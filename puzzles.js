@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-export const puzzles = {
+window.PUZZLES = {
     /**
      * Act I Puzzles
      */
@@ -940,7 +940,7 @@ export const puzzles = {
 /**
  * Helper functions for puzzle management
  */
-export const puzzleUtils = {
+window.puzzleUtils = {
     /**
      * Initialize a puzzle for a player
      * @param {string} puzzleId - The ID of the puzzle to initialize
@@ -1119,4 +1119,5 @@ export const puzzleUtils = {
         
         return playerState;
     }
+
 };
