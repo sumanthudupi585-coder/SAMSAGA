@@ -16,7 +16,7 @@
  * 8.  **Cosmic Harmony:** Emphasizes themes of harmony, beauty, reverence, and divine splendor.
  */
 
-export const storyData = {
+window.ACT2_STORY_DATA = {
 
     // --- ACT II: THE PATH OF DEVOTION (BHAKTI MARGA) ---
 
@@ -857,3 +857,4 @@ export const storyData = {
         ]
     }
 };
+
