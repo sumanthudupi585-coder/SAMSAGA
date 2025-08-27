@@ -107,7 +107,7 @@
             </div>
         </div>
     </main>
-    
+
     <script src="GameStateManager.js"></script>
     <script src="navigation.js"></script>
     <script>
@@ -127,28 +127,28 @@
         function setGunaValues(e){const t={sattva:[8,17,22,27,20,21,25,26,19,23,24],rajas:[1,5,7,2,4,6,3,9],tamas:[13,15,11,12,10,14,16,18]};let n=t.sattva.includes(e)?2:1,o=t.rajas.includes(e)?2:1,a=t.tamas.includes(e)?2:1;'Sattva'===userAnswers.guna1&&n++,'Rajas'===userAnswers.guna1&&o++,'Tamas'===userAnswers.guna1&&a++,'Sattva'===userAnswers.guna3&&n++,'Rajas'===userAnswers.guna3&&o++,'Tamas'===userAnswers.guna3&&a++,document.getElementById('sattva-value').textContent=n,document.getElementById('rajas-value').textContent=o,document.getElementById('tamas-value').textContent=a}
         document.addEventListener('DOMContentLoaded',()=>{document.querySelector('.oracle-container').addEventListener('click',e=>{if(!e.target.matches('.option')&&!e.target.closest('.option'))return;const t=e.target.matches('.option')?e.target:e.target.closest('.option'),n=t.dataset.value;document.querySelectorAll(`#${currentQuestion} .option`).forEach(e=>e.classList.remove('choice-selected')),t.classList.add('choice-selected'),setTimeout(()=>{switch(currentQuestion){case'q1':userAnswers.gana=n,showScreen('q2');break;case'q2':userAnswers.guna1=n,populateShaktiQuestion(),showScreen('q3');break;case'q3':userAnswers.nakshatraNum=n,showScreen('q4');break;case'q4':userAnswers.pada=n,showScreen('q5');break;case'q5':userAnswers.guna3=n,showResult()}},600)}),document.getElementById('action-button').addEventListener('click',()=>{const e=document.querySelector('.page-transition');e.classList.add('active');const t=new URLSearchParams({nakshatra:userAnswers.nakshatraNum,guna1:userAnswers.guna1,pada:userAnswers.pada,guna3:userAnswers.guna3}).toString();setTimeout(()=>{window.location.href=`Gameplay-fixed.html?${t}`},1500)}),window.matchMedia('(pointer: fine)').matches&&(document.body.classList.add('custom-cursor-active'),document.addEventListener('mousemove',e=>{document.getElementById('cursor-container').style.transform=`translate3d(${e.clientX}px, ${e.clientY}px, 0)`}),document.addEventListener('mouseover',e=>{(e.target.matches('a, button, .option')||e.target.closest('.option'))&&document.getElementById('cursor-container').classList.add('active')}),document.addEventListener('mouseout',e=>{(e.target.matches('a, button, .option')||e.target.closest('.option'))&&document.getElementById('cursor-container').classList.remove('active')}))});
         function finalizeCharacter() {
-        // Get selected character attributes
-        const characterData = {
-            nakshatra: selectedNakshatra,
-            gana: selectedGana,
-            shakti: nakshatraAttributes[selectedNakshatraIndex].shakti,
-            gunas: nakshatraAttributes[selectedNakshatraIndex].gunas,
-            avatar: `images/avatars/${selectedGana.toLowerCase()}.png`
-        };
-        
-        // Save character data to game state
-        if (window.gameStateManager) {
-            window.gameStateManager.playerProfile = characterData;
-            window.gameStateManager.saveTemporaryCharacter();
+            // Get selected character attributes
+            const characterData = {
+                nakshatra: selectedNakshatra,
+                gana: selectedGana,
+                shakti: nakshatraAttributes[selectedNakshatraIndex].shakti,
+                gunas: nakshatraAttributes[selectedNakshatraIndex].gunas,
+                avatar: `images/avatars/${selectedGana.toLowerCase()}.png`
+            };
+            
+            // Save character data to game state
+            if (window.gameStateManager) {
+                window.gameStateManager.playerProfile = characterData;
+                window.gameStateManager.saveTemporaryCharacter();
+            }
+            
+            // Navigate to gameplay
+            if (window.navigationManager) {
+                window.navigationManager.navigateToGameplay();
+            } else {
+                window.location.href = 'Gameplay-fixed.html';
+            }
         }
-        
-        // Navigate to gameplay
-        if (window.navigationManager) {
-            window.navigationManager.navigateToGameplay();
-        } else {
-            window.location.href = 'Gameplay-fixed.html';
-        }
-    }
     </script>
     <style>
         :root { --color-bg: #0F0C08; --color-surface: #1a140f; --color-border: #4a3422; --color-primary-glow: #ffc58f; --color-primary-base: #e09658; --color-text: #dcd1c7; --color-text-muted: #918070; --font-body: 'Jost', sans-serif; --font-title: 'Cinzel', serif; --shadow-glow: 0 0 15px -3px var(--color-primary-base); }
