@@ -1,0 +1,322 @@
+/* =================================================================
+|
+|   Samsara Saga - Thematic Master Stylesheet V5.0
+|
+|   * Description: The definitive stylesheet implementing the full
+|     UI/UX architectural vision. This version translates the
+|     "Living Manuscript" and "Mandala Grid" concepts into a
+|     cohesive, beautiful, and accessible game interface.
+|
+|   * UI/UX Architect: Gemini (Based on Architectural Review)
+|   * Version: 5.0.0 (Thematic Implementation)
+|
+================================================================= */
+
+/* --- SECTION 1: THEME API & GLOBAL SETUP --- */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Hind:wght@400;600&display=swap');
+
+:root {
+  /* ======================================== */
+  /* COLOR PALETTE (EARTH, JEWEL, & SPIRIT)   */
+  /* ======================================== */
+  /* Foundational "Manuscript" Colors */
+  --color-manuscript-bg: #FDFBF5;         /* Aged Palm Leaf/Paper */
+  --color-manuscript-ink: #4A3027;        /* Brown Coffee for primary text */
+  --color-manuscript-ink-secondary: #A86645; /* Metallic Bronze for subtitles */
+  --color-border-subtle: #C99A7B;       /* Antique Brass for dividers */
+
+  /* Jewel Tone Accents for Interaction & Highlights */
+  --color-accent-jewel: #C72A39;        /* Madder Lake Red */
+  --color-accent-highlight: #F09D22;    /* Marigold Orange/Yellow */
+  --color-accent-divine: #3F51B5;       /* Indigo/Lapis Lazuli Blue */
+  
+  /* High Contrast Mode Palette (WCAG AAA Aim) */
+  --color-contrast-bg: #FFFFFF;
+  --color-contrast-text: #000000;
+  --color-contrast-link: #0000FF;
+
+  /* ======================================== */
+  /* TYPOGRAPHY (VOICE OF THE SAGES)          */
+  /* ======================================== */
+  --font-family-narrative: 'Merriweather', Georgia, serif;
+  --font-family-ui: 'Hind', 'Helvetica Neue', sans-serif;
+  --font-size-base: 1rem; /* User-adjustable, typically 16px */
+  --font-size-body: 1.125rem; /* ~18px for optimal readability */
+  --font-size-ui: 0.9rem;
+  --line-height-narrative: 1.7; /* Unitless for scalability */
+  --line-height-ui: 1.4;
+
+  /* ======================================== */
+  /* SPACING & LAYOUT (MANDALA GRID)          */
+  /* ======================================== */
+  --spacing-unit: 1.5rem; /* ~24px */
+  --container-max-width: 70ch; /* Optimal line length for reading */
+  --border-radius-soft: 4px;
+  --nav-height: 70px;
+
+  /* ======================================== */
+  /* Z-INDEX HIERARCHY                        */
+  /* ======================================== */
+  --z-index-background: -1;
+  --z-index-content: 10;
+  --z-index-nav: 1000;
+  --z-index-modal: 2000;
+  --z-index-transition: 9998;
+  --z-index-cursor: 9999;
+
+  /* ======================================== */
+  /* EFFECTS & TRANSITIONS                    */
+  /* ======================================== */
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --transition-normal: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* --- SECTION 2: BASE & ACCESSIBILITY --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-manuscript-bg);
+  color: var(--color-manuscript-ink);
+  font-family: var(--font-family-narrative);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-narrative);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* High Contrast Mode Toggle */
+body.high-contrast-mode {
+  --color-manuscript-bg: var(--color-contrast-bg);
+  --color-manuscript-ink: var(--color-contrast-text);
+  --color-accent-highlight: var(--color-contrast-link);
+  --color-border-subtle: var(--color-contrast-text);
+}
+
+/* Reduced Motion Toggle */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- SECTION 3: LAYOUT (THE MANDALA GRID SYSTEM) --- */
+.game-viewport {
+  display: grid;
+  grid-template-columns: 1fr minmax(auto, var(--container-max-width)) 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header header header"
+    ".  narrative  ."
+    "footer footer footer";
+  min-height: 100vh;
+  padding: 0 var(--spacing-unit);
+}
+
+/* The central narrative area (Brahma Pada) */
+.narrative-container {
+  grid-area: narrative;
+  padding: var(--spacing-unit) 0;
+}
+
+/* Marginalia for stats/inventory (Manusha Pada) */
+.marginalia {
+  position: fixed; /* Or absolute, depending on scroll behavior */
+  top: var(--nav-height);
+  padding: var(--spacing-unit);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-ui);
+  line-height: var(--line-height-ui);
+  color: var(--color-manuscript-ink-secondary);
+}
+.marginalia-left { left: 0; }
+.marginalia-right { right: 0; }
+
+/* --- SECTION 4: TYPOGRAPHY (THE VOICE OF THE SAGES) --- */
+p {
+  margin-block: 1lh; /* Creates vertical rhythm based on line-height */
+}
+p:first-child { margin-block-start: 0; }
+p:last-child { margin-block-end: 0; }
+
+h1, h2, h3 {
+  font-family: var(--font-family-ui);
+  line-height: var(--line-height-ui);
+  font-weight: 600;
+  margin-bottom: 0.5lh;
+  color: var(--color-manuscript-ink);
+}
+
+/* Interactive text within the narrative */
+a, .choice-link {
+  color: var(--color-accent-highlight);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-accent-highlight);
+  transition: all var(--transition-fast);
+}
+a:hover, .choice-link:hover {
+  border-bottom-style: solid;
+  background-color: rgba(240, 157, 34, 0.1);
+}
+
+/* --- SECTION 5: CONTAINERS & DIVIDERS (FRAMING THE WORLD) --- */
+.ui-panel {
+  background-color: rgba(74, 48, 39, 0.05); /* Faint manuscript color */
+  border-radius: var(--border-radius-soft);
+  padding: var(--spacing-unit);
+  box-shadow: var(--shadow-md);
+  /* Thematic border using SVG */
+  border: 10px solid;
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 L30 15 L15 30 L0 15 Z' fill='%234A3027'/%3E%3C/svg%3E");
+  border-image-slice: 10;
+  border-image-repeat: round;
+}
+
+hr {
+  border: none;
+  height: 2px;
+  background-image: linear-gradient(to right, transparent, var(--color-border-subtle), transparent);
+  margin: 2lh 0;
+}
+
+/* Dynamic Theming for Warli/Madhubani states */
+.ui-style-warli {
+  --color-manuscript-bg: #EAE0D5; /* Earthier tone */
+  --color-manuscript-ink: #5C3D2E;
+  --color-accent-highlight: #C68B59;
+  /* Add changes to borders, etc. */
+}
+.ui-style-madhubani {
+  --color-manuscript-bg: #FFF8E1; /* Brighter paper */
+  --color-manuscript-ink: #3E2723;
+  --color-accent-highlight: #D81B60; /* Vibrant pink */
+  /* Add changes to borders, etc. */
+}
+
+/* --- SECTION 6: ICONOGRAPHY & MOTIFS --- */
+.icon {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.icon-lotus { background-image: url("data:image/svg+xml,..."); } /* Placeholder for actual SVG data */
+.icon-yali { background-image: url("data:image/svg+xml,..."); }
+.icon-swastika { background-image: url("data:image/svg+xml,..."); }
+
+/* --- SECTION 7: INTERACTIVE ELEMENTS --- */
+.action-button {
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  color: var(--color-manuscript-bg);
+  background-color: var(--color-manuscript-ink-secondary);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-soft);
+  padding: 0.5em 1.5em;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+.action-button:hover, .action-button:focus {
+  background-color: var(--color-accent-highlight);
+  color: var(--color-bg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Text Input Field */
+.text-input {
+  font-family: var(--font-family-narrative);
+  font-size: var(--font-size-body);
+  color: var(--color-manuscript-ink);
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-border-subtle);
+  padding: 0.5em;
+  width: 100%;
+  background-image: linear-gradient(to bottom, transparent 95%, rgba(74, 48, 39, 0.1) 95%);
+  background-size: 100% 1.7em; /* Mimics ruled lines */
+}
+.text-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent-highlight);
+}
+
+/* --- SECTION 8: ANIMATIONS & TRANSITIONS --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Applying the animation to new text */
+.new-text {
+  animation: fadeIn var(--transition-slow) ease-out;
+}
+
+/* Stat change feedback */
+.stat-change {
+  animation: flash var(--transition-normal);
+}
+@keyframes flash {
+  0%, 100% { color: var(--color-manuscript-ink-secondary); }
+  50% { color: var(--color-accent-jewel); transform: scale(1.1); }
+}
+
+/* Panel transitions */
+.panel-enter-active { animation: slideIn var(--transition-normal); }
+.panel-exit-active { animation: slideOut var(--transition-normal); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-20px); }
+}
+
+/* --- SECTION 9: RESPONSIVE DESIGN --- */
+@media (max-width: 1200px) {
+  .marginalia {
+    position: relative; /* Stack in document flow on smaller screens */
+    top: auto; left: auto; right: auto;
+    grid-column: 2 / 3; /* Keep it within the central column */
+    margin-bottom: var(--spacing-unit);
+  }
+  .game-viewport {
+    grid-template-areas:
+      "header header header"
+      ". narrative ."
+      ". marginalia ."
+      "footer footer footer";
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --font-size-body: 1rem; /* ~16px */
+    --spacing-unit: 1rem;
+  }
+  .game-viewport {
+    grid-template-columns: 1fr;
+    grid-template-areas: "header" "narrative" "marginalia" "footer";
+    padding: 0 var(--spacing-unit);
+  }
+  .marginalia {
+    grid-column: 1 / 2;
+  }
+}
