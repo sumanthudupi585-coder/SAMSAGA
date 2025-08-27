@@ -1,7 +1,6 @@
 /**
  * GameStateManager.js
- * 
- * This module is the game's memory. It holds all player and world data
+ * * This module is the game's memory. It holds all player and world data
  * but does not know about the story itself. Its logic is focused on
  * state manipulation and persistence.
  */
@@ -291,6 +290,38 @@ class GameStateManager {
             return true;
         } catch (error) {
             console.error("Failed to load game:", error);
+            return false;
+        }
+    }
+    
+    /**
+     * Save temporary character data (for page transitions)
+     */
+    saveTemporaryCharacter() {
+        try {
+            localStorage.setItem('samsagaTemporaryCharacter', JSON.stringify(this.playerProfile));
+            return true;
+        } catch (error) {
+            console.error("Error saving temporary character:", error);
+            return false;
+        }
+    }
+
+    /**
+     * Load temporary character data (for page transitions)
+     */
+    loadTemporaryCharacter() {
+        try {
+            const tempData = localStorage.getItem('samsagaTemporaryCharacter');
+            if (tempData) {
+                this.playerProfile = JSON.parse(tempData);
+                // Clear temporary data after loading
+                localStorage.removeItem('samsagaTemporaryCharacter');
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error loading temporary character:", error);
             return false;
         }
     }
