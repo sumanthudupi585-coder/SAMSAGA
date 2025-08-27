@@ -15,7 +15,7 @@
  * 8.  **The Final Riddle:** Culminates in the ultimate question about the nature of suffering and the Self.
  */
 
-export const storyData = {
+window.ACT3_STORY_DATA = {
 
     // --- ACT III: THE PATH OF KNOWLEDGE (JNANA MARGA) ---
 
@@ -866,4 +866,5 @@ export const storyData = {
             { "text": "The End", "nextScene": "JOURNEY_TO_PATALA" }
         ]
     }
+
 };
