@@ -58,7 +58,7 @@
         <h1 class="game-title text-fade-in">Samsara Saga</h1>
         <p class="game-subtitle text-fade-in-delay-1">A Journey Through the Cycles of Existence</p>
 
-        <a href="CB-fixed.html" class="mandala-link text-fade-in-delay-2">
+        <a href="CB-fixed.html" class="mandala-link text-fade-in-delay-2" id="new-game-button">
             <div class="mandala-container">
                 <svg class="mandala-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="100" cy="100" r="98" stroke-width="0.25"/>
@@ -93,6 +93,7 @@
             </div>
             <p class="cta-text">Begin Your Journey</p>
         </a>
+        <button class="action-button" id="continue-button" style="margin-top: 1rem;">Continue Journey</button>
 
         <div class="footer-links text-fade-in-delay-3">
             <a href="#" class="nav-link footer-nav-link" id="about-link">
@@ -149,7 +150,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="GameStateManager.js"></script>
     <script src="navigation.js"></script>
     <script>
@@ -209,6 +210,24 @@
                         closeModal(modal);
                     }
                 });
+            });
+
+            document.getElementById('new-game-button').addEventListener('click', function() {
+                if (window.navigationManager) {
+                    window.navigationManager.navigateToCharacterCreation();
+                } else {
+                    window.location.href = 'CB-fixed.html';
+                }
+            });
+
+            document.getElementById('continue-button').addEventListener('click', function() {
+                if (window.gameStateManager && window.gameStateManager.hasSavedGame()) {
+                    if (window.navigationManager) {
+                        window.navigationManager.navigateToGameplay();
+                    } else {
+                        window.location.href = 'Gameplay-fixed.html';
+                    }
+                }
             });
 
             document.querySelector('.mandala-link').addEventListener('click', function(e) {
