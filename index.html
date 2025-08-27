@@ -286,6 +286,18 @@
 
     <style>
         /* Additional styles specific to the home page */
+        
+        /* UPDATED LAYOUT STYLE */
+        .screen-container {
+            min-height: 100vh; /* Ensures the container is at least as tall as the screen */
+            display: flex; /* Activates Flexbox for easy alignment */
+            flex-direction: column; /* Stacks content vertically (title, mandala, links) */
+            justify-content: center; /* Centers content vertically */
+            align-items: center; /* Centers content horizontally */
+            padding: 2rem; /* Adds some breathing room on the sides */
+            box-sizing: border-box; /* Ensures padding is included in the total height */
+        }
+
         .game-subtitle {
             font-size: clamp(1rem, 2.5vw, 1.4rem);
             color: var(--color-text-muted);
