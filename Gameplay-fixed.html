@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samsara Saga - Journey Through Existence</title>
     
-    <!-- Link to Google Fonts from the theme file -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Kurale&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Marcellus&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Link to the external CSS files -->
     <link rel="stylesheet" href="main.css">
@@ -25,19 +25,14 @@
     <script src="AudioManager.js"></script>
     <script src="UIController.js"></script>
     <script src="VisualEffects.js"></script>
-    
-    <!-- Story Data Scripts (using type="module" for ES6 imports) -->
-    <script src="ACT1storyData.js" type="module"></script>
-    <script src="ACT2storyData.js" type="module"></script>
-    <script src="ACT3storyData.js" type="module"></script>
-    <script src="storyDataBridge.js" type="module"></script>
-    
-    <!-- Main Game Script -->
-    <script src="main.js"></script>
-    
-    <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+
 </head>
 <body>
+
+    <!-- Animated Background -->
+    <div id="vignette-overlay"></div>
+    <div id="particle-background"></div>
+
     <!-- Custom Cursor -->
     <div id="cursor-container">
         <svg class="chakra-cursor" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e09658" stroke-width="1">
@@ -61,69 +56,48 @@
 
     <!-- Page Transition Effect -->
     <div class="page-transition">
-        <div class="page-transition-content">
-            <div class="page-transition-mandala">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="45" stroke="#e09658" stroke-width="1" fill="none"/>
-                    <circle cx="50" cy="50" r="30" stroke="#e09658" stroke-width="1" fill="none"/>
-                    <circle cx="50" cy="50" r="15" stroke="#e09658" stroke-width="1" fill="none"/>
-                    <circle cx="50" cy="50" r="5" fill="#e09658"/>
-                </svg>
-            </div>
-        </div>
+        <div class="page-transition-mandala"></div>
     </div>
 
-    <!-- Navigation Bar -->
-    <nav class="nav-bar">
-        <a href="SS.html" class="nav-link">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <div class="nav-title">Samsara Saga</div>
-        <a href="#" class="nav-link" id="menu-button">
+    <!-- Top Bar with Title and Menu -->
+    <header class="game-header">
+        <div class="header-title">Samsara Saga</div>
+        <button class="menu-toggle-button" id="menu-button">
             <i class="fas fa-bars"></i>
             <span>Menu</span>
-        </a>
-    </nav>
+        </button>
+    </header>
 
     <!-- Main wrapper for the entire game interface -->
     <div class="game-wrapper">
         <!-- Main content area for narrative and choices (Left Column) -->
-        <main>
-            <div id="story-container" class="card section">
+        <main class="story-panel">
+            <div id="story-container" class="section">
                 <div id="story-text" class="text-fade-in">
                     <p>The cycle turns...</p>
                     <p>You find yourself at the beginning of a new journey, your past lives echoing in the chambers of your consciousness like distant whispers.</p>
                     <p>The path ahead is shrouded in mist, but your <span class="highlight-text" id="nakshatra-name">Nakshatra</span> nature guides you forward, illuminating the way with its unique light.</p>
                 </div>
-                <div id="story-decoration" class="mandala-decoration">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" stroke="#e09658" stroke-width="0.5" fill="none"/>
-                        <circle cx="50" cy="50" r="30" stroke="#e09658" stroke-width="0.5" fill="none"/>
-                        <circle cx="50" cy="50" r="15" stroke="#e09658" stroke-width="0.5" fill="none"/>
-                        <circle cx="50" cy="50" r="5" stroke="#e09658" stroke-width="0.5" fill="none"/>
-                    </svg>
-                </div>
             </div>
             <div id="choices-container" class="text-fade-in-delay-1">
                 <!-- Player choices will be dynamically inserted here -->
                 <button class="choice-button">
-                    <div class="choice-icon"><i class="fas fa-walking"></i></div>
-                    <div class="choice-content">Begin your journey with mindful steps, observing the world around you.</div>
+                    <span class="choice-icon"><i class="fas fa-walking"></i></span>
+                    <span class="choice-content">Begin your journey with mindful steps, observing the world around you.</span>
                 </button>
                 <button class="choice-button">
-                    <div class="choice-icon"><i class="fas fa-eye"></i></div>
-                    <div class="choice-content">Close your eyes and turn inward, seeking guidance from your inner wisdom.</div>
+                    <span class="choice-icon"><i class="fas fa-eye"></i></span>
+                    <span class="choice-content">Close your eyes and turn inward, seeking guidance from your inner wisdom.</span>
                 </button>
                 <button class="choice-button">
-                    <div class="choice-icon"><i class="fas fa-comments"></i></div>
-                    <div class="choice-content">Call out to see if anyone else is nearby who might offer guidance.</div>
+                    <span class="choice-icon"><i class="fas fa-comments"></i></span>
+                    <span class="choice-content">Call out to see if anyone else is nearby who might offer guidance.</span>
                 </button>
             </div>
         </main>
         
         <!-- Sidebar for player stats and game controls (Right Column) -->
-        <aside>
+        <aside class="status-panel">
             <div class="character-summary">
                 <div class="character-symbol">
                     <svg viewBox="0 0 100 100" id="character-symbol-svg"></svg>
@@ -131,41 +105,50 @@
                 <h2 class="character-name" id="character-name">Jiva</h2>
             </div>
             
-            <h3 class="status-panel-title">Spiritual Attributes</h3>
-            
-            <div class="stats-grid">
-                <div class="stat-item karma-stat">
-                    <span>Karma</span> 
-                    <span id="karma-value" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Sattva</span> 
-                    <span id="sattva-value" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Rajas</span> 
-                    <span id="rajas-value" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Tamas</span> 
-                    <span id="tamas-value" class="stat-value">0</span>
-                </div>
-            </div>
-            
-            <div class="element-indicator">
-                <div class="element-title">Element</div>
-                <div class="element-display" id="element-display">
-                    <!-- Will be populated by JavaScript -->
+            <div class="panel-section">
+                <h3 class="panel-title">Spiritual Attributes</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Karma</span> 
+                        <div class="stat-bar karma-bar"><div id="karma-fill" style="width: 50%;"></div></div>
+                        <span id="karma-value" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Sattva</span> 
+                        <div class="stat-bar sattva-bar"><div id="sattva-fill" style="width: 30%;"></div></div>
+                        <span id="sattva-value" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Rajas</span> 
+                        <div class="stat-bar rajas-bar"><div id="rajas-fill" style="width: 80%;"></div></div>
+                        <span id="rajas-value" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Tamas</span> 
+                        <div class="stat-bar tamas-bar"><div id="tamas-fill" style="width: 10%;"></div></div>
+                        <span id="tamas-value" class="stat-value">0</span>
+                    </div>
                 </div>
             </div>
             
-            <h3 class="status-panel-title">Inventory</h3>
-            <ul id="inventory-list">
-                <li class="inventory-empty">(Empty)</li>
-            </ul>
+            <div class="panel-section">
+                 <h3 class="panel-title">Elemental Affinity</h3>
+                 <div class="element-display" id="element-display">
+                    <!-- Populated by JS -->
+                 </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3 class="panel-title">Inventory</h3>
+                <ul id="inventory-list">
+                    <li class="inventory-empty">(Empty)</li>
+                </ul>
+            </div>
 
             <div class="game-controls">
-                <button class="control-button" id="new-game-btn">Begin Anew</button>
+                <button class="control-button" id="new-game-btn">
+                    <i class="fas fa-sync-alt"></i> Begin Anew
+                </button>
             </div>
         </aside>
     </div>
@@ -179,30 +162,12 @@
             </div>
             <div class="modal-body">
                 <div class="menu-buttons">
-                    <button class="menu-button" id="character-profile-btn">
-                        <i class="fas fa-user"></i>
-                        <span>Character Profile</span>
-                    </button>
-                    <button class="menu-button" id="save-game-btn">
-                        <i class="fas fa-save"></i>
-                        <span>Save Game</span>
-                    </button>
-                    <button class="menu-button" id="load-game-btn">
-                        <i class="fas fa-folder-open"></i>
-                        <span>Load Game</span>
-                    </button>
-                    <button class="menu-button" id="settings-btn">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </button>
-                    <button class="menu-button" id="help-btn">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Help</span>
-                    </button>
-                    <button class="menu-button" id="exit-game-btn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Exit to Main Menu</span>
-                    </button>
+                    <button class="menu-button" id="character-profile-btn"><i class="fas fa-user"></i><span>Character Profile</span></button>
+                    <button class="menu-button" id="save-game-btn"><i class="fas fa-save"></i><span>Save Game</span></button>
+                    <button class="menu-button" id="load-game-btn"><i class="fas fa-folder-open"></i><span>Load Game</span></button>
+                    <button class="menu-button" id="settings-btn"><i class="fas fa-cog"></i><span>Settings</span></button>
+                    <button class="menu-button" id="help-btn"><i class="fas fa-question-circle"></i><span>Help</span></button>
+                    <button class="menu-button" id="exit-game-btn"><i class="fas fa-sign-out-alt"></i><span>Exit to Main Menu</span></button>
                 </div>
             </div>
         </div>
@@ -211,7 +176,462 @@
     <!-- Notification System -->
     <div id="notification-container"></div>
 
-    <script>
+    <style>
+        /* --- Gamic UI/UX Revamp Styles --- */
+        :root {
+            --font-title: 'Cinzel', serif;
+            --font-body: 'Marcellus', serif;
+            
+            --color-bg: #0a0908;
+            --color-surface: #1a1817;
+            --color-text: #c5c1b9;
+            --color-text-muted: #7a7670;
+            
+            --color-primary: #e09658;
+            --color-primary-glow: #ffc994;
+            --color-shadow: #e09658;
+
+            --color-sattva: #63b4d1;
+            --color-rajas: #d96c47;
+            --color-tamas: #5c527f;
+            --color-karma: #bca06a;
+
+            --border-radius: 8px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            overflow: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+        
+        /* --- Custom Cursor --- */
+        .custom-cursor-active {
+            cursor: none;
+        }
+        #cursor-container {
+            position: fixed;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+        #cursor-container .chakra-cursor {
+            transition: all 0.2s ease;
+            transform-origin: center center;
+        }
+        #cursor-container.active .chakra-cursor {
+            transform: scale(1.5);
+            filter: drop-shadow(0 0 5px var(--color-primary-glow));
+        }
+        @media (pointer: coarse) {
+            body, .custom-cursor-active {
+                cursor: auto;
+            }
+            #cursor-container {
+                display: none;
+            }
+        }
+
+        /* --- Animated Background & Overlays --- */
+        #particle-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(224, 150, 88, 0.05) 1px, transparent 1px);
+            background-size: 2rem 2rem;
+            animation: pan-background 120s linear infinite;
+            z-index: -2;
+        }
+        @keyframes pan-background {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        #vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 15vw 5vw var(--color-bg);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* --- Page Transitions --- */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .page-transition-mandala {
+            width: 100px;
+            height: 100px;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23e09658' stroke-width='1' fill='none'/%3E%3Ccircle cx='50' cy='50' r='30' stroke='%23e09658' stroke-width='1' fill='none'/%3E%3Ccircle cx='50' cy='50' r='15' stroke='%23e09658' stroke-width='1' fill='none'/%3E%3Ccircle cx='50' cy='50' r='5' fill='%23e09658'/%3E%3C/svg%3E");
+            animation: spin 2s linear infinite, pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* --- Game Layout --- */
+        .game-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(10, 9, 8, 0.8) 0%, rgba(10, 9, 8, 0) 100%);
+            z-index: 50;
+        }
+        .header-title {
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-shadow);
+        }
+        .menu-toggle-button {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .game-wrapper {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 8rem 2rem 2rem;
+            height: 100vh;
+        }
+        .story-panel, .status-panel {
+            background: rgba(26, 24, 23, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(224, 150, 88, 0.2);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(224, 150, 88, 0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+
+        /* --- Story Panel --- */
+        #story-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        #story-text p { margin-bottom: 1.5rem; }
+        .highlight-text {
+            color: var(--color-primary-glow);
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--color-shadow);
+        }
+
+        /* --- Choice Buttons --- */
+        #choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .choice-button {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: transparent;
+            border: none;
+            border-image: linear-gradient(to right, transparent, rgba(224, 150, 88, 0.3), transparent) 1;
+            border-bottom: 1px solid;
+            color: var(--color-text);
+            padding: 1.25rem 1rem;
+            text-align: left;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .choice-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(224, 150, 88, 0.2), transparent);
+            transition: left var(--transition-speed) ease-in-out;
+        }
+        .choice-button:hover {
+            color: var(--color-primary-glow);
+            transform: scale(1.02);
+            border-image: linear-gradient(to right, transparent, var(--color-primary), transparent) 1;
+        }
+        .choice-button:hover::before {
+            left: 100%;
+        }
+        .choice-icon {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            transition: transform var(--transition-speed) ease;
+        }
+        .choice-button:hover .choice-icon {
+            transform: scale(1.2) rotate(-5deg);
+        }
+        .choice-button.choice-selected {
+            background-color: rgba(224, 150, 88, 0.2);
+            animation: pulse-glow 0.5s ease-out;
+        }
+
+        /* --- Status Panel --- */
+        .status-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .panel-section {
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(224, 150, 88, 0.1);
+        }
+        .panel-section:last-child { border-bottom: none; }
+        .panel-title {
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .character-summary {
+            text-align: center;
+        }
+        .character-symbol {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+            filter: drop-shadow(0 0 15px var(--color-shadow));
+            animation: float 4s ease-in-out infinite;
+        }
+        .character-name {
+            font-family: var(--font-title);
+            font-size: 2.2rem;
+            color: var(--color-primary-glow);
+        }
+        
+        /* Stats Grid with Bars */
+        .stats-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .stat-item {
+            display: grid;
+            grid-template-columns: 60px 1fr 30px;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .stat-label { color: var(--color-text-muted); }
+        .stat-value { text-align: right; font-weight: bold; }
+        .stat-bar {
+            height: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .stat-bar > div {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        .karma-bar > div { background: linear-gradient(90deg, var(--color-karma), lighten(var(--color-karma), 20%)); }
+        .sattva-bar > div { background: linear-gradient(90deg, var(--color-sattva), lighten(var(--color-sattva), 20%)); }
+        .rajas-bar > div { background: linear-gradient(90deg, var(--color-rajas), lighten(var(--color-rajas), 20%)); }
+        .tamas-bar > div { background: linear-gradient(90deg, var(--color-tamas), lighten(var(--color-tamas), 20%)); }
+
+        /* Element Display */
+        .element-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            text-transform: capitalize;
+        }
+        .element-icon { font-size: 2.5rem; }
+        .element-earth { color: #8c6a46; }
+        .element-water { color: #5c8b9c; }
+        .element-fire { color: #d96c47; }
+        .element-air { color: #a9b7c0; }
+        .element-ether { color: #8c6da6; }
+
+        /* Inventory */
+        #inventory-list {
+            list-style: none;
+            text-align: center;
+            min-height: 50px;
+        }
+        .inventory-empty { color: var(--color-text-muted); font-style: italic; }
+
+        /* --- Buttons --- */
+        button {
+            cursor: none; /* Use custom cursor */
+        }
+        .control-button, .menu-toggle-button, .menu-button {
+            background: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.05));
+            border: 1px solid rgba(224, 150, 88, 0.5);
+            color: var(--color-text);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-family: var(--font-title);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .control-button:hover, .menu-toggle-button:hover, .menu-button:hover {
+            background-color: rgba(224, 150, 88, 0.1);
+            color: var(--color-primary-glow);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px 0 var(--color-shadow);
+            transform: translateY(-2px);
+        }
+        .control-button { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(10, 9, 8, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--color-surface);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.7);
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .modal-header {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(224, 150, 88, 0.3);
+        }
+        .modal-header h2 {
+            font-family: var(--font-title);
+            font-size: 2rem;
+            color: var(--color-primary);
+        }
+        .close-modal {
+            color: var(--color-text-muted);
+            font-size: 2rem;
+            transition: color 0.3s ease;
+        }
+        .close-modal:hover { color: var(--color-primary-glow); }
+        .modal-body { padding: 1.5rem; }
+        .menu-buttons { display: flex; flex-direction: column; gap: 1rem; }
+        .menu-button { display: flex; align-items: center; gap: 1rem; width: 100%; }
+        .menu-button i { color: var(--color-primary); min-width: 20px; }
+
+        /* --- Notifications --- */
+        #notification-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .notification {
+            background: linear-gradient(135deg, var(--color-surface), #2a2725);
+            border-left: 4px solid var(--color-primary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            min-width: 300px;
+        }
+        .notification.show { transform: translateX(0); opacity: 1; }
+        .notification.hide { transform: translateX(120%); opacity: 0; }
+        .notification.success { border-left-color: var(--color-sattva); }
+        .notification.error { border-left-color: var(--color-rajas); }
+        .notification-content { display: flex; align-items: center; gap: 1rem; }
+        .notification-icon { font-size: 1.5rem; }
+        .notification.success .notification-icon { color: var(--color-sattva); }
+        .notification.error .notification-icon { color: var(--color-rajas); }
+
+        /* --- Animations --- */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse-glow { 0%, 100% { filter: drop-shadow(0 0 10px var(--color-shadow)); } 50% { filter: drop-shadow(0 0 20px var(--color-primary-glow)); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        .text-fade-in { animation: fadeInUp 0.8s ease-out; }
+        .text-fade-in-delay-1 { animation: fadeInUp 0.8s ease-out 0.4s; animation-fill-mode: backwards; }
+        .karma-increase { animation: karma-flash-green 1s; }
+        .karma-decrease { animation: karma-flash-red 1s; }
+        @keyframes karma-flash-green { 50% { color: var(--color-sattva); transform: scale(1.2); } }
+        @keyframes karma-flash-red { 50% { color: var(--color-rajas); transform: scale(1.2); } }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .game-wrapper {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                padding: 6rem 1rem 1rem;
+            }
+            .status-panel {
+                grid-row: 1;
+            }
+            .story-panel {
+                grid-row: 2;
+            }
+        }
+        @media (max-width: 768px) {
+            .header-title { font-size: 1.8rem; }
+            .menu-toggle-button { right: 1rem; }
+            .game-wrapper { gap: 1rem; }
+            .story-panel, .status-panel { padding: 1.5rem; }
+            #story-text { font-size: 1.1rem; }
+            .choice-button { font-size: 1rem; padding: 1rem; gap: 1rem; }
+        }
+
+    </style>
+
+<script>
         // Nakshatra data
         const nakshatraData = {
             1: { name: 'Ashwini', deity: 'Ashvins', symbol: "Horse's Head", shakti: 'To heal quickly', element: 'fire', gana: 'Deva', rulingPlanet: 'Ketu' },
@@ -574,384 +994,5 @@
             }
         });
     </script>
-
-    <style>
-        /* Additional styles specific to the gameplay interface */
-        .nav-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background-color: rgba(26, 26, 26, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 50;
-            border-bottom: 1px solid var(--color-bronze);
-        }
-        
-        .nav-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--color-text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-link:hover {
-            color: var(--color-bronze-glow);
-        }
-        
-        .nav-link i {
-            font-size: 1.2rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .nav-title {
-            font-family: var(--font-title);
-            font-size: 1.8rem;
-            color: var(--color-bronze-glow);
-        }
-        
-        /* Game wrapper styles */
-        .game-wrapper {
-            padding-top: 60px; /* Account for fixed nav bar */
-            height: 100vh;
-        }
-        
-        /* Story container styles */
-        #story-container {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        
-        #story-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 2rem;
-        }
-        
-        #story-text p {
-            margin-bottom: 1rem;
-        }
-        
-        .highlight-text {
-            color: var(--color-bronze-glow);
-            font-weight: bold;
-        }
-        
-        .mandala-decoration {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-        
-        /* Choice button styles */
-        .choice-button {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-align: left;
-            background-color: transparent;
-            border: 1px solid var(--color-bronze);
-            color: var(--color-text);
-            padding: 1rem 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .choice-button:hover {
-            background-color: rgba(224, 150, 88, 0.1);
-            box-shadow: 0 0 25px 8px rgba(224, 150, 88, 0.15);
-            transform: translateY(-3px);
-        }
-        
-        .choice-icon {
-            min-width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(169, 113, 66, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: var(--color-bronze-glow);
-            transition: all 0.3s ease;
-        }
-        
-        .choice-button:hover .choice-icon {
-            background-color: rgba(224, 150, 88, 0.2);
-            transform: scale(1.1);
-        }
-        
-        /* Character summary styles */
-        .character-summary {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px dashed rgba(169, 113, 66, 0.3);
-        }
-        
-        .character-symbol {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-        }
-        
-        .character-name {
-            font-family: var(--font-title);
-            font-size: 2rem;
-            color: var(--color-bronze-glow);
-        }
-        
-        /* Element indicator styles */
-        .element-indicator {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background-color: rgba(26, 26, 26, 0.5);
-            border-radius: 4px;
-            text-align: center;
-        }
-        
-        .element-title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            color: var(--color-text-muted);
-        }
-        
-        .element-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .element-display .element-icon {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .element-display.element-earth .element-icon {
-            color: var(--color-earth);
-        }
-        
-        .element-display.element-water .element-icon {
-            color: var(--color-water);
-        }
-        
-        .element-display.element-fire .element-icon {
-            color: var(--color-fire);
-        }
-        
-        .element-display.element-air .element-icon {
-            color: var(--color-air);
-        }
-        
-        .element-display.element-ether .element-icon {
-            color: var(--color-ether);
-        }
-        
-        /* Inventory styles */
-        #inventory-list {
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-        
-        #inventory-list li {
-            padding: 0.5rem 0;
-            border-bottom: 1px dashed rgba(169, 113, 66, 0.3);
-        }
-        
-        .inventory-empty {
-            color: var(--color-text-muted);
-            font-style: italic;
-            text-align: center;
-        }
-        
-        /* Menu modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background-color: var(--color-stone-dark);
-            border: 1px solid var(--color-bronze);
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        .modal-header {
-            background-color: rgba(169, 113, 66, 0.2);
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--color-bronze);
-        }
-        
-        .modal-header h2 {
-            color: var(--color-bronze-glow);
-            font-family: var(--font-title);
-            font-size: 2rem;
-            font-weight: normal;
-            margin: 0;
-        }
-        
-        .close-modal {
-            color: var(--color-text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        
-        .close-modal:hover {
-            color: var(--color-bronze-glow);
-        }
-        
-        .modal-body {
-            padding: 1.5rem;
-        }
-        
-        .menu-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .menu-button {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background-color: transparent;
-            border: 1px solid var(--color-bronze);
-            color: var(--color-text);
-            padding: 1rem 1.5rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            text-align: left;
-        }
-        
-        .menu-button:hover {
-            background-color: rgba(224, 150, 88, 0.1);
-            box-shadow: 0 0 25px 8px rgba(224, 150, 88, 0.15);
-            transform: translateY(-3px);
-        }
-        
-        .menu-button i {
-            min-width: 20px;
-            color: var(--color-bronze-glow);
-        }
-        
-        /* Notification styles */
-        #notification-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .notification {
-            background-color: rgba(26, 26, 26, 0.9);
-            border-left: 3px solid var(--color-bronze);
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transform: translateX(120%);
-            opacity: 0;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            min-width: 250px;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        
-        .notification.hide {
-            transform: translateX(120%);
-            opacity: 0;
-        }
-        
-        .notification.success {
-            border-left-color: var(--color-deva);
-        }
-        
-        .notification.error {
-            border-left-color: var(--color-rakshasa);
-        }
-        
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .notification-icon {
-            color: var(--color-bronze-glow);
-            font-size: 1.2rem;
-        }
-        
-        .notification.success .notification-icon {
-            color: var(--color-deva);
-        }
-        
-        .notification.error .notification-icon {
-            color: var(--color-rakshasa);
-        }
-        
-        /* Animation classes */
-        .text-fade-out {
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .nav-title {
-                font-size: 1.4rem;
-            }
-            
-            .game-wrapper {
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr auto;
-            }
-            
-            aside {
-                border-left: none;
-                border-top: 1px solid var(--color-bronze);
-            }
-        }
-    </style>
 </body>
 </html>
