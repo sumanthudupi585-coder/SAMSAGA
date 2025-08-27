@@ -15,7 +15,7 @@
  * 8.  **Five Complete Quests:** Expanded the game to include five complete quests with unique paths for all 27 Nakshatras.
  */
 
-export const storyData = {
+window.ACT1_STORY_DATA = {
 
     // --- ACT I: THE THREE TRIALS OF DHARMAPURA ---
 
@@ -1040,4 +1040,5 @@ export const storyData = {
             { "text": "The End... For Now", "nextScene": "JOURNEY_START" }
         ]
     }
+
 };
