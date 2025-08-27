@@ -12,7 +12,7 @@
 </head>
 <body>
     <div id="cursor-container">
-        <svg class="chakra-cursor" xmlns="http://www.w.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFC58F" stroke-width="1">
+        <svg class="chakra-cursor" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFC58F" stroke-width="1">
             <circle cx="12" cy="12" r="10"/>
             <g transform="translate(12,12)">
                 <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(0)"/>
@@ -46,12 +46,7 @@
     </div>
     
     <nav class="nav-bar">
-        <div class="nav-placeholder"></div>
         <div class="nav-title">Samsara Saga</div>
-        <a href="#" class="nav-link" id="menu-button">
-            <i class="fas fa-bars"></i>
-            <span>Menu</span>
-        </a>
     </nav>
 
     <main class="screen-container">
@@ -84,10 +79,6 @@
                             <g transform="translate(100,100)">
                                 <circle cx="35" cy="0" r="3" transform="rotate(0)"/> <circle cx="35" cy="0" r="3" transform="rotate(60)"/> <circle cx="35" cy="0" r="3" transform="rotate(120)"/> <circle cx="35" cy="0" r="3" transform="rotate(180)"/> <circle cx="35" cy="0" r="3" transform="rotate(240)"/> <circle cx="35" cy="0" r="3" transform="rotate(300)"/>
                             </g>
-                        </g>
-                        <circle cx="100" cy="100" r="25" stroke-width="0.5"/>
-                        <g transform="translate(100,100)">
-                            <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(0)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(45)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(90)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(135)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(180)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(225)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(270)"/> <path d="M0,-30 C10,-20 10,-10 0,-20 C-10,-10 -10,-20 0,-30 Z" transform="rotate(315)"/>
                         </g>
                         <circle cx="100" cy="100" r="5"/>
                     </svg>
@@ -357,26 +348,11 @@
             border-bottom: 1px solid var(--color-border);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
-        .nav-placeholder { display: none; }
-        .nav-link {
-            display: flex; flex-direction: column; align-items: center;
-            color: var(--color-text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease, transform 0.3s ease;
-            font-size: 0.8rem;
-        }
-        .nav-link:hover {
-            color: var(--color-primary-glow);
-            transform: translateY(-2px);
-            text-decoration: none;
-        }
-        .nav-link i { font-size: 1.2rem; margin-bottom: 0.25rem; }
         .nav-title {
             font-family: var(--font-title); font-size: 2rem; font-weight: 700;
             color: var(--color-primary-glow);
             text-shadow: 0 0 10px var(--color-primary-base);
         }
-        #menu-button { display: none; }
         
         /*------------------------------------*\
           #MAIN CONTENT & LAYOUT
@@ -433,6 +409,7 @@
             padding: 0.8rem 2rem;
             transition: all 0.3s ease;
             letter-spacing: 1px;
+            margin-top: 1rem; /* Added margin for spacing */
         }
         .action-button:hover {
             background: rgba(224, 150, 88, 0.1);
@@ -447,6 +424,7 @@
         .mandala-link {
             display: flex; flex-direction: column; align-items: center;
             text-decoration: none; color: inherit;
+            outline: none; /* Remove outline on focus */
         }
         .mandala-link:hover {
             text-decoration: none;
@@ -466,6 +444,7 @@
             fill: none;
             transition: all 0.5s ease;
         }
+        /* The inner-most circle as a solid fill */
         .mandala-svg > circle:last-of-type {
             fill: var(--color-primary-base);
         }
@@ -473,10 +452,15 @@
         .mandala-link:hover .mandala-svg path {
             stroke: var(--color-primary-glow);
         }
-        .mandala-link:hover .mandala-svg {
+        /* Removed the box-shadow on hover to fix the glowing box */
+        /* .mandala-link:hover .mandala-svg {
             filter: drop-shadow(0 0 15px var(--color-primary-base));
             transform: scale(1.05);
+        } */
+        .mandala-link:hover .mandala-container {
+            transform: scale(1.05) translate(calc(var(--mouse-x) / -40), calc(var(--mouse-y) / -40));
         }
+
         .mandala-rotate-1 { animation: spin 120s linear infinite; transform-origin: center; }
         .mandala-rotate-2 { animation: spin-reverse 90s linear infinite; transform-origin: center; }
         .mandala-rotate-3 { animation: spin 60s linear infinite; transform-origin: center; }
@@ -561,6 +545,14 @@
         .credits-section { margin-bottom: 1.5rem; }
         .credits-section p { margin: 0.25rem 0; color: var(--color-text); }
         .credits-section strong { color: var(--color-primary-glow); font-weight: 400; }
+
+        /* Footer Links - remove underline */
+        .footer-nav-link {
+            text-decoration: none;
+        }
+        .footer-nav-link:hover {
+            text-decoration: none;
+        }
 
         /*------------------------------------*\
           #ANIMATIONS & HELPERS
