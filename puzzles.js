@@ -20,8 +20,10 @@ window.PUZZLES = {
      * to align symbols and visually balance the tree's energy.
      */
     "BanyanTreeHarmony": {
+        "id": "BanyanTreeHarmony",
         "title": "The Sacred Balance",
         "description": "Align the celestial rings to balance the spiritual energies of the Banyan tree.",
+        "nextSceneOnSuccess": "BANYAN_HARMONY_SUCCESS",
         "difficulty": "Medium",
         "visualType": "MandalaWheel", // UIController will render an interactive mandala
         "uiConfig": {
@@ -69,8 +71,10 @@ window.PUZZLES = {
      * visually react, either repelling incorrect items or dissolving for the correct one.
      */
     "BarrierOfNegativity": {
+        "id": "BarrierOfNegativity",
         "title": "The Barrier of Spiritual Despair",
         "description": "Drag an object of pure spiritual intent from your inventory to dissolve the barrier.",
+        "nextSceneOnSuccess": "PURIFY_CRYSTAL_SUCCESS",
         "difficulty": "Medium",
         "visualType": "SymbolDnd", // UIController renders a drag-and-drop target and inventory
         "uiConfig": {
@@ -1101,7 +1105,7 @@ window.puzzleUtils = {
      * @returns {object} Updated player state with rewards granted
      */
     grantRewards: function(puzzleId, playerState) {
-        const puzzle = puzzles[puzzleId];
+        const puzzle = window.PUZZLES[puzzleId];
         if (!puzzle || !puzzle.rewards) {
             return playerState;
         }
