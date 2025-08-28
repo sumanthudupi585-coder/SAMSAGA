@@ -160,6 +160,13 @@
         function updateProgressDots(e){const t='result-screen'===e?6:parseInt(e.replace('q',''))||0,n=document.querySelectorAll('.progress-dot');n.forEach((e,o)=>{o+1<t?(e.classList.add('completed'),e.classList.remove('active')):o+1===t?(e.classList.add('active'),e.classList.remove('completed')):e.classList.remove('active','completed')}),t>n.length&&n.forEach(e=>e.classList.add('completed'))}
         function populateShaktiQuestion(){const e=`${userAnswers.gana}-${userAnswers.guna1}`,t=shaktiQuestions[e],n=document.getElementById('q3-options');if(n.innerHTML='',t)for(const e of t){const t=document.createElement('button');t.className='option',t.dataset.value=e.result,t.innerHTML=`<div class="option-icon"><i class="fas fa-star-of-life"></i></div><div class="option-content"><div class="option-description">${e.text}</div></div>`,n.appendChild(t)}}
         function showResult(){
+            // Validate that all required user answers are present
+            if (!userAnswers.gana || !userAnswers.guna1 || !userAnswers.pada || !userAnswers.guna3) {
+                console.warn('Missing required user answers:', userAnswers);
+                // Don't show an alert here since this might be called during URL initialization
+                return;
+            }
+
             // Ensure userAnswers.nakshatraNum exists and is valid
             if (!userAnswers.nakshatraNum || userAnswers.nakshatraNum === 'undefined' || userAnswers.nakshatraNum === 'null') {
                 console.warn('No nakshatra number provided, attempting to derive from user answers');
