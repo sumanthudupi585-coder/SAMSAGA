@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samsara Saga - Journey Through Existence</title>
@@ -18,44 +17,13 @@
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="atmospheric-ui-system.css">
     <link rel="stylesheet" href="fixed-banyan-puzzle.css">
-
-    <!-- Data files first -->
-    <script src="ACT1storyData.js"></script>
-    <script src="ACT2storyData.js"></script>
-    <script src="ACT3storyData.js"></script>
-    <script src="puzzles.js"></script>
-    <script src="nakshatraData.js"></script>
-    <script src="storyDataBridge.js"></script>
-    
-    <!-- Then engine components -->
-    <script src="GameStateManager.js"></script>
-    <script src="StoryEngine.js"></script>
-    <script src="ProgressionSystem.js"></script>
-    <script src="PuzzleEngine.js"></script>
-    <script src="QuestSystem.js"></script>
-    <script src="AudioManager.js"></script>
-    <script src="UIController.js"></script>
-    <script src="VisualEffects.js"></script>
-    <script src="adventure-game-engine.js"></script>
-    <script src="enhanced-puzzle-systems.js"></script>
-    <script src="ultra-enhanced-atmospheric-system.js"></script>
-    <script src="ultra-enhanced-escape-room-system.js"></script>
-    <script src="ultra-enhanced-progression-system.js"></script>
-    <script src="ultra-enhanced-banyan-puzzle.js"></script>
-    <script src="ultra-enhanced-barrier-puzzle.js"></script>
-    <script src="complete-gameplay-overhaul.js"></script>
-    <script src="fixed-banyan-puzzle.js"></script>
-    <script src="navigation.js"></script>
-
 </head>
 <body>
-
     <a href="#main-content" class="skip-link">Skip to content</a>
 
     <!-- Animated Background -->
     <div id="vignette-overlay"></div>
     <div id="particle-background"></div>
-
 
     <!-- Custom Cursor -->
     <div id="cursor-container">
@@ -63,7 +31,8 @@
             <circle cx="12" cy="12" r="10"/>
             <g transform="translate(12,12)">
                 <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(0)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(30)"/>                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(60)"/>
+                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(30)"/>                
+                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(60)"/>
                 <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(90)"/>
                 <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(120)"/>
                 <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(150)"/>
@@ -97,17 +66,28 @@
         <!-- Main content area for narrative and choices (Left Column) -->
         <main class="story-panel" id="main-content">
             <div id="story-container" class="section">
-                <div id="story-text" class="text-fade-in"></div>
+                <div id="story-text" class="text-fade-in">
+                    <p>Loading your journey...</p>
+                </div>
             </div>
             <div id="puzzle-container" class="text-fade-in-delay-1"></div>
-            <div id="choices-container" class="text-fade-in-delay-1"></div>
+            <div id="choices-container" class="text-fade-in-delay-1">
+                <button class="choice-button" onclick="initializeGame()">
+                    <span class="choice-icon"><i class="fas fa-play"></i></span>
+                    <span class="choice-content">Begin Journey</span>
+                </button>
+            </div>
         </main>
         
         <!-- Sidebar for player stats and game controls (Right Column) -->
         <aside class="status-panel">
             <div class="character-summary">
                 <div class="character-symbol">
-                    <svg viewBox="0 0 100 100" id="character-symbol-svg"></svg>
+                    <svg viewBox="0 0 100 100" id="character-symbol-svg">
+                        <circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/>
+                        <circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>
+                        <circle cx="50" cy="50" r="5" fill="#e09658"/>
+                    </svg>
                 </div>
                 <h2 class="character-name" id="character-name">Jiva</h2>
             </div>
@@ -141,7 +121,8 @@
             <div class="panel-section">
                  <h3 class="panel-title">Elemental Affinity</h3>
                  <div class="element-display" id="element-display">
-                    <!-- Populated by JS -->
+                    <div class="element-icon"><i class="fas fa-star"></i></div>
+                    <div class="element-name">Ether</div>
                  </div>
             </div>
             
@@ -183,15 +164,698 @@
     <!-- Notification System -->
     <div id="notification-container"></div>
 
-    <style>
-        .skip-link { position: fixed; left: -9999px; top: 0; background: var(--color-primary); color: #0a0908; padding: 8px 12px; border-radius: 6px; z-index: 10001; }
-        .skip-link:focus { left: 10px; top: 10px; box-shadow: 0 0 10px var(--color-primary-glow); }
-        @media (prefers-reduced-motion: reduce) {
-            * { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition: none !important; }
-            .page-transition-mandala { animation: none !important; }
-            #particle-background { animation: none !important; }
+    <!-- Load all JavaScript files with proper error handling -->
+    <script>
+        // Global variables for game state
+        window.gameInitialized = false;
+        window.gameStateManager = null;
+        window.storyEngine = null;
+        window.currentScene = null;
+        
+        // Script loading with dependencies
+        const scriptsToLoad = [
+            'nakshatraData.js',
+            'ACT1storyData.js',
+            'ACT2storyData.js', 
+            'ACT3storyData.js',
+            'GameStateManager.js',
+            'StoryEngine.js'
+        ];
+        
+        let loadedScripts = 0;
+        const totalScripts = scriptsToLoad.length;
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    console.log(`✓ Loaded: ${src}`);
+                    loadedScripts++;
+                    resolve();
+                };
+                script.onerror = () => {
+                    console.error(`✗ Failed to load: ${src}`);
+                    reject(new Error(`Failed to load ${src}`));
+                };
+                document.head.appendChild(script);
+            });
         }
-        /* --- Gamic UI/UX Revamp Styles --- */
+        
+        // Load scripts sequentially
+        async function loadAllScripts() {
+            try {
+                for (const script of scriptsToLoad) {
+                    await loadScript(script);
+                }
+                console.log('✓ All core scripts loaded successfully');
+                
+                // Try to load optional enhancement scripts
+                const optionalScripts = [
+                    'puzzles.js',
+                    'PuzzleEngine.js',
+                    'fixed-banyan-puzzle.js'
+                ];
+                
+                for (const script of optionalScripts) {
+                    try {
+                        await loadScript(script);
+                    } catch (e) {
+                        console.warn(`Optional script ${script} failed to load, continuing without it`);
+                    }
+                }
+                
+                // Initialize game after all scripts are loaded
+                setTimeout(initializeGameSafely, 100);
+                
+            } catch (error) {
+                console.error('Critical script loading failed:', error);
+                showError('Failed to load game. Please refresh the page.');
+            }
+        }
+        
+        function initializeGameSafely() {
+            try {
+                console.log('🎮 Initializing Samsara Saga...');
+                
+                // Initialize GameStateManager
+                if (typeof GameStateManager !== 'undefined') {
+                    window.gameStateManager = new GameStateManager();
+                    console.log('✓ GameStateManager initialized');
+                } else {
+                    throw new Error('GameStateManager not available');
+                }
+                
+                // Initialize StoryEngine
+                if (typeof StoryEngine !== 'undefined') {
+                    window.storyEngine = new StoryEngine(window.gameStateManager);
+                    console.log('✓ StoryEngine initialized');
+                } else {
+                    throw new Error('StoryEngine not available');
+                }
+                
+                // Set up character from URL parameters
+                setupCharacterFromURL();
+                
+                // Initialize the story
+                initializeStory();
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                window.gameInitialized = true;
+                console.log('🌟 Game successfully initialized!');
+                
+            } catch (error) {
+                console.error('Game initialization failed:', error);
+                showError('Game initialization failed. Please refresh the page.');
+            }
+        }
+        
+        function setupCharacterFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nakshatraNum = urlParams.get('nakshatra');
+            const pada = urlParams.get('pada');
+            const guna1 = urlParams.get('guna1');
+            const guna3 = urlParams.get('guna3');
+            
+            if (nakshatraNum && window.nakshatraData && window.nakshatraData[nakshatraNum]) {
+                const nakshatra = window.nakshatraData[nakshatraNum];
+                
+                // Set up player profile
+                window.gameStateManager.playerProfile = {
+                    nakshatra: nakshatra.name,
+                    gana: nakshatra.gana,
+                    shakti: nakshatra.shakti,
+                    gunas: nakshatra.gunas || { sattva: 0, rajas: 0, tamas: 0 },
+                    avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                };
+                
+                // Update character display
+                updateCharacterDisplay(nakshatra, nakshatraNum);
+                
+                console.log(`✓ Character set up: ${nakshatra.name}`);
+            } else {
+                // Set default character
+                window.gameStateManager.playerProfile = {
+                    nakshatra: 'Ashwini',
+                    gana: 'Deva',
+                    shakti: 'To heal quickly',
+                    gunas: { sattva: 2, rajas: 1, tamas: 0 },
+                    avatar: 'images/avatars/deva.png'
+                };
+                console.log('✓ Default character set up');
+            }
+        }
+        
+        function updateCharacterDisplay(nakshatra, nakshatraNum) {
+            // Update character name
+            const characterNameEl = document.getElementById('character-name');
+            if (characterNameEl) characterNameEl.textContent = nakshatra.name;
+            
+            // Update character symbol
+            const symbolSvg = document.getElementById('character-symbol-svg');
+            if (symbolSvg && window.nakshatraSvgPaths && window.nakshatraSvgPaths[nakshatraNum]) {
+                symbolSvg.innerHTML = window.nakshatraSvgPaths[nakshatraNum];
+            }
+            
+            // Update element display
+            const elementDisplay = document.getElementById('element-display');
+            if (elementDisplay && nakshatra.element) {
+                const elementIcons = {
+                    earth: '<i class="fas fa-mountain"></i>',
+                    water: '<i class="fas fa-water"></i>',
+                    fire: '<i class="fas fa-fire"></i>',
+                    air: '<i class="fas fa-wind"></i>',
+                    ether: '<i class="fas fa-star"></i>'
+                };
+                
+                elementDisplay.innerHTML = `
+                    <div class="element-icon">${elementIcons[nakshatra.element] || elementIcons.ether}</div>
+                    <div class="element-name">${nakshatra.element ? nakshatra.element.charAt(0).toUpperCase() + nakshatra.element.slice(1) : 'Ether'}</div>
+                `;
+                elementDisplay.className = `element-display element-${nakshatra.element || 'ether'}`;
+            }
+            
+            // Update guna values
+            if (nakshatra.gunas) {
+                updateGunaDisplay(nakshatra.gunas);
+            }
+        }
+        
+        function updateGunaDisplay(gunas) {
+            const elements = [
+                { id: 'sattva-value', key: 'sattva', fillId: 'sattva-fill' },
+                { id: 'rajas-value', key: 'rajas', fillId: 'rajas-fill' },
+                { id: 'tamas-value', key: 'tamas', fillId: 'tamas-fill' }
+            ];
+            
+            elements.forEach(({ id, key, fillId }) => {
+                const valueEl = document.getElementById(id);
+                const fillEl = document.getElementById(fillId);
+                const value = gunas[key] || 0;
+                
+                if (valueEl) valueEl.textContent = value;
+                if (fillEl) fillEl.style.width = `${Math.min(100, (value / 3) * 100)}%`;
+            });
+        }
+        
+        function initializeStory() {
+            // Set initial game state
+            window.gameStateManager.playerState.currentAct = 1;
+            window.gameStateManager.playerState.currentSceneId = 'JOURNEY_START';
+            
+            // Render the first scene
+            renderCurrentScene();
+        }
+        
+        function renderCurrentScene() {
+            try {
+                const scene = window.storyEngine.getCurrentScene();
+                
+                if (!scene) {
+                    console.error('No scene found, loading default');
+                    loadDefaultScene();
+                    return;
+                }
+                
+                console.log('Rendering scene:', window.gameStateManager.playerState.currentSceneId);
+                
+                // Update story text
+                const storyTextEl = document.getElementById('story-text');
+                if (storyTextEl && scene.text) {
+                    storyTextEl.innerHTML = `<p>${scene.text}</p>`;
+                }
+                
+                // Update puzzle container
+                const puzzleEl = document.getElementById('puzzle-container');
+                if (puzzleEl) {
+                    puzzleEl.innerHTML = '';
+                    if (scene.puzzle) {
+                        renderPuzzle(scene.puzzle, puzzleEl);
+                    }
+                }
+                
+                // Update choices
+                const choicesEl = document.getElementById('choices-container');
+                if (choicesEl) {
+                    renderChoices(choicesEl);
+                }
+                
+                // Update inventory
+                updateInventoryDisplay();
+                
+            } catch (error) {
+                console.error('Error rendering scene:', error);
+                loadDefaultScene();
+            }
+        }
+        
+        function loadDefaultScene() {
+            const storyTextEl = document.getElementById('story-text');
+            const choicesEl = document.getElementById('choices-container');
+            
+            if (storyTextEl) {
+                storyTextEl.innerHTML = `
+                    <h2>Welcome to Samsara Saga</h2>
+                    <p>Your consciousness awakens in the village of Dharmapura. The ancient Banyan tree in the center of the village seems to call to you, its gnarled branches reaching toward the sky like hands in prayer.</p>
+                    <p>A spiritual malaise hangs in the air, and you sense that your journey has begun...</p>
+                `;
+            }
+            
+            if (choicesEl) {
+                choicesEl.innerHTML = `
+                    <button class="choice-button" onclick="goToScene('DHARMAPURA_SQUARE')">
+                        <span class="choice-icon"><i class="fas fa-tree"></i></span>
+                        <span class="choice-content">Approach the village square</span>
+                    </button>
+                    <button class="choice-button" onclick="goToScene('EXAMINE_BANYAN')">
+                        <span class="choice-icon"><i class="fas fa-search"></i></span>
+                        <span class="choice-content">Examine the ancient Banyan tree</span>
+                    </button>
+                `;
+            }
+        }
+        
+        function renderChoices(container) {
+            container.innerHTML = '';
+            
+            try {
+                const choices = window.storyEngine.getAvailableChoices();
+                
+                if (choices.length === 0) {
+                    container.innerHTML = '<p class="no-choices">No choices available. <button onclick="renderCurrentScene()" class="choice-button">Refresh</button></p>';
+                    return;
+                }
+                
+                choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-button';
+                    button.innerHTML = `
+                        <span class="choice-icon"><i class="fas fa-angle-right"></i></span>
+                        <span class="choice-content">${choice.text}</span>
+                    `;
+                    
+                    button.addEventListener('click', () => {
+                        button.classList.add('choice-selected');
+                        processChoice(choice);
+                    });
+                    
+                    container.appendChild(button);
+                });
+            } catch (error) {
+                console.error('Error rendering choices:', error);
+                container.innerHTML = `
+                    <button class="choice-button" onclick="goToScene('DHARMAPURA_SQUARE')">
+                        <span class="choice-icon"><i class="fas fa-forward"></i></span>
+                        <span class="choice-content">Continue journey</span>
+                    </button>
+                `;
+            }
+        }
+        
+        function renderPuzzle(puzzle, container) {
+            if (!puzzle || !puzzle.puzzleId) return;
+            
+            const puzzleDiv = document.createElement('div');
+            puzzleDiv.className = 'puzzle-container';
+            
+            const title = document.createElement('h3');
+            title.className = 'puzzle-title';
+            title.textContent = `Puzzle: ${puzzle.puzzleId}`;
+            
+            const description = document.createElement('p');
+            description.className = 'puzzle-description';
+            description.textContent = puzzle.description || 'A challenge awaits...';
+            
+            puzzleDiv.appendChild(title);
+            puzzleDiv.appendChild(description);
+            
+            // Handle specific puzzles
+            if (puzzle.puzzleId === 'BanyanTreeHarmony') {
+                renderBanyanPuzzle(puzzleDiv);
+            } else if (puzzle.puzzleId === 'BarrierOfNegativity') {
+                renderBarrierPuzzle(puzzleDiv);
+            }
+            
+            container.appendChild(puzzleDiv);
+        }
+        
+        function renderBanyanPuzzle(container) {
+            const puzzleContent = document.createElement('div');
+            puzzleContent.className = 'banyan-puzzle';
+            puzzleContent.innerHTML = `
+                <p>The ancient Banyan tree's energy is unbalanced. You must harmonize its three spiritual rings:</p>
+                <div class="puzzle-rings">
+                    <div class="ring" data-ring="vitality">
+                        <label>Vitality Ring</label>
+                        <input type="range" min="0" max="360" value="0" id="vitality-ring">
+                    </div>
+                    <div class="ring" data-ring="wisdom">
+                        <label>Wisdom Ring</label>
+                        <input type="range" min="0" max="360" value="120" id="wisdom-ring">
+                    </div>
+                    <div class="ring" data-ring="harmony">
+                        <label>Harmony Ring</label>
+                        <input type="range" min="0" max="360" value="240" id="harmony-ring">
+                    </div>
+                </div>
+                <button class="puzzle-button" onclick="checkBanyanSolution()">Harmonize the Tree</button>
+                <div id="puzzle-feedback"></div>
+            `;
+            container.appendChild(puzzleContent);
+        }
+        
+        function renderBarrierPuzzle(container) {
+            const puzzleContent = document.createElement('div');
+            puzzleContent.className = 'barrier-puzzle';
+            puzzleContent.innerHTML = `
+                <p>A barrier of negative energy blocks your path. You need an object of purity to dispel it.</p>
+                <div class="barrier-zone" id="barrier-drop-zone">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Drop a pure item here</p>
+                </div>
+                <div class="inventory-items">
+                    <h4>Your Items:</h4>
+                    <div id="draggable-items"></div>
+                </div>
+            `;
+            
+            container.appendChild(puzzleContent);
+            setupBarrierPuzzleInteraction();
+        }
+        
+        function setupBarrierPuzzleInteraction() {
+            const dropZone = document.getElementById('barrier-drop-zone');
+            const itemsContainer = document.getElementById('draggable-items');
+            
+            // Create draggable items
+            const inventory = window.gameStateManager.playerState.inventory || [];
+            const hasLotusPetal = window.gameStateManager.worldState.has_lotus_petal;
+            
+            if (hasLotusPetal) inventory.push('Lotus Petal');
+            
+            inventory.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'draggable-item';
+                itemEl.draggable = true;
+                itemEl.textContent = item;
+                itemEl.dataset.item = item;
+                
+                itemEl.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', item);
+                });
+                
+                itemsContainer.appendChild(itemEl);
+            });
+            
+            // Set up drop zone
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                
+                const item = e.dataTransfer.getData('text/plain');
+                if (item === 'Lotus Petal') {
+                    solveBarrierPuzzle();
+                } else {
+                    showNotification('The barrier repels this item. You need something purer.', 'error');
+                }
+            });
+        }
+        
+        function processChoice(choice) {
+            try {
+                if (choice.nextScene) {
+                    goToScene(choice.nextScene);
+                } else if (choice.id) {
+                    const result = window.storyEngine.processChoice(choice.id);
+                    if (result) {
+                        setTimeout(() => renderCurrentScene(), 300);
+                    }
+                }
+            } catch (error) {
+                console.error('Error processing choice:', error);
+                showNotification('Error processing choice. Please try again.', 'error');
+            }
+        }
+        
+        function goToScene(sceneId) {
+            try {
+                window.gameStateManager.playerState.currentSceneId = sceneId;
+                setTimeout(() => renderCurrentScene(), 300);
+            } catch (error) {
+                console.error('Error navigating to scene:', error);
+                showNotification('Error navigating. Please try again.', 'error');
+            }
+        }
+        
+        function checkBanyanSolution() {
+            const vitality = document.getElementById('vitality-ring').value;
+            const wisdom = document.getElementById('wisdom-ring').value;
+            const harmony = document.getElementById('harmony-ring').value;
+            
+            // Check if rings are aligned (within tolerance)
+            const tolerance = 30;
+            const isAligned = Math.abs(vitality - 0) < tolerance && 
+                             Math.abs(wisdom - 120) < tolerance && 
+                             Math.abs(harmony - 240) < tolerance;
+            
+            const feedback = document.getElementById('puzzle-feedback');
+            
+            if (isAligned) {
+                feedback.innerHTML = '<p class="success">✓ The tree glows with renewed harmony!</p>';
+                window.gameStateManager.updateState('banyan_balanced', true);
+                showNotification('Puzzle solved! The Banyan tree is harmonized.', 'success');
+                setTimeout(() => goToScene('BANYAN_HARMONY_SUCCESS'), 1500);
+            } else {
+                feedback.innerHTML = '<p class="error">The energies are still unbalanced. Try adjusting the rings.</p>';
+            }
+        }
+        
+        function solveBarrierPuzzle() {
+            showNotification('The lotus petal dissolves the barrier!', 'success');
+            window.gameStateManager.updateState('river_purified', true);
+            setTimeout(() => goToScene('PURIFY_CRYSTAL_SUCCESS'), 1500);
+        }
+        
+        function updateInventoryDisplay() {
+            const inventoryEl = document.getElementById('inventory-list');
+            if (!inventoryEl) return;
+            
+            const inventory = window.gameStateManager.playerState.inventory || [];
+            const hasLotusPetal = window.gameStateManager.worldState.has_lotus_petal;
+            
+            inventoryEl.innerHTML = '';
+            
+            if (inventory.length === 0 && !hasLotusPetal) {
+                const li = document.createElement('li');
+                li.className = 'inventory-empty';
+                li.textContent = '(Empty)';
+                inventoryEl.appendChild(li);
+            } else {
+                if (hasLotusPetal) {
+                    const li = document.createElement('li');
+                    li.textContent = 'Lotus Petal';
+                    inventoryEl.appendChild(li);
+                }
+                
+                inventory.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    inventoryEl.appendChild(li);
+                });
+            }
+        }
+        
+        function setupEventListeners() {
+            // Menu button
+            const menuButton = document.getElementById('menu-button');
+            if (menuButton) {
+                menuButton.addEventListener('click', () => {
+                    const modal = document.getElementById('game-menu-modal');
+                    if (modal) modal.style.display = 'flex';
+                });
+            }
+            
+            // Close modal
+            const closeModal = document.querySelector('.close-modal');
+            if (closeModal) {
+                closeModal.addEventListener('click', () => {
+                    const modal = document.getElementById('game-menu-modal');
+                    if (modal) modal.style.display = 'none';
+                });
+            }
+            
+            // New game button
+            const newGameBtn = document.getElementById('new-game-btn');
+            if (newGameBtn) {
+                newGameBtn.addEventListener('click', () => {
+                    if (confirm('Start a new journey? Current progress will be lost.')) {
+                        window.location.href = 'CB-fixed.html';
+                    }
+                });
+            }
+            
+            // Save game button
+            const saveGameBtn = document.getElementById('save-game-btn');
+            if (saveGameBtn) {
+                saveGameBtn.addEventListener('click', () => {
+                    try {
+                        window.gameStateManager.saveGame();
+                        showNotification('Game saved successfully!', 'success');
+                        document.getElementById('game-menu-modal').style.display = 'none';
+                    } catch (error) {
+                        showNotification('Failed to save game.', 'error');
+                    }
+                });
+            }
+            
+            // Custom cursor
+            setupCustomCursor();
+        }
+        
+        function setupCustomCursor() {
+            if (window.matchMedia('(pointer: fine)').matches) {
+                document.body.classList.add('custom-cursor-active');
+                const cursorContainer = document.getElementById('cursor-container');
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (cursorContainer) {
+                        cursorContainer.style.left = e.clientX + 'px';
+                        cursorContainer.style.top = e.clientY + 'px';
+                    }
+                });
+                
+                document.addEventListener('mouseover', (e) => {
+                    if (e.target.matches('a, button, .choice-button') || 
+                        e.target.closest('a, button, .choice-button')) {
+                        if (cursorContainer) cursorContainer.classList.add('active');
+                    }
+                });
+                
+                document.addEventListener('mouseout', (e) => {
+                    if (e.target.matches('a, button, .choice-button') || 
+                        e.target.closest('a, button, .choice-button')) {
+                        if (cursorContainer) cursorContainer.classList.remove('active');
+                    }
+                });
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            if (!container) return;
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    </div>
+                    <div class="notification-message">${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        function showError(message) {
+            const storyTextEl = document.getElementById('story-text');
+            const choicesEl = document.getElementById('choices-container');
+            
+            if (storyTextEl) {
+                storyTextEl.innerHTML = `
+                    <div class="error-message">
+                        <h2>⚠️ Error</h2>
+                        <p>${message}</p>
+                        <p>Please refresh the page or try again later.</p>
+                    </div>
+                `;
+            }
+            
+            if (choicesEl) {
+                choicesEl.innerHTML = `
+                    <button class="choice-button" onclick="window.location.reload()">
+                        <span class="choice-icon"><i class="fas fa-refresh"></i></span>
+                        <span class="choice-content">Refresh Page</span>
+                    </button>
+                `;
+            }
+        }
+        
+        // Manual initialization function
+        function initializeGame() {
+            if (!window.gameInitialized) {
+                loadAllScripts();
+            } else {
+                renderCurrentScene();
+            }
+        }
+        
+        // Auto-start when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🌟 Samsara Saga - Starting...');
+            loadAllScripts();
+        });
+        
+    </script>
+
+    <!-- Embedded Nakshatra Data for fallback -->
+    <script>
+        // Nakshatra data fallback
+        window.nakshatraData = window.nakshatraData || {
+            1: { name: 'Ashwini', deity: 'Ashvins', symbol: "Horse's Head", shakti: 'To heal quickly', element: 'fire', gana: 'Deva', gunas: { sattva: 2, rajas: 1, tamas: 0 } },
+            2: { name: 'Bharani', deity: 'Yama', symbol: 'Yoni', shakti: 'To renew and purify', element: 'earth', gana: 'Manushya', gunas: { sattva: 0, rajas: 2, tamas: 1 } },
+            3: { name: 'Krittika', deity: 'Agni', symbol: 'Knife or Spear', shakti: 'To burn illusion', element: 'fire', gana: 'Rakshasa', gunas: { sattva: 1, rajas: 2, tamas: 0 } },
+            4: { name: 'Rohini', deity: 'Brahma', symbol: 'Cart or Chariot', shakti: 'To make things grow', element: 'earth', gana: 'Manushya', gunas: { sattva: 1, rajas: 0, tamas: 2 } },
+            5: { name: 'Mrigashira', deity: 'Soma', symbol: "Deer's Head", shakti: 'To find fulfillment', element: 'air', gana: 'Deva', gunas: { sattva: 0, rajas: 1, tamas: 2 } },
+            6: { name: 'Ardra', deity: 'Rudra', symbol: 'Teardrop', shakti: 'To feel and act', element: 'water', gana: 'Manushya', gunas: { sattva: 1, rajas: 1, tamas: 1 } },
+            7: { name: 'Punarvasu', deity: 'Aditi', symbol: 'Bow and Quiver', shakti: 'To regenerate and recover', element: 'air', gana: 'Deva', gunas: { sattva: 1, rajas: 1, tamas: 1 } },
+            8: { name: 'Pushya', deity: 'Brihaspati', symbol: "Cow's Udder", shakti: 'To create spiritual energy', element: 'water', gana: 'Deva', gunas: { sattva: 2, rajas: 0, tamas: 1 } },
+            9: { name: 'Ashlesha', deity: 'Nagas', symbol: 'Serpent', shakti: 'To poison and heal', element: 'water', gana: 'Rakshasa', gunas: { sattva: 1, rajas: 1, tamas: 1 } },
+            10: { name: 'Magha', deity: 'Pitrs', symbol: 'Royal Throne', shakti: 'To leave the body', element: 'fire', gana: 'Rakshasa', gunas: { sattva: 0, rajas: 2, tamas: 1 } },
+            11: { name: 'Purva Phalguni', deity: 'Bhaga', symbol: 'Front Legs of Bed', shakti: 'To find love and enjoyment', element: 'fire', gana: 'Manushya', gunas: { sattva: 0, rajas: 1, tamas: 2 } },
+            12: { name: 'Uttara Phalguni', deity: 'Aryaman', symbol: 'Four Legs of Bed', shakti: 'To accumulate security', element: 'fire', gana: 'Manushya', gunas: { sattva: 1, rajas: 0, tamas: 2 } }
+        };
+        
+        // SVG paths for Nakshatra symbols
+        window.nakshatraSvgPaths = window.nakshatraSvgPaths || {
+            1: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,30 Q50,10 70,30 Q80,50 70,70 Q50,90 30,70 Q20,50 30,30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            2: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><ellipse cx="50" cy="50" rx="20" ry="30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            3: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="30" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
+            4: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>',
+            5: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 Q50,20 70,50 Q50,80 30,50" stroke="#e09658" stroke-width="2" fill="none"/>',
+            6: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M50,30 Q70,50 50,70 Q30,50 50,30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            7: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 L70,50 M50,30 L50,70" stroke="#e09658" stroke-width="2"/>',
+            8: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>',
+            9: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,70 Q50,30 70,70" stroke="#e09658" stroke-width="2" fill="none"/>',
+            10: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="35" y="35" width="30" height="30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            11: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="70" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="30" y2="30" stroke="#e09658" stroke-width="2"/><line x1="70" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
+            12: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>'
+        };
+    </script>
+
+    <!-- Inline styles for better appearance -->
+    <style>
+        /* --- Core Game Styles --- */
         :root {
             --font-title: 'Cinzel', serif;
             --font-body: 'Marcellus', serif;
@@ -225,10 +889,10 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             overflow: hidden;
-            cursor: none; /* Hide default cursor */
+            cursor: none;
         }
         
-        /* --- Custom Cursor --- */
+        /* Custom Cursor */
         .custom-cursor-active {
             cursor: none;
         }
@@ -257,7 +921,7 @@
             }
         }
 
-        /* --- Animated Background & Overlays --- */
+        /* Animated Background */
         #particle-background {
             position: fixed;
             top: 0;
@@ -284,7 +948,7 @@
             z-index: -1;
         }
         
-        /* --- Page Transitions --- */
+        /* Page Transitions */
         .page-transition {
             position: fixed;
             top: 0;
@@ -311,7 +975,7 @@
             animation: spin 2s linear infinite, pulse-glow 2s ease-in-out infinite;
         }
 
-        /* --- Game Layout --- */
+        /* Game Layout */
         .game-header {
             position: fixed;
             top: 0;
@@ -358,7 +1022,7 @@
         ::-webkit-scrollbar-thumb { background: rgba(224, 150, 88, 0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
 
-        /* --- Story Panel --- */
+        /* Story Panel */
         #story-text {
             font-size: 1.2rem;
             line-height: 1.8;
@@ -371,7 +1035,7 @@
             text-shadow: 0 0 5px var(--color-shadow);
         }
 
-        /* --- Choice Buttons --- */
+        /* Choice Buttons */
         #choices-container {
             display: flex;
             flex-direction: column;
@@ -393,6 +1057,7 @@
             transition: all var(--transition-speed) ease;
             position: relative;
             overflow: hidden;
+            cursor: none;
         }
         .choice-button::before {
             content: '';
@@ -425,7 +1090,7 @@
             animation: pulse-glow 0.5s ease-out;
         }
 
-        /* --- Status Panel --- */
+        /* Status Panel */
         .status-panel {
             display: flex;
             flex-direction: column;
@@ -461,7 +1126,7 @@
             color: var(--color-primary-glow);
         }
         
-        /* Stats Grid with Bars */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             gap: 1rem;
@@ -516,9 +1181,9 @@
         }
         .inventory-empty { color: var(--color-text-muted); font-style: italic; }
 
-        /* --- Buttons --- */
+        /* Buttons */
         button {
-            cursor: none; /* Use custom cursor */
+            cursor: none;
         }
         .control-button, .menu-toggle-button, .menu-button {
             background: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.05));
@@ -541,7 +1206,7 @@
         }
         .control-button { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
 
-        /* --- Modal --- */
+        /* Modal */
         .modal {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -576,6 +1241,7 @@
             color: var(--color-text-muted);
             font-size: 2rem;
             transition: color 0.3s ease;
+            cursor: none;
         }
         .close-modal:hover { color: var(--color-primary-glow); }
         .modal-body { padding: 1.5rem; }
@@ -583,7 +1249,7 @@
         .menu-button { display: flex; align-items: center; gap: 1rem; width: 100%; }
         .menu-button i { color: var(--color-primary); min-width: 20px; }
 
-        /* --- Notifications --- */
+        /* Notifications */
         #notification-container {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
             display: flex; flex-direction: column; gap: 10px;
@@ -608,19 +1274,108 @@
         .notification.success .notification-icon { color: var(--color-sattva); }
         .notification.error .notification-icon { color: var(--color-rajas); }
 
-        /* --- Animations --- */
+        /* Puzzle Styles */
+        .puzzle-container {
+            background: rgba(224, 150, 88, 0.1);
+            border: 1px solid rgba(224, 150, 88, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .puzzle-title {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .puzzle-description {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .puzzle-rings {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .ring {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .ring label {
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+        .ring input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(224, 150, 88, 0.2);
+            outline: none;
+            border-radius: 3px;
+        }
+        .puzzle-button {
+            background: var(--color-primary);
+            color: var(--color-bg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .puzzle-button:hover {
+            background: var(--color-primary-glow);
+            transform: translateY(-2px);
+        }
+        .barrier-puzzle {
+            text-align: center;
+        }
+        .barrier-zone {
+            background: rgba(92, 82, 127, 0.2);
+            border: 2px dashed rgba(92, 82, 127, 0.5);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin: 1rem 0;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .barrier-zone.drag-over {
+            background: rgba(224, 150, 88, 0.2);
+            border-color: var(--color-primary);
+        }
+        .draggable-item {
+            background: rgba(224, 150, 88, 0.3);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            display: inline-block;
+            cursor: grab;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+        #puzzle-feedback .success {
+            color: var(--color-sattva);
+            font-weight: bold;
+        }
+        #puzzle-feedback .error {
+            color: var(--color-rajas);
+        }
+
+        /* Animations */
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pulse-glow { 0%, 100% { filter: drop-shadow(0 0 10px var(--color-shadow)); } 50% { filter: drop-shadow(0 0 20px var(--color-primary-glow)); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
         .text-fade-in { animation: fadeInUp 0.8s ease-out; }
         .text-fade-in-delay-1 { animation: fadeInUp 0.8s ease-out 0.4s; animation-fill-mode: backwards; }
-        .karma-increase { animation: karma-flash-green 1s; }
-        .karma-decrease { animation: karma-flash-red 1s; }
-        @keyframes karma-flash-green { 50% { color: var(--color-sattva); transform: scale(1.2); } }
-        @keyframes karma-flash-red { 50% { color: var(--color-rajas); transform: scale(1.2); } }
 
-        /* --- Responsive Design --- */
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .game-wrapper {
                 grid-template-columns: 1fr;
@@ -643,648 +1398,52 @@
             .choice-button { font-size: 1rem; padding: 1rem; gap: 1rem; }
         }
 
+        /* Error styles */
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(217, 108, 71, 0.1);
+            border: 1px solid rgba(217, 108, 71, 0.3);
+            border-radius: var(--border-radius);
+        }
+        .error-message h2 {
+            color: var(--color-rajas);
+            margin-bottom: 1rem;
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Skip link for accessibility */
+        .skip-link { 
+            position: fixed; 
+            left: -9999px; 
+            top: 0; 
+            background: var(--color-primary); 
+            color: #0a0908; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            z-index: 10001; 
+        }
+        .skip-link:focus { 
+            left: 10px; 
+            top: 10px; 
+            box-shadow: 0 0 10px var(--color-primary-glow); 
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * { 
+                animation-duration: 0.001s !important; 
+                animation-iteration-count: 1 !important; 
+                transition: none !important; 
+            }
+            .page-transition-mandala { animation: none !important; }
+            #particle-background { animation: none !important; }
+        }
     </style>
-
-<script>
-        // Nakshatra data
-        const nakshatraData = {
-            1: { name: 'Ashwini', deity: 'Ashvins', symbol: "Horse's Head", shakti: 'To heal quickly', element: 'fire', gana: 'Deva', rulingPlanet: 'Ketu' },
-            2: { name: 'Bharani', deity: 'Yama', symbol: 'Yoni', shakti: 'To renew and purify', element: 'earth', gana: 'Manushya', rulingPlanet: 'Venus' },
-            3: { name: 'Krittika', deity: 'Agni', symbol: 'Knife or Spear', shakti: 'To burn illusion', element: 'fire', gana: 'Rakshasa', rulingPlanet: 'Sun' },
-            4: { name: 'Rohini', deity: 'Brahma', symbol: 'Cart or Chariot', shakti: 'To make things grow', element: 'earth', gana: 'Manushya', rulingPlanet: 'Moon' },
-            5: { name: 'Mrigashira', deity: 'Soma', symbol: "Deer's Head", shakti: 'To find fulfillment', element: 'air', gana: 'Deva', rulingPlanet: 'Mars' },
-            6: { name: 'Ardra', deity: 'Rudra', symbol: 'Teardrop', shakti: 'To feel and act', element: 'water', gana: 'Manushya', rulingPlanet: 'Rahu' },
-            7: { name: 'Punarvasu', deity: 'Aditi', symbol: 'Bow and Quiver', shakti: 'To regenerate and recover', element: 'air', gana: 'Deva', rulingPlanet: 'Jupiter' },
-            8: { name: 'Pushya', deity: 'Brihaspati', symbol: "Cow's Udder", shakti: 'To create spiritual energy', element: 'water', gana: 'Deva', rulingPlanet: 'Saturn' },
-            9: { name: 'Ashlesha', deity: 'Nagas', symbol: 'Serpent', shakti: 'To poison and heal', element: 'water', gana: 'Rakshasa', rulingPlanet: 'Mercury' },
-            10: { name: 'Magha', deity: 'Pitrs', symbol: 'Royal Throne', shakti: 'To leave the body', element: 'fire', gana: 'Rakshasa', rulingPlanet: 'Ketu' },
-            11: { name: 'Purva Phalguni', deity: 'Bhaga', symbol: 'Front Legs of Bed', shakti: 'To find love and enjoyment', element: 'fire', gana: 'Manushya', rulingPlanet: 'Venus' },
-            12: { name: 'Uttara Phalguni', deity: 'Aryaman', symbol: 'Four Legs of Bed', shakti: 'To accumulate security', element: 'fire', gana: 'Manushya', rulingPlanet: 'Sun' },
-            13: { name: 'Hasta', deity: 'Savitri', symbol: 'Hand or Fist', shakti: 'To manifest desires', element: 'earth', gana: 'Deva', rulingPlanet: 'Moon' },
-            14: { name: 'Chitra', deity: 'Tvastar', symbol: 'Bright Jewel', shakti: 'To accumulate merit', element: 'air', gana: 'Rakshasa', rulingPlanet: 'Mars' },
-            15: { name: 'Swati', deity: 'Vayu', symbol: 'Shoot of a Plant', shakti: 'To scatter like the wind', element: 'air', gana: 'Deva', rulingPlanet: 'Rahu' },
-            16: { name: 'Vishakha', deity: 'Indra-Agni', symbol: 'Triumphal Archway', shakti: 'To achieve many things', element: 'fire', gana: 'Rakshasa', rulingPlanet: 'Jupiter' },
-            17: { name: 'Anuradha', deity: 'Mitra', symbol: 'Lotus Flower', shakti: 'To worship (Bhakti)', element: 'earth', gana: 'Deva', rulingPlanet: 'Saturn' },
-            18: { name: 'Jyeshtha', deity: 'Indra', symbol: 'Umbrella', shakti: 'To rise and conquer', element: 'earth', gana: 'Rakshasa', rulingPlanet: 'Mercury' },
-            19: { name: 'Mula', deity: 'Nirriti', symbol: 'Tied Bundle of Roots', shakti: 'To ruin or destroy', element: 'water', gana: 'Rakshasa', rulingPlanet: 'Ketu' },
-            20: { name: 'Purva Ashadha', deity: 'Apas (Water)', symbol: 'Fan', shakti: 'To invigorate or strengthen', element: 'water', gana: 'Manushya', rulingPlanet: 'Venus' },
-            21: { name: 'Uttara Ashadha', deity: 'Visvedevas', symbol: 'Elephant Tusk', shakti: 'To win for the highest good', element: 'earth', gana: 'Manushya', rulingPlanet: 'Sun' },
-            22: { name: 'Shravana', deity: 'Vishnu', symbol: 'Ear', shakti: 'To connect', element: 'air', gana: 'Deva', rulingPlanet: 'Moon' },
-            23: { name: 'Dhanishtha', deity: 'Vasus', symbol: 'Drum or Flute', shakti: 'To give fame and abundance', element: 'fire', gana: 'Rakshasa', rulingPlanet: 'Mars' },
-            24: { name: 'Shatabhisha', deity: 'Varuna', symbol: 'Empty Circle', shakti: 'To heal and support', element: 'water', gana: 'Rakshasa', rulingPlanet: 'Rahu' },
-            25: { name: 'Purva Bhadrapada', deity: 'Aja Ekapada', symbol: 'Two Front Legs of Cot', shakti: 'To raise a person up', element: 'fire', gana: 'Manushya', rulingPlanet: 'Jupiter' },
-            26: { name: 'Uttara Bhadrapada', deity: 'Ahir Budhyana', symbol: 'Back Legs of Cot', shakti: 'To bring rain and stability', element: 'water', gana: 'Manushya', rulingPlanet: 'Saturn' },
-            27: { name: 'Revati', deity: 'Pushan', symbol: 'Pair of Fish', shakti: 'To nourish and transcend', element: 'water', gana: 'Deva', rulingPlanet: 'Mercury' },
-        };
-
-        // Nakshatra symbol SVG paths
-        const nakshatraSvgPaths = {
-            1: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,30 Q50,10 70,30 Q80,50 70,70 Q50,90 30,70 Q20,50 30,30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            2: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><ellipse cx="50" cy="50" rx="20" ry="30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            3: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="30" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
-            4: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>',
-            5: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 Q50,20 70,50 Q50,80 30,50" stroke="#e09658" stroke-width="2" fill="none"/>',
-            6: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M50,30 Q70,50 50,70 Q30,50 50,30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            7: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 L70,50 M50,30 L50,70" stroke="#e09658" stroke-width="2"/>',
-            8: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>',
-            9: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,70 Q50,30 70,70" stroke="#e09658" stroke-width="2" fill="none"/>',
-            10: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="35" y="35" width="30" height="30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            11: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="70" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="30" y2="30" stroke="#e09658" stroke-width="2"/><line x1="70" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
-            12: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>',
-            13: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 L70,50 M30,40 L70,40 M30,60 L70,60" stroke="#e09658" stroke-width="2"/>',
-            14: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><polygon points="50,20 60,40 80,40 65,55 70,75 50,65 30,75 35,55 20,40 40,40" stroke="#e09658" stroke-width="2" fill="none"/>',
-            15: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M50,30 Q60,50 50,70" stroke="#e09658" stroke-width="2" fill="none"/>',
-            16: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,70 L50,30 L70,70" stroke="#e09658" stroke-width="2" fill="none"/>',
-            17: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M50,30 C70,40 70,60 50,70 C30,60 30,40 50,30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            18: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M40,30 L60,30 L60,70 L40,70 Z" stroke="#e09658" stroke-width="2" fill="none"/>',
-            19: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,30 Q50,50 30,70 M70,30 Q50,50 70,70" stroke="#e09658" stroke-width="2" fill="none"/>',
-            20: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,40 Q50,20 70,40 Q50,60 30,40" stroke="#e09658" stroke-width="2" fill="none"/>',
-            21: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M40,30 C60,40 60,60 40,70" stroke="#e09658" stroke-width="2" fill="none"/>',
-            22: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 C40,30 60,30 70,50 C60,70 40,70 30,50" stroke="#e09658" stroke-width="2" fill="none"/>',
-            23: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="15" stroke="#e09658" stroke-width="2" fill="none"/>',
-            24: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>',
-            25: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="70" x2="30" y2="30" stroke="#e09658" stroke-width="2"/><line x1="70" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
-            26: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="70" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="30" y2="30" stroke="#e09658" stroke-width="2"/><line x1="70" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
-            27: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,40 Q50,20 70,40 M30,60 Q50,80 70,60" stroke="#e09658" stroke-width="2" fill="none"/>',
-        };
-
-        // Element icons and animations
-        const elementIcons = {
-            earth: '<i class="fas fa-mountain element-earth-anim"></i>',
-            water: '<i class="fas fa-water element-water-anim"></i>',
-            fire: '<i class="fas fa-fire element-fire-anim"></i>',
-            air: '<i class="fas fa-wind element-air-anim"></i>',
-            ether: '<i class="fas fa-star element-ether-anim"></i>'
-        };
-
-        // Initialize the game
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nakshatraNum = urlParams.get('nakshatra');
-            const pada = urlParams.get('pada');
-            const guna1 = urlParams.get('guna1');
-            const guna3 = urlParams.get('guna3');
-            // Set up auto-save
-            if (window.gameStateManager) {
-                window.gameStateManager.setupAutoSave(60000); // Auto-save every minute
-            }
-
-            if (nakshatraNum && nakshatraData[nakshatraNum]) {
-                const nakshatra = nakshatraData[nakshatraNum];
-                
-                // Initialize complete player profile in game state manager
-                if (window.gameStateManager) {
-                    window.gameStateManager.playerProfile = {
-                        nakshatra: nakshatra.name,
-                        gana: nakshatra.gana,
-                        shakti: nakshatra.shakti,
-                        gunas: {
-                            sattva: nakshatra.gunas?.sattva || 0,
-                            rajas: nakshatra.gunas?.rajas || 0,
-                            tamas: nakshatra.gunas?.tamas || 0
-                        },
-                        avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
-                    };
-
-                    // Set additional URL parameters
-                    if (pada) window.gameStateManager.updateState('pada', pada);
-                    if (guna1) window.gameStateManager.updateState('guna1', guna1);
-                    if (guna3) window.gameStateManager.updateState('guna3', guna3);
-                }
-
-                // Update character information display
-                const characterNameEl = document.getElementById('character-name');
-                if (characterNameEl) characterNameEl.textContent = nakshatra.name;
-                const nakshatraNameEl = document.getElementById('nakshatra-name');
-                if (nakshatraNameEl) nakshatraNameEl.textContent = nakshatra.name;
-                
-                // Set character symbol
-                const symbolSvg = document.getElementById('character-symbol-svg');
-                symbolSvg.innerHTML = nakshatraSvgPaths[nakshatraNum] || '';
-                
-                // Set element display
-                const elementDisplay = document.getElementById('element-display');
-                elementDisplay.innerHTML = `
-                    <div class="element-icon">${elementIcons[nakshatra.element]}</div>
-                    <div class="element-name">${nakshatra.element.charAt(0).toUpperCase() + nakshatra.element.slice(1)}</div>
-                `;
-                elementDisplay.className = `element-display element-${nakshatra.element}`;
-                
-                // Set initial Guna values
-                setGunaValues(nakshatraNum);
-            }
-
-            // Set up menu button
-            document.getElementById('menu-button').addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('game-menu-modal').style.display = 'flex';
-            });
-
-            // Set up close modal button
-            document.querySelector('.close-modal').addEventListener('click', () => {
-                document.getElementById('game-menu-modal').style.display = 'none';
-            });
-
-            // Close modal when clicking outside
-            window.addEventListener('click', (e) => {
-                const modal = document.getElementById('game-menu-modal');
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            // Set up menu buttons
-            document.getElementById('character-profile-btn').addEventListener('click', () => {
-                // Show page transition
-                const transition = document.querySelector('.page-transition');
-                transition.classList.add('active');
-                
-                // Navigate after animation
-                setTimeout(() => {
-                    window.location.href = `character-profile.html?${urlParams.toString()}`;
-                }, 1000);
-            });
-
-            document.getElementById('exit-game-btn').addEventListener('click', () => {
-                // Show page transition
-                const transition = document.querySelector('.page-transition');
-                transition.classList.add('active');
-                
-                // Navigate after animation
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-            });
-
-            document.getElementById('save-game-btn').addEventListener('click', () => {
-                showNotification('Game saved successfully!', 'success');
-                document.getElementById('game-menu-modal').style.display = 'none';
-            });
-
-            document.getElementById('new-game-btn').addEventListener('click', () => {
-                // Show page transition
-                const transition = document.querySelector('.page-transition');
-                transition.classList.add('active');
-                
-                // Navigate after animation
-                setTimeout(() => {
-                    window.location.href = 'CB-fixed.html';
-                }, 1000);
-            });
-
-            // Initialize enhanced adventure gameplay system
-            const gsm = window.gameStateManager;
-
-            // Character profile already initialized above, proceed with game initialization
-            console.log('Initializing gameplay systems...');
-            console.log('Player profile:', gsm.playerProfile);
-
-            // Initialize the complete gameplay overhaul
-            const gameplayOverhaul = initializeCompleteGameplayOverhaul(gsm);
-
-            // Keep original story engine for compatibility
-            const storyEngine = new StoryEngine(gsm);
-            const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
-
-            // Debug: Check if story data is loaded
-            console.log('Story data loaded:', {
-                ACT1: !!window.ACT1_STORY_DATA,
-                ACT2: !!window.ACT2_STORY_DATA,
-                ACT3: !!window.ACT3_STORY_DATA
-            });
-
-            if (window.ACT1_STORY_DATA) {
-                console.log('ACT1 scenes available:', Object.keys(window.ACT1_STORY_DATA));
-                console.log('JOURNEY_START scene:', window.ACT1_STORY_DATA.JOURNEY_START);
-            } else {
-                console.error('ACT1_STORY_DATA not loaded!');
-            }
-
-            // Set initial act/scene
-            gsm.playerState.currentAct = 1;
-            const firstSceneId = storyEngine.getFirstSceneIdForAct(1);
-            gsm.playerState.currentSceneId = firstSceneId;
-
-            console.log('Initial scene setup:', {
-                currentAct: gsm.playerState.currentAct,
-                currentSceneId: gsm.playerState.currentSceneId,
-                firstSceneId: firstSceneId
-            });
-
-            function renderScene() {
-                console.log('Rendering scene...', {
-                    currentAct: gsm.playerState.currentAct,
-                    currentSceneId: gsm.playerState.currentSceneId
-                });
-
-                let scene = storyEngine.getCurrentScene();
-                console.log('Scene retrieved:', scene);
-
-                const storyTextEl = document.getElementById('story-text');
-                const choicesEl = document.getElementById('choices-container');
-                const puzzleEl = document.getElementById('puzzle-container');
-
-                if (!storyTextEl || !choicesEl || !puzzleEl) {
-                    console.error('Story UI elements not found!', {
-                        storyTextEl: !!storyTextEl,
-                        choicesEl: !!choicesEl,
-                        puzzleEl: !!puzzleEl
-                    });
-                    return;
-                }
-
-                // Apply one-time world state triggers on entering a scene
-                if (scene && scene.worldStateTriggers) {
-                    const appliedKey = `scene_applied_${gsm.playerState.currentSceneId}`;
-                    if (!gsm.worldState[appliedKey]) {
-                        Object.entries(scene.worldStateTriggers).forEach(([k, v]) => gsm.updateState(k, v));
-                        gsm.worldState[appliedKey] = true;
-                    }
-                }
-
-                // Fallback if data not ready
-                if (!scene) {
-                    // Try resetting to Act 1 start
-                    gsm.playerState.currentAct = 1;
-                    gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
-                    scene = storyEngine.getCurrentScene();
-                }
-
-                if (!scene) {
-                    storyTextEl.innerHTML = '<p>Preparing Act I...</p>';
-                    choicesEl.innerHTML = '';
-                    const startBtn = document.createElement('button');
-                    startBtn.className = 'choice-button';
-                    startBtn.innerHTML = '<span class="choice-icon"><i class="fas fa-play"></i></span><span class="choice-content">Start Act I</span>';
-                    startBtn.addEventListener('click', () => {
-                        gsm.playerState.currentAct = 1;
-                        gsm.playerState.currentSceneId = 'JOURNEY_START';
-                        renderScene();
-                    });
-                    choicesEl.appendChild(startBtn);
-                    puzzleEl.innerHTML = '';
-                    return;
-                }
-
-                // Render scene text
-                storyTextEl.innerHTML = scene.text ? `<p>${scene.text}</p>` : '';
-
-                // Render puzzle UI if present
-                puzzleEl.innerHTML = '';
-                const puzzle = storyEngine.getCurrentPuzzle();
-                if (puzzle && puzzle.puzzleId) {
-                    // Skip puzzles already completed to avoid repeat and flicker
-                    if (
-                        (puzzle.puzzleId === 'BanyanTreeHarmony' && gsm.worldState.banyan_balanced) ||
-                        (puzzle.puzzleId === 'BarrierOfNegativity' && gsm.worldState.river_purified) ||
-                        (gsm.worldState[`${puzzle.puzzleId}_completed`] === true)
-                    ) {
-                        const sol = (puzzle.solutions || []).find(s => s.successScene);
-                        if (sol && sol.successScene) {
-                            gsm.playerState.currentSceneId = sol.successScene;
-                            renderScene();
-                            return;
-                        }
-                    }
-
-                    const box = document.createElement('div');
-                    box.className = 'puzzle-box';
-                    const title = document.createElement('div');
-                    title.className = 'panel-title';
-                    title.textContent = `Puzzle: ${puzzle.puzzleId}`;
-                    const desc = document.createElement('p');
-                    desc.textContent = puzzle.description || '';
-                    box.appendChild(title);
-                    box.appendChild(desc);
-
-                    if (puzzle.puzzleId === 'BarrierOfNegativity') {
-                        // Use the enhanced psychological transformation puzzle
-                        box.innerHTML = '';
-
-                        // Check if enhanced overhaul is active
-                        if (window.gameplayOverhaul) {
-                            window.gameplayOverhaul.loadEnhancedPuzzle('BarrierOfNegativity');
-                        } else {
-                            // Fallback to simplified drag-and-drop version
-                            const info = document.createElement('p');
-                            info.textContent = 'Drag a pure item from your inventory onto the barrier.';
-                            box.appendChild(info);
-
-                            const dndWrap = document.createElement('div');
-                            dndWrap.className = 'puzzle-action-row';
-
-                            const drop = document.createElement('div');
-                            drop.id = 'barrier-drop-zone';
-                            drop.className = 'drop-zone';
-                            drop.style.minHeight = '140px';
-                            drop.style.display = 'flex';
-                            drop.style.alignItems = 'center';
-                            drop.style.justifyContent = 'center';
-                            drop.style.border = '1px dashed rgba(224,150,88,0.5)';
-                            drop.innerHTML = '<i class="fas fa-shield-virus"></i> Drop here';
-
-                            const inv = document.createElement('div');
-                            inv.className = 'inventory-source';
-                            inv.innerHTML = '<h4>Your Inventory</h4>';
-
-                            const invList = document.createElement('div');
-                            const items = new Set(gsm.playerState.inventory || []);
-                            if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
-                            items.forEach(name => {
-                                const el = document.createElement('div');
-                                el.className = 'draggable-item';
-                                el.draggable = true;
-                                el.dataset.itemName = name;
-                                el.textContent = name;
-                                el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', name));
-                                invList.appendChild(el);
-                            });
-                            inv.appendChild(invList);
-
-                            dndWrap.appendChild(drop);
-                            dndWrap.appendChild(inv);
-                            box.appendChild(dndWrap);
-
-                            const validItems = ['Lotus Petal'];
-
-                            drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.boxShadow = '0 0 15px rgba(224,150,88,0.6)'; });
-                            drop.addEventListener('dragleave', () => { drop.style.boxShadow = 'none'; });
-                            drop.addEventListener('drop', (e) => {
-                                e.preventDefault();
-                                drop.style.boxShadow = 'none';
-                                const itemName = e.dataTransfer.getData('text/plain');
-                                if (validItems.includes(itemName)) {
-                                    const sol = (puzzle.solutions || []).find(s => s.successScene);
-                                    const next = (sol && sol.successScene) || 'PURIFY_CRYSTAL_SUCCESS';
-                                    gsm.playerState.currentSceneId = next;
-                                    renderScene();
-                                } else {
-                                    drop.classList.add('shake');
-                                    setTimeout(() => drop.classList.remove('shake'), 600);
-                                    showNotification('The barrier repels impure intent.', 'error');
-                                }
-                            });
-                        }
-                    }
-
-                    if (puzzle.puzzleId === 'BanyanTreeHarmony') {
-                        // Use the enhanced multi-stage puzzle with deep complexity
-                        box.innerHTML = '';
-
-                        // Check if enhanced overhaul is active
-                        if (window.gameplayOverhaul) {
-                            window.gameplayOverhaul.loadEnhancedPuzzle('BanyanTreeHarmony');
-                        } else {
-                            // Fallback to fixed puzzle
-                            const fixedPuzzle = new window.FixedBanyanTreeHarmony(
-                                box,
-                                gsm,
-                                () => {
-                                    gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
-                                    renderScene();
-                                }
-                            );
-                            window.currentBanyanPuzzle = fixedPuzzle;
-                        }
-                    }
-
-                    puzzleEl.appendChild(box);
-                }
-
-                // Render choices
-                const choices = storyEngine.getAvailableChoices();
-                choicesEl.innerHTML = '';
-
-                // Special unlock: inner sanctum becomes available when temple flags are met
-                if (gsm.playerState.currentSceneId === 'TEMPLE_ENTRANCE' && (gsm.worldState.made_offering && gsm.worldState.solved_puzzle && gsm.worldState.aligned_energy)) {
-                    choices.unshift({ id: 'ENTER_INNER_SANCTUM', text: 'Enter the inner sanctum...', nextScene: 'TEMPLE_INNER_SANCTUM' });
-                }
-
-                choices.forEach((c) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'choice-button';
-                    btn.innerHTML = `<span class="choice-icon"><i class="fas fa-angle-right"></i></span><span class="choice-content">${c.text}</span>`;
-                    btn.dataset.choiceId = c.id;
-                    btn.addEventListener('click', () => {
-                        btn.classList.add('choice-selected');
-                        setTimeout(() => {
-                            if (c.nextScene === 'TEMPLE_INNER_SANCTUM') {
-                                gsm.playerState.currentSceneId = 'TEMPLE_INNER_SANCTUM';
-                            } else {
-                                storyEngine.processChoice(c.id);
-                            }
-                            renderScene();
-                        }, 250);
-                    });
-                    choicesEl.appendChild(btn);
-                });
-                // Update inventory UI based on game state
-                const invEl = document.getElementById('inventory-list');
-                if (invEl) {
-                    invEl.innerHTML = '';
-                    const items = new Set(gsm.playerState.inventory || []);
-                    if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
-                    if (items.size === 0) {
-                        const li = document.createElement('li');
-                        li.className = 'inventory-empty';
-                        li.textContent = '(Empty)';
-                        invEl.appendChild(li);
-                    } else {
-                        items.forEach((name) => {
-                            const li = document.createElement('li');
-                            li.textContent = name;
-                            invEl.appendChild(li);
-                        });
-                    }
-                }
-            }
-
-            renderScene();
-        });
-
-        // Set guna values based on nakshatra number
-        function setGunaValues(nakshatraNum) {
-            let sattva = 0, rajas = 0, tamas = 0;
-            
-            // Simple algorithm to set guna values based on nakshatra number
-            if (nakshatraNum >= 1 && nakshatraNum <= 9) {
-                sattva = 1;
-                rajas = 2;
-                tamas = 0;
-            } else if (nakshatraNum >= 10 && nakshatraNum <= 18) {
-                sattva = 0;
-                rajas = 1;
-                tamas = 2;
-            } else {
-                sattva = 2;
-                rajas = 0;
-                tamas = 1;
-            }
-            
-            // Update the UI
-            document.getElementById('sattva-value').textContent = sattva;
-            document.getElementById('rajas-value').textContent = rajas;
-            document.getElementById('tamas-value').textContent = tamas;
-        }
-
-        // Update story text
-        function updateStory(choiceText) {
-            const storyText = document.getElementById('story-text');
-            
-            // Fade out current text
-            storyText.classList.add('text-fade-out');
-            
-            setTimeout(() => {
-                // Update text
-                storyText.innerHTML = `
-                    <p>You chose to ${choiceText.toLowerCase()}</p>
-                    <p>As you proceed, the world around you begins to take shape, reflecting the essence of your inner nature.</p>
-                    <p>Your journey has truly begun...</p>
-                `;
-                
-                // Fade in new text
-                storyText.classList.remove('text-fade-out');
-                storyText.classList.add('text-fade-in');
-                
-                // Update choices
-                updateChoices();
-            }, 500);
-        }
-
-        // Update choices
-        function updateChoices() {
-            const choicesContainer = document.getElementById('choices-container');
-            
-            // Fade out current choices
-            choicesContainer.classList.add('text-fade-out');
-            
-            setTimeout(() => {
-                // Update choices
-                choicesContainer.innerHTML = `
-                    <button class="choice-button">
-                        <div class="choice-icon"><i class="fas fa-map-signs"></i></div>
-                        <div class="choice-content">Follow the path that leads toward the distant mountains.</div>
-                    </button>
-                    <button class="choice-button">
-                        <div class="choice-icon"><i class="fas fa-tree"></i></div>
-                        <div class="choice-content">Enter the forest to your right, which seems to whisper ancient secrets.</div>
-                    </button>
-                    <button class="choice-button">
-                        <div class="choice-icon"><i class="fas fa-home"></i></div>
-                        <div class="choice-content">Approach the small dwelling you notice in the distance.</div>
-                    </button>
-                `;
-                
-                // Fade in new choices
-                choicesContainer.classList.remove('text-fade-out');
-                choicesContainer.classList.add('text-fade-in');
-                
-                // Add event listeners to new buttons
-                const newChoiceButtons = document.querySelectorAll('.choice-button');
-                newChoiceButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        // Add selection animation
-                        button.classList.add('choice-selected');
-                        
-                        // Wait for animation to complete before proceeding
-                        setTimeout(() => {
-                            // Update story text
-                            updateStory(button.querySelector('.choice-content').textContent);
-                            
-                            // Update karma (for demonstration)
-                            updateKarma(1);
-                        }, 500);
-                    });
-                });
-            }, 500);
-        }
-
-        // Update karma
-        function updateKarma(amount) {
-            const karmaValue = document.getElementById('karma-value');
-            const currentKarma = parseInt(karmaValue.textContent);
-            const newKarma = currentKarma + amount;
-            
-            // Add animation class
-            karmaValue.classList.add(amount > 0 ? 'karma-increase' : 'karma-decrease');
-            
-            // Update value
-            setTimeout(() => {
-                karmaValue.textContent = newKarma;
-                
-                // Remove animation class
-                setTimeout(() => {
-                    karmaValue.classList.remove('karma-increase', 'karma-decrease');
-                }, 1000);
-            }, 500);
-        }
-
-        // Show notification
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notification-container');
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-icon">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                    </div>
-                    <div class="notification-message">${message}</div>
-                </div>
-            `;
-            
-            container.appendChild(notification);
-            
-            // Show notification
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            
-            // Hide and remove notification after delay
-            setTimeout(() => {
-                notification.classList.remove('show');
-                notification.classList.add('hide');
-                
-                setTimeout(() => {
-                    container.removeChild(notification);
-                }, 500);
-            }, 3000);
-        }
-
-        // Custom cursor functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if the device has a fine pointer (e.g., a mouse)
-            if (window.matchMedia('(pointer: fine)').matches) {
-                document.body.classList.add('custom-cursor-active');
-
-                const cursorContainer = document.getElementById('cursor-container');
-
-                document.addEventListener('mousemove', (e) => {
-                    if (cursorContainer) {
-                        cursorContainer.style.left = e.clientX + 'px';
-                        cursorContainer.style.top = e.clientY + 'px';
-                    }
-                });
-
-                document.addEventListener('mouseover', (e) => {
-                    if (e.target.matches('a, button, .choice-button, .nav-link, .close-modal, .menu-button') || 
-                        e.target.closest('a, button, .choice-button, .nav-link, .close-modal, .menu-button')) {
-                        if (cursorContainer) {
-                            cursorContainer.classList.add('active');
-                        }
-                    }
-                });
-
-                document.addEventListener('mouseout', (e) => {
-                    if (e.target.matches('a, button, .choice-button, .nav-link, .close-modal, .menu-button') || 
-                        e.target.closest('a, button, .choice-button, .nav-link, .close-modal, .menu-button')) {
-                        if (cursorContainer) {
-                            cursorContainer.classList.remove('active');
-                        }
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>
