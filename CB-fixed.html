@@ -211,8 +211,15 @@
                 document.getElementById('result-shakti').textContent=t.shakti,
                 n&&(document.getElementById('result-archetype').innerHTML=`<div class="profile-title">Spiritual Archetype</div><div class="archetype-icon"><i class="${n.icon}"></i></div><h3 class="archetype-name">${n.name}</h3><p class="archetype-description">${n.description}</p>`),
                 document.getElementById('nakshatra-svg').innerHTML=nakshatraSvgPaths[e]||'',
-                document.querySelectorAll('.pada-item').forEach(e=>e.classList.remove('active')),
-                document.getElementById(`pada-${userAnswers.pada.toLowerCase()}`).classList.add('active'),
+                document.querySelectorAll('.pada-item').forEach(e=>e.classList.remove('active'));
+                if (userAnswers.pada) {
+                    const padaElement = document.getElementById(`pada-${userAnswers.pada.toLowerCase()}`);
+                    if (padaElement) {
+                        padaElement.classList.add('active');
+                    } else {
+                        console.warn('Pada element not found for:', userAnswers.pada);
+                    }
+                }
                 setGunaValues(e);
                 const o=document.getElementById('gana-indicator');
                 o.innerHTML=`<div class="gana-icon"><i class="${getGanaIcon(t.gana)}"></i></div><div class="gana-name">${t.gana}</div>`,
