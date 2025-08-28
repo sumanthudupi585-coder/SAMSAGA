@@ -416,6 +416,110 @@ class CinematicUISystem {
     }
 
     /**
+     * Evolve UI based on player progress
+     */
+    evolveUI(newStage) {
+        if (this.currentEvolutionStage === newStage) return;
+
+        console.log(`🔄 Evolving UI from ${this.currentEvolutionStage} to ${newStage}`);
+
+        const evolutionData = this.evolutionStages[newStage];
+        if (!evolutionData) {
+            console.warn('Unknown evolution stage:', newStage);
+            return;
+        }
+
+        this.currentEvolutionStage = newStage;
+
+        // Update UI complexity
+        this.updateUIComplexity(evolutionData.complexity);
+
+        // Enable/disable features
+        this.updateAvailableFeatures(evolutionData.features);
+
+        // Update philosophical depth
+        this.updatePhilosophicalDepth(evolutionData.depth);
+
+        // Trigger evolution transition
+        this.queueTransition('ui_evolution', {
+            from: this.currentEvolutionStage,
+            to: newStage,
+            callback: () => {
+                console.log(`✅ UI evolved to ${newStage} stage`);
+            }
+        });
+    }
+
+    /**
+     * Update UI complexity level
+     */
+    updateUIComplexity(complexity) {
+        const container = this.uiElements.container;
+        if (!container) return;
+
+        // Remove existing complexity classes
+        container.classList.remove('complexity-simple', 'complexity-enhanced', 'complexity-advanced', 'complexity-master');
+
+        // Add new complexity class
+        container.classList.add(`complexity-${complexity}`);
+    }
+
+    /**
+     * Update available UI features
+     */
+    updateAvailableFeatures(features) {
+        const container = this.uiElements.container;
+        if (!container) return;
+
+        // Show/hide features based on evolution stage
+        const allFeatures = ['insights_panel', 'journal', 'meditation', 'advanced_stats', 'cosmic_map'];
+
+        allFeatures.forEach(feature => {
+            const element = container.querySelector(`[data-feature="${feature}"]`);
+            if (element) {
+                if (features.includes(feature) || features.includes('all')) {
+                    element.style.display = '';
+                    element.classList.remove('feature-locked');
+                } else {
+                    element.style.display = 'none';
+                    element.classList.add('feature-locked');
+                }
+            }
+        });
+    }
+
+    /**
+     * Update philosophical depth indicators
+     */
+    updatePhilosophicalDepth(depth) {
+        const container = this.uiElements.container;
+        if (!container) return;
+
+        // Remove existing depth classes
+        container.classList.remove('depth-introductory', 'depth-intermediate', 'depth-advanced', 'depth-expert');
+
+        // Add new depth class
+        container.classList.add(`depth-${depth}`);
+
+        // Update content complexity indicators
+        const depthIndicators = container.querySelectorAll('[data-depth]');
+        depthIndicators.forEach(indicator => {
+            const requiredDepth = indicator.dataset.depth;
+            const depthLevels = ['introductory', 'intermediate', 'advanced', 'expert'];
+            const currentLevel = depthLevels.indexOf(depth);
+            const requiredLevel = depthLevels.indexOf(requiredDepth);
+
+            if (currentLevel >= requiredLevel) {
+                indicator.classList.remove('depth-locked');
+                indicator.style.opacity = '1';
+            } else {
+                indicator.classList.add('depth-locked');
+                indicator.style.opacity = '0.3';
+            }
+        });
+    }
+
+    /**
      * Set visual theme based on spiritual progress
      */
     setTheme(themeName) {
