@@ -970,7 +970,77 @@ class CinematicUISystem {
             }, 500);
         }, 4000);
     }
-    
+
+    /**
+     * Play phase advancement transition
+     */
+    playPhaseTransition(options) {
+        const overlay = document.getElementById('phase-overlay');
+        const title = overlay?.querySelector('.phase-title');
+        const description = overlay?.querySelector('.phase-description');
+
+        if (!overlay) {
+            console.warn('Phase overlay not found, using generic transition');
+            this.playGenericTransition(options);
+            return;
+        }
+
+        // Set content
+        if (title) title.textContent = options.title || 'Advancing to New Phase';
+        if (description) description.textContent = options.description || 'Your spiritual journey deepens...';
+
+        overlay.style.display = 'flex';
+
+        // Animate in
+        setTimeout(() => {
+            overlay.classList.add('active');
+        }, 50);
+
+        // Complete transition
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                if (options.callback) options.callback();
+                this.processNextTransition();
+            }, 500);
+        }, 5000);
+    }
+
+    /**
+     * Play generic transition
+     */
+    playGenericTransition(options) {
+        console.log('🎬 Playing generic transition:', options);
+
+        // Create a simple fade transition
+        const mainContent = this.uiElements.content;
+        if (!mainContent) {
+            // If we can't find the main content, just call the callback
+            setTimeout(() => {
+                if (options.callback) options.callback();
+                this.processNextTransition();
+            }, 500);
+            return;
+        }
+
+        // Fade out
+        mainContent.style.transition = 'opacity 0.3s ease';
+        mainContent.style.opacity = '0.7';
+
+        setTimeout(() => {
+            // Execute callback in the middle of transition
+            if (options.callback) options.callback();
+
+            // Fade back in
+            mainContent.style.opacity = '1';
+
+            setTimeout(() => {
+                this.processNextTransition();
+            }, 300);
+        }, 200);
+    }
+
     /**
      * Update character display
      */
