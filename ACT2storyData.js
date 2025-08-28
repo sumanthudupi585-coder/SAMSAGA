@@ -19,7 +19,17 @@
 window.ACT2_STORY_DATA = {
 
     // --- ACT II: THE PATH OF DEVOTION (BHAKTI MARGA) ---
-
+"ACT2_START": {
+    "title": "The Path Beyond",
+    "text": "The morning sun casts long shadows as you leave Dharmapura behind. The lessons of the village have strengthened your resolve, but greater challenges await. The path ahead leads through ancient forests and sacred mountains, where the veil between worlds grows thin. Your journey of self-discovery continues.",
+    "choices": [
+        {
+            "id": "enter_forest",
+            "text": "Enter the ancient forest...",
+            "nextScene": "FOREST_ENTRANCE"
+        }
+    ]
+},
     "JOURNEY_TO_SVARGA": {
         "title": "Ascension",
         "text": "Having proven your understanding of earthly karma, your soul ascends from Dharmapura toward Svarga, the celestial realm of the Devas. As you rise, the material world falls away, replaced by clouds of impossible colors and the distant sounds of divine music. Your consciousness expands, preparing for the next stage of your spiritual journey.",
@@ -854,7 +864,21 @@ window.ACT2_STORY_DATA = {
         "text": "As the divine concert fills Svarga with renewed splendor, you reflect on your journey through the celestial realm. You have proven your worth not through righteous deeds alone, but by demonstrating a soul capable of creating beauty and resonating with cosmic harmony. The path of devotion\u2014Bhakti Marga\u2014has revealed itself as a powerful spiritual approach, complementing the path of action you mastered in the mortal world. Yet your spiritual journey is not complete. New horizons await as you continue your progression through the great paths of yoga toward ultimate liberation.",
         "choices": [
             { "text": "Prepare for the next stage of your journey...", "nextScene": "JOURNEY_TO_SVARGA" }
-        ]
-    }
+            "ACT2_ENDING": {
+    "title": "The Second Trial Completed",
+    "text": "The challenges of the forest and mountains have tested you in ways you never imagined. You have grown stronger, wiser, and more attuned to the cosmic forces that shape existence. As you stand at the precipice of the final leg of your journey, you feel a profound transformation taking place within you.",
+    "choices": [
+        {
+            "id": "continue_to_act3",
+            "text": "Embrace the final challenge...",
+            "nextAct": 3,
+            "effects": {
+                "karma": 15,
+                "dharmicProfile": {
+                    "moksha": 10
+                }
+            }
+        }
+    ]
 };
 
