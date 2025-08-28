@@ -2025,7 +2025,168 @@ class GameplayOverhaulEngine {
         // Setup discovery progress
         this.updateDiscoveryProgress();
     }
-    
+
+    initializeCharacterInformation() {
+        // Initialize character name and symbol from nakshatra data
+        const urlParams = new URLSearchParams(window.location.search);
+        const nakshatraNum = urlParams.get('nakshatra');
+
+        if (nakshatraNum && window.nakshatraData && window.nakshatraData[nakshatraNum]) {
+            const nakshatra = window.nakshatraData[nakshatraNum];
+
+            // Update character name
+            const characterNameEl = document.getElementById('character-name');
+            if (characterNameEl) {
+                characterNameEl.textContent = nakshatra.name;
+            }
+
+            // Update character symbol
+            const symbolSvg = document.getElementById('character-symbol-svg');
+            if (symbolSvg && window.nakshatraSvgPaths) {
+                symbolSvg.innerHTML = window.nakshatraSvgPaths[nakshatraNum] || '';
+            }
+        }
+    }
+
+    initializeTraditionalAttributes() {
+        // Initialize traditional spiritual attributes (Karma, Sattva, Rajas, Tamas)
+        const urlParams = new URLSearchParams(window.location.search);
+        const nakshatraNum = parseInt(urlParams.get('nakshatra')) || 1;
+
+        // Calculate guna values based on nakshatra
+        let sattva = 0, rajas = 0, tamas = 0, karma = 0;
+
+        if (nakshatraNum >= 1 && nakshatraNum <= 9) {
+            sattva = 1;
+            rajas = 2;
+            tamas = 0;
+        } else if (nakshatraNum >= 10 && nakshatraNum <= 18) {
+            sattva = 0;
+            rajas = 1;
+            tamas = 2;
+        } else {
+            sattva = 2;
+            rajas = 0;
+            tamas = 1;
+        }
+
+        // Get karma from game state if available
+        if (this.gameStateManager && this.gameStateManager.playerState) {
+            karma = this.gameStateManager.playerState.karma || 0;
+        }
+
+        // Update the UI
+        this.updateAttributeDisplay('karma', karma, 50);
+        this.updateAttributeDisplay('sattva', sattva, sattva * 33);
+        this.updateAttributeDisplay('rajas', rajas, rajas * 40);
+        this.updateAttributeDisplay('tamas', tamas, tamas * 50);
+    }
+
+    updateAttributeDisplay(attributeName, value, barWidth) {
+        // Update attribute value and bar
+        const valueEl = document.getElementById(`${attributeName}-value`);
+        const fillEl = document.getElementById(`${attributeName}-fill`);
+
+        if (valueEl) {
+            valueEl.textContent = value;
+        }
+
+        if (fillEl) {
+            fillEl.style.width = `${Math.min(100, barWidth)}%`;
+        }
+    }
+
+    initializeElementDisplay() {
+        // Initialize elemental affinity display
+        const urlParams = new URLSearchParams(window.location.search);
+        const nakshatraNum = urlParams.get('nakshatra');
+
+        if (nakshatraNum && window.nakshatraData && window.nakshatraData[nakshatraNum]) {
+            const nakshatra = window.nakshatraData[nakshatraNum];
+            const elementDisplay = document.getElementById('element-display');
+
+            if (elementDisplay && window.elementIcons) {
+                const elementIcon = window.elementIcons[nakshatra.element] || '✨';
+                const elementName = nakshatra.element.charAt(0).toUpperCase() + nakshatra.element.slice(1);
+
+                elementDisplay.innerHTML = `
+                    <div class="element-icon">${elementIcon}</div>
+                    <div class="element-name">${elementName}</div>
+                `;
+                elementDisplay.className = `element-display element-${nakshatra.element}`;
+            }
+        }
+    }
+
+    initializeInventoryDisplay() {
+        // Initialize inventory display from game state
+        const inventoryEl = document.getElementById('inventory-list');
+        if (!inventoryEl) return;
+
+        inventoryEl.innerHTML = '';
+
+        // Get inventory from game state
+        let items = new Set();
+        if (this.gameStateManager && this.gameStateManager.playerState) {
+            items = new Set(this.gameStateManager.playerState.inventory || []);
+
+            // Add special items from world state
+            if (this.gameStateManager.worldState) {
+                if (this.gameStateManager.worldState.has_lotus_petal) {
+                    items.add('Lotus Petal');
+                }
+            }
+        }
+
+        if (items.size === 0) {
+            const li = document.createElement('li');
+            li.className = 'inventory-empty';
+            li.textContent = '(Empty)';
+            inventoryEl.appendChild(li);
+        } else {
+            items.forEach(itemName => {
+                const li = document.createElement('li');
+                li.textContent = itemName;
+                inventoryEl.appendChild(li);
+            });
+        }
+    }
+
+    updateKarma(amount) {
+        // Update karma value with animation
+        if (!this.gameStateManager || !this.gameStateManager.playerState) return;
+
+        const currentKarma = this.gameStateManager.playerState.karma || 0;
+        const newKarma = currentKarma + amount;
+
+        // Update game state
+        this.gameStateManager.playerState.karma = newKarma;
+
+        // Update UI with animation
+        const karmaValueEl = document.getElementById('karma-value');
+        if (karmaValueEl) {
+            // Add animation class
+            karmaValueEl.classList.add(amount > 0 ? 'karma-increase' : 'karma-decrease');
+
+            // Update value after brief delay
+            setTimeout(() => {
+                karmaValueEl.textContent = newKarma;
+
+                // Update karma bar
+                const karmaFillEl = document.getElementById('karma-fill');
+                if (karmaFillEl) {
+                    const karmaPercentage = Math.max(0, Math.min(100, 50 + newKarma * 5));
+                    karmaFillEl.style.width = `${karmaPercentage}%`;
+                }
+
+                // Remove animation class
+                setTimeout(() => {
+                    karmaValueEl.classList.remove('karma-increase', 'karma-decrease');
+                }, 1000);
+            }, 500);
+        }
+    }
+
     updateCharacterAbilitiesDisplay() {
         const abilitiesContainer = document.getElementById('ability-items');
         if (!abilitiesContainer) return;
