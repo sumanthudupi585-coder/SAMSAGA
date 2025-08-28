@@ -2001,15 +2001,27 @@ class GameplayOverhaulEngine {
     
     // Integration methods
     populateEnhancedInterface() {
+        // Initialize traditional character information
+        this.initializeCharacterInformation();
+
+        // Initialize traditional player attributes
+        this.initializeTraditionalAttributes();
+
+        // Initialize element display
+        this.initializeElementDisplay();
+
+        // Initialize inventory
+        this.initializeInventoryDisplay();
+
         // Populate character abilities
         this.updateCharacterAbilitiesDisplay();
-        
+
         // Setup initial location
         this.createLocationElements(this.currentLocation);
-        
+
         // Initialize atmospheric meters
         this.updateAtmosphericMeters();
-        
+
         // Setup discovery progress
         this.updateDiscoveryProgress();
     }
