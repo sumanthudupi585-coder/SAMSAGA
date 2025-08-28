@@ -86,27 +86,10 @@
         <!-- Main content area for narrative and choices (Left Column) -->
         <main class="story-panel" id="main-content">
             <div id="story-container" class="section">
-                <div id="story-text" class="text-fade-in">
-                    <p>The cycle turns...</p>
-                    <p>You find yourself at the beginning of a new journey, your past lives echoing in the chambers of your consciousness like distant whispers.</p>
-                    <p>The path ahead is shrouded in mist, but your <span class="highlight-text" id="nakshatra-name">Nakshatra</span> nature guides you forward, illuminating the way with its unique light.</p>
-                </div>
+                <div id="story-text" class="text-fade-in"></div>
             </div>
-            <div id="choices-container" class="text-fade-in-delay-1">
-                <!-- Player choices will be dynamically inserted here -->
-                <button class="choice-button">
-                    <span class="choice-icon"><i class="fas fa-walking"></i></span>
-                    <span class="choice-content">Begin your journey with mindful steps, observing the world around you.</span>
-                </button>
-                <button class="choice-button">
-                    <span class="choice-icon"><i class="fas fa-eye"></i></span>
-                    <span class="choice-content">Close your eyes and turn inward, seeking guidance from your inner wisdom.</span>
-                </button>
-                <button class="choice-button">
-                    <span class="choice-icon"><i class="fas fa-comments"></i></span>
-                    <span class="choice-content">Call out to see if anyone else is nearby who might offer guidance.</span>
-                </button>
-            </div>
+            <div id="puzzle-container" class="text-fade-in-delay-1"></div>
+            <div id="choices-container" class="text-fade-in-delay-1"></div>
         </main>
         
         <!-- Sidebar for player stats and game controls (Right Column) -->
@@ -815,23 +798,54 @@
                 }, 1000);
             });
 
-            // Set up choice buttons
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Add selection animation
-                    button.classList.add('choice-selected');
-                    
-                    // Wait for animation to complete before proceeding
-                    setTimeout(() => {
-                        // Update story text
-                        updateStory(button.querySelector('.choice-content').textContent);
-                        
-                        // Update karma (for demonstration)
-                        updateKarma(1);
-                    }, 500);
+            // Initialize story engine-driven gameplay
+            const gsm = window.gameStateManager;
+            const storyEngine = new StoryEngine(gsm);
+            const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
+
+            // Set initial act/scene
+            gsm.playerState.currentAct = 1;
+            gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
+
+            function renderScene() {
+                const scene = storyEngine.getCurrentScene();
+                const storyTextEl = document.getElementById('story-text');
+                const choicesEl = document.getElementById('choices-container');
+                const puzzleEl = document.getElementById('puzzle-container');
+
+                // Render scene text
+                storyTextEl.innerHTML = scene && scene.text ? `<p>${scene.text}</p>` : '';
+
+                // Render puzzle placeholder if any
+                puzzleEl.innerHTML = '';
+                const puzzle = storyEngine.getCurrentPuzzle();
+                if (puzzle && puzzle.puzzleId) {
+                    const box = document.createElement('div');
+                    box.className = 'puzzle-box';
+                    box.innerHTML = `<div class="panel-title">Puzzle: ${puzzle.puzzleId}</div><p>Interact with the world to progress the puzzle.</p>`;
+                    puzzleEl.appendChild(box);
+                }
+
+                // Render choices
+                const choices = storyEngine.getAvailableChoices();
+                choicesEl.innerHTML = '';
+                choices.forEach((c) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-button';
+                    btn.innerHTML = `<span class="choice-icon"><i class="fas fa-angle-right"></i></span><span class="choice-content">${c.text}</span>`;
+                    btn.dataset.choiceId = c.id;
+                    btn.addEventListener('click', () => {
+                        btn.classList.add('choice-selected');
+                        setTimeout(() => {
+                            storyEngine.processChoice(c.id);
+                            renderScene();
+                        }, 250);
+                    });
+                    choicesEl.appendChild(btn);
                 });
-            });
+            }
+
+            renderScene();
         });
 
         // Set guna values based on nakshatra number
