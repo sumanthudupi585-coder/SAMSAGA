@@ -818,6 +818,38 @@
             // Initialize enhanced adventure gameplay system
             const gsm = window.gameStateManager;
 
+            // Load character data from URL parameters first
+            const urlParams = new URLSearchParams(window.location.search);
+            const nakshatraNum = urlParams.get('nakshatra');
+            const pada = urlParams.get('pada');
+            const guna1 = urlParams.get('guna1');
+            const guna3 = urlParams.get('guna3');
+
+            console.log('Initializing gameplay with parameters:', { nakshatraNum, pada, guna1, guna3 });
+
+            // Ensure player profile is set up from URL parameters
+            if (nakshatraNum && nakshatraData[nakshatraNum]) {
+                const nakshatra = nakshatraData[nakshatraNum];
+                gsm.playerProfile = {
+                    nakshatra: nakshatra.name,
+                    gana: nakshatra.gana,
+                    shakti: nakshatra.shakti,
+                    gunas: {
+                        sattva: nakshatra.gunas?.sattva || 0,
+                        rajas: nakshatra.gunas?.rajas || 0,
+                        tamas: nakshatra.gunas?.tamas || 0
+                    },
+                    avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                };
+
+                // Set pada and guna selections
+                if (pada) gsm.updateState('pada', pada);
+                if (guna1) gsm.updateState('guna1', guna1);
+                if (guna3) gsm.updateState('guna3', guna3);
+
+                console.log('Player profile initialized:', gsm.playerProfile);
+            }
+
             // Initialize the complete gameplay overhaul
             const gameplayOverhaul = initializeCompleteGameplayOverhaul(gsm);
 
@@ -825,9 +857,23 @@
             const storyEngine = new StoryEngine(gsm);
             const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
 
+            // Debug: Check if story data is loaded
+            console.log('Story data loaded:', {
+                ACT1: !!window.ACT1_STORY_DATA,
+                ACT2: !!window.ACT2_STORY_DATA,
+                ACT3: !!window.ACT3_STORY_DATA
+            });
+
             // Set initial act/scene
             gsm.playerState.currentAct = 1;
-            gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
+            const firstSceneId = storyEngine.getFirstSceneIdForAct(1);
+            gsm.playerState.currentSceneId = firstSceneId;
+
+            console.log('Initial scene setup:', {
+                currentAct: gsm.playerState.currentAct,
+                currentSceneId: gsm.playerState.currentSceneId,
+                firstSceneId: firstSceneId
+            });
 
             function renderScene() {
                 let scene = storyEngine.getCurrentScene();
