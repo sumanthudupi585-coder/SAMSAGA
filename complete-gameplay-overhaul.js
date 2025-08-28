@@ -2031,8 +2031,12 @@ class GameplayOverhaulEngine {
         const urlParams = new URLSearchParams(window.location.search);
         const nakshatraNum = urlParams.get('nakshatra');
 
-        if (nakshatraNum && window.nakshatraData && window.nakshatraData[nakshatraNum]) {
-            const nakshatra = window.nakshatraData[nakshatraNum];
+        // Define nakshatra data if not available globally
+        const nakshatraData = window.nakshatraData || this.getNakshatraData();
+        const nakshatraSvgPaths = window.nakshatraSvgPaths || this.getNakshatraSvgPaths();
+
+        if (nakshatraNum && nakshatraData && nakshatraData[nakshatraNum]) {
+            const nakshatra = nakshatraData[nakshatraNum];
 
             // Update character name
             const characterNameEl = document.getElementById('character-name');
@@ -2042,8 +2046,14 @@ class GameplayOverhaulEngine {
 
             // Update character symbol
             const symbolSvg = document.getElementById('character-symbol-svg');
-            if (symbolSvg && window.nakshatraSvgPaths) {
-                symbolSvg.innerHTML = window.nakshatraSvgPaths[nakshatraNum] || '';
+            if (symbolSvg && nakshatraSvgPaths) {
+                symbolSvg.innerHTML = nakshatraSvgPaths[nakshatraNum] || '';
+            }
+
+            // Store in game state if available
+            if (this.gameStateManager && this.gameStateManager.playerProfile) {
+                this.gameStateManager.playerProfile.nakshatra = nakshatra.name;
+                this.gameStateManager.playerProfile.gana = nakshatra.gana;
             }
         }
     }
