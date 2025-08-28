@@ -1,0 +1,33 @@
+{
+  "name": "samsara-saga",
+  "version": "2.0.0",
+  "description": "An interactive narrative game exploring Hindu/Vedic concepts of karma, dharma, and spiritual evolution",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "interactive-fiction",
+    "narrative",
+    "hindu",
+    "vedic",
+    "karma",
+    "dharma",
+    "spiritual"
+  ],
+  "author": "Sumanth Udupi",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "homepage": "."
+}
