@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samsara Saga - Complete Journey</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Embark on a profound spiritual journey through the cycles of existence. Discover ancient wisdom through interactive storytelling.">
+    <meta name="keywords" content="spiritual journey, Hindu philosophy, interactive story, karma, dharma, moksha">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Marcellus:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='%23e09658' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23e09658'/%3E%3C/svg%3E">
+    
+    <style>
+        /* ===== LOADING SCREEN ===== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #1a1817 0%, #0a0908 70%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 1s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-mandala {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 2rem;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .loading-mandala svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .loading-mandala circle,
+        .loading-mandala path {
+            stroke: #e09658;
+            fill: none;
+            stroke-width: 1;
+            opacity: 0.8;
+        }
+        
+        .loading-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #e09658;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .loading-subtitle {
+            font-family: 'Marcellus', serif;
+            color: #c5c1b9;
+            text-align: center;
+            opacity: 0.8;
+        }
+        
+        .loading-progress {
+            width: 300px;
+            height: 4px;
+            background: rgba(224, 150, 88, 0.2);
+            border-radius: 2px;
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e09658, #63b4d1);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== ERROR HANDLING ===== */
+        .error-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2a1817 0%, #1a0908 70%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            color: #c5c1b9;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .error-container.show {
+            display: flex;
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            color: #ef4444;
+            margin-bottom: 2rem;
+        }
+        
+        .error-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .error-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(224, 150, 88, 0.2);
+            border: 1px solid #e09658;
+            border-radius: 8px;
+            color: #e09658;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Marcellus', serif;
+        }
+        
+        .error-btn:hover {
+            background: rgba(224, 150, 88, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* ===== COMPATIBILITY CHECKS ===== */
+        .compatibility-warning {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(245, 158, 11, 0.9);
+            color: #000;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            max-width: 300px;
+            display: none;
+            z-index: 10002;
+        }
+        
+        .compatibility-warning.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-mandala">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="95"/>
+                <circle cx="100" cy="100" r="70"/>
+                <circle cx="100" cy="100" r="45"/>
+                <circle cx="100" cy="100" r="20"/>
+                <g transform="translate(100,100)">
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(0)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(45)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(90)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(135)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(180)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(225)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(270)"/>
+                    <path d="M0,-90 L10,-80 L0,-70 L-10,-80 Z" transform="rotate(315)"/>
+                </g>
+            </svg>
+        </div>
+        <div class="loading-text">Samsara Saga</div>
+        <div class="loading-subtitle">Preparing your spiritual journey...</div>
+        <div class="loading-progress">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+    </div>
+    
+    <!-- Error Container -->
+    <div class="error-container" id="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Spiritual Journey Interrupted</h1>
+        <p class="error-message" id="error-message">
+            We encountered an issue while preparing your spiritual journey. Please ensure your browser supports modern web technologies and try again.
+        </p>
+        <div class="error-actions">
+            <button class="error-btn" onclick="location.reload()">🔄 Restart Journey</button>
+            <a href="index.html" class="error-btn">🏠 Return Home</a>
+            <button class="error-btn" onclick="showCompatibilityInfo()">ℹ️ Browser Support</button>
+        </div>
+    </div>
+    
+    <!-- Compatibility Warning -->
+    <div class="compatibility-warning" id="compatibility-warning">
+        <strong>⚠️ Browser Compatibility</strong><br>
+        For the best experience, please use a modern browser like Chrome, Firefox, Safari, or Edge.
+    </div>
+    
+    <!-- Main Game Container (Will be populated by CinematicUISystem) -->
+    <div id="game-container"></div>
+    
+    <!-- Core Game Systems -->
+    <script src="UnifiedGameFlow.js" onerror="console.error('Failed to load UnifiedGameFlow.js')"></script>
+    <script src="EnhancedACT1StoryData.js" onerror="console.error('Failed to load EnhancedACT1StoryData.js')"></script>
+    <script src="CinematicUISystem.js" onerror="console.error('Failed to load CinematicUISystem.js')"></script>
+
+    <!-- Legacy System Integration -->
+    <script src="GameStateManager.js" onerror="console.error('Failed to load GameStateManager.js')"></script>
+    <script src="StoryEngine.js" onerror="console.error('Failed to load StoryEngine.js')"></script>
+
+    <!-- Script Loading Verification -->
+    <script>
+        console.log('🔍 Verifying script loading...');
+        console.log('UnifiedGameFlow available:', typeof window.UnifiedGameFlow);
+        console.log('ENHANCED_ACT1_STORY_DATA available:', typeof window.ENHANCED_ACT1_STORY_DATA);
+        console.log('CinematicUISystem available:', typeof window.CinematicUISystem);
+
+        // Additional debugging
+        if (window.ENHANCED_ACT1_STORY_DATA) {
+            console.log('✅ Story data loaded with scenes:', Object.keys(window.ENHANCED_ACT1_STORY_DATA).length);
+        } else {
+            console.error('❌ ENHANCED_ACT1_STORY_DATA is not available');
+            // Try to manually check if the file loaded
+            console.log('Available window properties containing "ACT":',
+                Object.keys(window).filter(key => key.toUpperCase().includes('ACT')));
+        }
+
+        // Check for any JavaScript errors
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript Error:', e.error);
+            console.error('File:', e.filename, 'Line:', e.lineno);
+        });
+    </script>
+    
+    <!-- Main Application Script -->
+    <script>
+        /**
+         * Unified Samsara Saga Application
+         * Integrates all systems for a seamless spiritual journey experience
+         */
+        class SamsaraSagaApp {
+            constructor() {
+                this.loadingProgress = 0;
+                this.requiredSystems = [
+                'UnifiedGameFlow',
+                'CinematicUISystem',
+                'ENHANCED_ACT1_STORY_DATA'
+            ];
+            this.criticalSystems = ['UnifiedGameFlow']; // Only these are absolutely required
+                this.gameFlow = null;
+                this.uiSystem = null;
+                this.isInitialized = false;
+                
+                // Start initialization
+                this.initialize();
+            }
+            
+            /**
+             * Initialize the complete application
+             */
+            async initialize() {
+                console.log('🌟 Initializing Samsara Saga...');
+                
+                try {
+                    // Show loading screen
+                    this.showLoadingProgress(10, 'Checking browser compatibility...');
+                    
+                    // Check browser compatibility
+                    if (!this.checkCompatibility()) {
+                        this.showCompatibilityWarning();
+                        return;
+                    }
+                    
+                    this.showLoadingProgress(25, 'Loading spiritual systems...');
+                    
+                    // Wait for required systems to load
+                    await this.waitForSystems();
+                    
+                    this.showLoadingProgress(50, 'Initializing game flow...');
+                    
+                    // Initialize game flow system
+                    this.gameFlow = new window.UnifiedGameFlow();
+                    
+                    this.showLoadingProgress(70, 'Creating cinematic interface...');
+                    
+                    // Initialize UI system
+                    this.uiSystem = new window.CinematicUISystem(this.gameFlow);
+                    
+                    this.showLoadingProgress(85, 'Loading character data...');
+                    
+                    // Load character data and determine starting point
+                    await this.loadCharacterAndStartingPoint();
+                    
+                    this.showLoadingProgress(95, 'Finalizing spiritual preparation...');
+                    
+                    // Set up global integration
+                    this.setupGlobalIntegration();
+                    
+                    this.showLoadingProgress(100, 'Journey ready!');
+                    
+                    // Start the game
+                    setTimeout(() => {
+                        this.startGame();
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Failed to initialize Samsara Saga:', error);
+                    this.showError('Initialization failed: ' + error.message);
+                }
+            }
+            
+            /**
+             * Check browser compatibility
+             */
+            checkCompatibility() {
+                const requiredFeatures = [
+                    'Promise',
+                    'fetch',
+                    'localStorage',
+                    'requestAnimationFrame',
+                    'classList'
+                ];
+                
+                for (const feature of requiredFeatures) {
+                    if (feature === 'Promise' && typeof Promise === 'undefined') return false;
+                    if (feature === 'fetch' && typeof fetch === 'undefined') return false;
+                    if (feature === 'localStorage' && typeof localStorage === 'undefined') return false;
+                    if (feature === 'requestAnimationFrame' && typeof requestAnimationFrame === 'undefined') return false;
+                    if (feature === 'classList' && !document.createElement('div').classList) return false;
+                }
+                
+                // Check CSS Grid support
+                const testElement = document.createElement('div');
+                testElement.style.display = 'grid';
+                if (testElement.style.display !== 'grid') {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            /**
+             * Wait for all required systems to be available
+             */
+            async waitForSystems() {
+                console.log('⏳ Waiting for systems to load...');
+
+                // Give scripts more time to load and execute
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Check what we have
+                const systemCheck = {
+                    UnifiedGameFlow: typeof window.UnifiedGameFlow !== 'undefined',
+                    CinematicUISystem: typeof window.CinematicUISystem !== 'undefined',
+                    ENHANCED_ACT1_STORY_DATA: typeof window.ENHANCED_ACT1_STORY_DATA !== 'undefined'
+                };
+
+                console.log('📋 System availability check:', systemCheck);
+
+                // If we have the critical systems, proceed
+                if (systemCheck.UnifiedGameFlow) {
+                    console.log('✅ Critical systems available, proceeding...');
+
+                    // Create fallback story data if missing
+                    if (!systemCheck.ENHANCED_ACT1_STORY_DATA) {
+                        console.warn('📚 Creating fallback story data...');
+                        window.ENHANCED_ACT1_STORY_DATA = this.createFallbackStoryData();
+                    }
+
+                    return true;
+                } else {
+                    throw new Error('Critical system UnifiedGameFlow failed to load');
+                }
+            }
+
+            /**
+             * Create fallback story data
+             */
+            createFallbackStoryData() {
+                return {
+                    AWAKENING_PROLOGUE: {
+                        title: "The Journey Begins",
+                        subtitle: "Your spiritual adventure starts here...",
+                        text: "Your consciousness awakens to a world of infinite possibilities. Though the full story system is still loading, your journey of self-discovery begins now.",
+                        atmosphericDescription: "A gentle breeze carries the promise of adventure and wisdom.",
+                        choices: [
+                            {
+                                id: "explore",
+                                text: "🌟 Begin exploring your spiritual path",
+                                nextScene: "AWAKENING_PROLOGUE",
+                                philosophicalTheme: "beginning"
+                            },
+                            {
+                                id: "meditate",
+                                text: "🧘 Take a moment to center yourself",
+                                nextScene: "AWAKENING_PROLOGUE",
+                                philosophicalTheme: "mindfulness"
+                            }
+                        ],
+                        meditation: {
+                            available: true,
+                            text: "Center yourself before beginning this sacred journey"
+                        }
+                    }
+                };
+            }
+            
+            /**
+             * Load character data and determine starting point
+             */
+            async loadCharacterAndStartingPoint() {
+                // Try to load character data from URL (coming from CB)
+                const hasUrlData = this.gameFlow.loadCharacterData('url');
+                
+                if (hasUrlData) {
+                    console.log('📱 Character data loaded from URL parameters');
+                    // Start with story mode since character is created
+                    this.startingMode = 'story';
+                    this.startingScene = 'AWAKENING_PROLOGUE';
+                } else {
+                    // Try to load from saved game
+                    const hasSavedGame = this.gameFlow.loadGameProgress();
+                    
+                    if (hasSavedGame) {
+                        console.log('💾 Saved game loaded');
+                        this.startingMode = 'continue';
+                        this.startingScene = this.gameFlow.worldState.currentScene;
+                    } else {
+                        console.log('🆕 No character data found - redirecting to character creation');
+                        this.startingMode = 'redirect_to_cb';
+                    }
+                }
+            }
+            
+            /**
+             * Set up global integration between systems
+             */
+            setupGlobalIntegration() {
+                // Make systems globally accessible
+                window.samsaraSaga = this;
+                window.unifiedGameFlow = this.gameFlow;
+                window.cinematicUI = this.uiSystem;
+                
+                // Set up cross-system communication
+                this.gameFlow.uiSystem = this.uiSystem;
+                this.uiSystem.gameFlow = this.gameFlow;
+                
+                // Set up event listeners for seamless integration
+                this.setupEventListeners();
+                
+                console.log('🔗 Global integration established');
+            }
+            
+            /**
+             * Set up event listeners for system integration
+             */
+            setupEventListeners() {
+                // Listen for philosophical insights
+                document.addEventListener('philosophical-insight', (event) => {
+                    this.uiSystem.showPhilosophicalInsight(event.detail.theme, event.detail.concept);
+                });
+                
+                // Listen for phase changes
+                document.addEventListener('phase-change', (event) => {
+                    this.uiSystem.updatePhaseIndicator(event.detail.newPhase);
+                });
+                
+                // Listen for character updates
+                document.addEventListener('character-update', (event) => {
+                    this.uiSystem.updateCharacterDisplay();
+                });
+                
+                // Listen for scene changes
+                document.addEventListener('scene-change', (event) => {
+                    this.loadScene(event.detail.sceneId);
+                });
+                
+                // Handle errors gracefully
+                window.addEventListener('error', (event) => {
+                    console.error('Runtime error:', event.error);
+                    this.handleRuntimeError(event.error);
+                });
+                
+                // Handle unhandled promise rejections
+                window.addEventListener('unhandledrejection', (event) => {
+                    console.error('Unhandled promise rejection:', event.reason);
+                    this.handleRuntimeError(event.reason);
+                });
+            }
+            
+            /**
+             * Start the game based on the determined starting mode
+             */
+            startGame() {
+                this.hideLoadingScreen();
+                
+                switch (this.startingMode) {
+                    case 'story':
+                        this.startStoryMode();
+                        break;
+                    case 'continue':
+                        this.continueGame();
+                        break;
+                    case 'redirect_to_cb':
+                        this.redirectToCharacterCreation();
+                        break;
+                    default:
+                        this.showError('Unknown starting mode: ' + this.startingMode);
+                }
+            }
+            
+            /**
+             * Start story mode with character data
+             */
+            startStoryMode() {
+                console.log('🌟 Starting story mode...');
+                
+                // Update UI with character data
+                this.uiSystem.updateCharacterDisplay();
+                
+                // Load the starting scene
+                this.loadScene(this.startingScene);
+                
+                // Show welcome notification
+                const characterName = this.gameFlow.playerProfile.nakshatra || 'Seeker';
+                this.uiSystem.showNotification(
+                    `Welcome, ${characterName}! Your spiritual journey begins...`,
+                    'success',
+                    5000
+                );
+                
+                // Mark as initialized
+                this.isInitialized = true;
+            }
+            
+            /**
+             * Continue existing game
+             */
+            continueGame() {
+                console.log('▶️ Continuing saved game...');
+                
+                // Update UI with saved data
+                this.uiSystem.updateCharacterDisplay();
+                
+                // Load the current scene
+                this.loadScene(this.startingScene);
+                
+                // Show continuation notification
+                this.uiSystem.showNotification(
+                    'Welcome back! Your spiritual journey continues...',
+                    'info',
+                    4000
+                );
+                
+                // Mark as initialized
+                this.isInitialized = true;
+            }
+            
+            /**
+             * Redirect to character creation
+             */
+            redirectToCharacterCreation() {
+                console.log('🔄 Redirecting to character creation...');
+                
+                // Show transition message
+                this.uiSystem.showNotification(
+                    'Redirecting to character creation...',
+                    'info',
+                    3000
+                );
+                
+                // Redirect after a moment
+                setTimeout(() => {
+                    window.location.href = 'CB-fixed.html';
+                }, 2000);
+            }
+            
+            /**
+             * Load a specific scene
+             */
+            loadScene(sceneId) {
+                console.log('📖 Loading scene:', sceneId);
+                
+                // Get scene data from enhanced story data
+                const sceneData = window.ENHANCED_ACT1_STORY_DATA[sceneId];
+                
+                if (sceneData) {
+                    // Update game state
+                    this.gameFlow.worldState.currentScene = sceneId;
+                    
+                    // Load scene in UI
+                    this.uiSystem.loadScene(sceneData);
+                    
+                    // Save progress
+                    this.gameFlow.saveGameProgress();
+                } else {
+                    console.warn('Scene not found:', sceneId);
+                    this.uiSystem.showNotification(
+                        'Scene not found. The journey continues in unexpected ways...',
+                        'warning',
+                        4000
+                    );
+                }
+            }
+            
+            /**
+             * Handle choice selection
+             */
+            handleChoice(choice) {
+                console.log('✨ Choice selected:', choice);
+                
+                // Record decision in game flow
+                this.gameFlow.recordDecision(choice);
+                
+                // Process choice effects
+                if (choice.effects) {
+                    this.processChoiceEffects(choice.effects);
+                }
+                
+                // Handle scene transition
+                if (choice.nextScene) {
+                    // Queue transition
+                    this.uiSystem.queueTransition('scene_change', {
+                        targetScene: choice.nextScene,
+                        callback: () => {
+                            this.loadScene(choice.nextScene);
+                        }
+                    });
+                } else if (choice.nextAct) {
+                    this.transitionToAct(choice.nextAct);
+                }
+            }
+            
+            /**
+             * Process choice effects
+             */
+            processChoiceEffects(effects) {
+                if (effects.attributes) {
+                    Object.entries(effects.attributes).forEach(([attr, value]) => {
+                        if (this.gameFlow.playerProfile.attributes[attr] !== undefined) {
+                            this.gameFlow.playerProfile.attributes[attr] += value;
+                            
+                            // Show attribute gain notification
+                            this.uiSystem.showNotification(
+                                `${this.getAttributeName(attr)} increased by ${value}!`,
+                                'growth',
+                                2000
+                            );
+                        }
+                    });
+                    
+                    // Update UI
+                    this.uiSystem.updateCharacterDisplay();
+                }
+                
+                if (effects.philosophical) {
+                    Object.entries(effects.philosophical).forEach(([theme, insight]) => {
+                        this.gameFlow.advancePhilosophicalUnderstanding(theme, { text: insight });
+                    });
+                }
+                
+                if (effects.worldState) {
+                    Object.entries(effects.worldState).forEach(([key, value]) => {
+                        this.gameFlow.worldState[key] = value;
+                    });
+                }
+            }
+            
+            /**
+             * Get readable attribute name
+             */
+            getAttributeName(attr) {
+                const names = {
+                    wisdom: 'Wisdom',
+                    compassion: 'Compassion',
+                    spiritual_insight: 'Spiritual Insight',
+                    determination: 'Determination',
+                    detachment: 'Detachment'
+                };
+                return names[attr] || attr;
+            }
+            
+            /**
+             * Show loading progress
+             */
+            showLoadingProgress(percentage, message) {
+                const bar = document.getElementById('loading-bar');
+                const subtitle = document.querySelector('.loading-subtitle');
+                
+                if (bar) {
+                    bar.style.width = percentage + '%';
+                }
+                if (subtitle) {
+                    subtitle.textContent = message;
+                }
+                
+                this.loadingProgress = percentage;
+            }
+            
+            /**
+             * Hide loading screen
+             */
+            hideLoadingScreen() {
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 1000);
+                }
+            }
+            
+            /**
+             * Show error screen
+             */
+            showError(message) {
+                const errorContainer = document.getElementById('error-container');
+                const errorMessage = document.getElementById('error-message');
+                
+                if (errorMessage) {
+                    errorMessage.textContent = message;
+                }
+                if (errorContainer) {
+                    errorContainer.classList.add('show');
+                }
+                
+                // Hide loading screen
+                this.hideLoadingScreen();
+            }
+            
+            /**
+             * Show compatibility warning
+             */
+            showCompatibilityWarning() {
+                const warning = document.getElementById('compatibility-warning');
+                if (warning) {
+                    warning.classList.add('show');
+                    setTimeout(() => {
+                        warning.classList.remove('show');
+                    }, 10000);
+                }
+            }
+            
+            /**
+             * Handle runtime errors gracefully
+             */
+            handleRuntimeError(error) {
+                // Don't show error screen if already initialized and running
+                if (this.isInitialized) {
+                    console.error('Runtime error handled gracefully:', error);
+                    this.uiSystem.showNotification(
+                        'A minor issue occurred, but your journey continues...',
+                        'warning',
+                        3000
+                    );
+                } else {
+                    // Show error screen for initialization failures
+                    this.showError('A technical issue interrupted the initialization. Please refresh to try again.');
+                }
+            }
+        }
+        
+        // Global functions for external integration
+        function showCompatibilityInfo() {
+            alert(`Samsara Saga works best with:
+            
+✅ Chrome 70+
+✅ Firefox 65+  
+✅ Safari 12+
+✅ Edge 79+
+
+Features required:
+• CSS Grid Layout
+• ES6 JavaScript
+• Local Storage
+• Modern CSS animations`);
+        }
+        
+        // Immediate debugging check
+        console.log('🔍 Immediate post-script check:');
+        console.log('UnifiedGameFlow:', typeof window.UnifiedGameFlow);
+        console.log('ENHANCED_ACT1_STORY_DATA:', typeof window.ENHANCED_ACT1_STORY_DATA);
+        console.log('CinematicUISystem:', typeof window.CinematicUISystem);
+
+        // Auto-start application when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Starting Samsara Saga application...');
+
+            // Additional check at DOM ready
+            console.log('📋 DOM Ready check:');
+            console.log('UnifiedGameFlow:', typeof window.UnifiedGameFlow);
+            console.log('ENHANCED_ACT1_STORY_DATA:', typeof window.ENHANCED_ACT1_STORY_DATA);
+            console.log('CinematicUISystem:', typeof window.CinematicUISystem);
+
+            window.samsaraSagaApp = new SamsaraSagaApp();
+        });
+
+        // Fallback for older browsers
+        if (document.readyState === 'loading') {
+            // DOM is still loading
+        } else {
+            // DOM already loaded
+            console.log('🚀 Starting Samsara Saga application (DOM already ready)...');
+
+            // Additional check for immediate start
+            console.log('⚡ Immediate start check:');
+            console.log('UnifiedGameFlow:', typeof window.UnifiedGameFlow);
+            console.log('ENHANCED_ACT1_STORY_DATA:', typeof window.ENHANCED_ACT1_STORY_DATA);
+            console.log('CinematicUISystem:', typeof window.CinematicUISystem);
+
+            window.samsaraSagaApp = new SamsaraSagaApp();
+        }
+    </script>
+    
+    <!-- Service Worker for Offline Support (Optional) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then((registration) => {
+                    console.log('SW registered: ', registration);
+                }).catch((registrationError) => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+    </script>
+    
+    <!-- Analytics Integration (Optional) -->
+    <script>
+        // Add analytics code here if needed
+        // This could track spiritual journey progress for insights
+    </script>
+</body>
+</html>

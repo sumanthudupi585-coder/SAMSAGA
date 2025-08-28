@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Data Test</title>
+</head>
+<body>
+    <h1>Story Data Loading Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        console.log('🧪 Testing story data loading...');
+        
+        // Listen for any errors
+        window.addEventListener('error', function(e) {
+            console.error('❌ JavaScript Error:', e.error);
+            console.error('File:', e.filename, 'Line:', e.lineno);
+            document.getElementById('results').innerHTML += `<p style="color: red;">Error: ${e.error.message}</p>`;
+        });
+        
+        function updateResults(message, isError = false) {
+            const results = document.getElementById('results');
+            const color = isError ? 'red' : 'green';
+            results.innerHTML += `<p style="color: ${color};">${message}</p>`;
+            console.log(message);
+        }
+    </script>
+    
+    <!-- Load the story data -->
+    <script src="EnhancedACT1StoryData.js" onerror="updateResults('❌ Failed to load EnhancedACT1StoryData.js', true)"></script>
+    
+    <script>
+        // Test the loaded data
+        setTimeout(() => {
+            try {
+                if (typeof window.ENHANCED_ACT1_STORY_DATA === 'undefined') {
+                    updateResults('❌ ENHANCED_ACT1_STORY_DATA not found on window', true);
+                } else {
+                    updateResults('✅ ENHANCED_ACT1_STORY_DATA found on window');
+                    
+                    const data = window.ENHANCED_ACT1_STORY_DATA;
+                    const sceneCount = Object.keys(data).length;
+                    updateResults(`✅ Story data contains ${sceneCount} scenes`);
+                    
+                    // Test specific scenes
+                    if (data.AWAKENING_PROLOGUE) {
+                        updateResults('✅ AWAKENING_PROLOGUE scene found');
+                        updateResults(`✅ Scene title: ${data.AWAKENING_PROLOGUE.title}`);
+                    } else {
+                        updateResults('❌ AWAKENING_PROLOGUE scene missing', true);
+                    }
+                    
+                    if (data.DHARMAPURA_OBSERVATION) {
+                        updateResults('✅ DHARMAPURA_OBSERVATION scene found');
+                    } else {
+                        updateResults('❌ DHARMAPURA_OBSERVATION scene missing', true);
+                    }
+                    
+                    updateResults('🎉 Story data test completed successfully!');
+                }
+            } catch (error) {
+                updateResults(`❌ Test error: ${error.message}`, true);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

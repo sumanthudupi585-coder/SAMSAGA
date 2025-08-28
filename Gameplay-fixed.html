@@ -1055,8 +1055,8 @@
                     <button class="control-btn btn-danger" onclick="resetCurrentStage()">
                         Reset Stage
                     </button>
-                    <button class="control-btn btn-secondary" onclick="skipToNextQuest()">
-                        Continue Journey
+                    <button class="control-btn btn-secondary" onclick="masterGameState.startStoryMode()">
+                        Skip to Story Mode
                     </button>
                 </div>
             </div>
@@ -1135,6 +1135,12 @@
     <!-- Notification Container -->
     <div class="notification-container" id="notification-container"></div>
 
+    <!-- Story Data Scripts -->
+    <script src="ACT1storyData.js"></script>
+    <script src="ACT2storyData.js"></script>
+    <script src="ACT3storyData.js"></script>
+    <script src="StoryEngine.js"></script>
+
     <script>
         // ===== COMPREHENSIVE GAME STATE MANAGEMENT =====
         class MasterGameState {
@@ -1175,27 +1181,116 @@
             }
             
             initializeCharacter() {
-                // Extract character data from URL parameters (maintain compatibility)
+                // Extract character data from URL parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const nakshatraNum = urlParams.get('nakshatra');
-                
-                // Nakshatra data
+                const guna1 = urlParams.get('guna1');
+                const pada = urlParams.get('pada');
+                const guna3 = urlParams.get('guna3');
+
+                console.log('Loading character data:', { nakshatraNum, guna1, pada, guna3 });
+
+                // Complete Nakshatra data mapping
                 const nakshatraData = {
-                    12: { name: 'Uttara Phalguni', gana: 'Manushya', element: 'fire' },
-                    1: { name: 'Ashwini', gana: 'Deva', element: 'fire' },
-                    2: { name: 'Bharani', gana: 'Manushya', element: 'earth' },
-                    3: { name: 'Krittika', gana: 'Rakshasa', element: 'fire' }
+                    1: { name: 'Ashwini', gana: 'Deva', element: 'fire', shakti: 'To heal quickly' },
+                    2: { name: 'Bharani', gana: 'Manushya', element: 'earth', shakti: 'To renew and purify' },
+                    3: { name: 'Krittika', gana: 'Rakshasa', element: 'fire', shakti: 'To burn illusion' },
+                    4: { name: 'Rohini', gana: 'Manushya', element: 'earth', shakti: 'To make things grow' },
+                    5: { name: 'Mrigashira', gana: 'Deva', element: 'air', shakti: 'To find fulfillment' },
+                    6: { name: 'Ardra', gana: 'Manushya', element: 'water', shakti: 'To feel and act' },
+                    7: { name: 'Punarvasu', gana: 'Deva', element: 'air', shakti: 'To regenerate and recover' },
+                    8: { name: 'Pushya', gana: 'Deva', element: 'water', shakti: 'To create spiritual energy' },
+                    9: { name: 'Ashlesha', gana: 'Rakshasa', element: 'water', shakti: 'To poison and heal' },
+                    10: { name: 'Magha', gana: 'Rakshasa', element: 'fire', shakti: 'To leave the body' },
+                    11: { name: 'Purva Phalguni', gana: 'Manushya', element: 'fire', shakti: 'To find love and enjoyment' },
+                    12: { name: 'Uttara Phalguni', gana: 'Manushya', element: 'fire', shakti: 'To accumulate security' },
+                    13: { name: 'Hasta', gana: 'Manushya', element: 'fire', shakti: 'To manifest desires' },
+                    14: { name: 'Chitra', gana: 'Rakshasa', element: 'fire', shakti: 'To gather merit' },
+                    15: { name: 'Swati', gana: 'Deva', element: 'air', shakti: 'To scatter and disperse' },
+                    16: { name: 'Vishakha', gana: 'Rakshasa', element: 'fire', shakti: 'To achieve goals' },
+                    17: { name: 'Anuradha', gana: 'Deva', element: 'water', shakti: 'To worship and connect' },
+                    18: { name: 'Jyeshtha', gana: 'Rakshasa', element: 'air', shakti: 'To be eldest' },
+                    19: { name: 'Mula', gana: 'Rakshasa', element: 'air', shakti: 'To destroy' },
+                    20: { name: 'Purva Ashadha', gana: 'Manushya', element: 'water', shakti: 'To invigorate' },
+                    21: { name: 'Uttara Ashadha', gana: 'Manushya', element: 'water', shakti: 'To gain victory' },
+                    22: { name: 'Shravana', gana: 'Deva', element: 'air', shakti: 'To connect and link' },
+                    23: { name: 'Dhanishta', gana: 'Rakshasa', element: 'air', shakti: 'To give fame' },
+                    24: { name: 'Shatabhisha', gana: 'Rakshasa', element: 'air', shakti: 'To heal' },
+                    25: { name: 'Purva Bhadrapada', gana: 'Manushya', element: 'air', shakti: 'To raise up' },
+                    26: { name: 'Uttara Bhadrapada', gana: 'Manushya', element: 'air', shakti: 'To bring rain' },
+                    27: { name: 'Revati', gana: 'Deva', element: 'air', shakti: 'To nourish and protect' }
                 };
-                
+
+                // Initialize GameStateManager with character data
                 if (nakshatraNum && nakshatraData[nakshatraNum]) {
                     const nakshatra = nakshatraData[nakshatraNum];
+
+                    // Set character data in GameStateManager
+                    window.gameStateManager.playerProfile = {
+                        nakshatra: nakshatra.name,
+                        gana: nakshatra.gana,
+                        shakti: nakshatra.shakti,
+                        gunas: {
+                            sattva: guna1 === 'Sattva' ? 2 : (guna3 === 'Sattva' ? 1 : 0),
+                            rajas: guna1 === 'Rajas' ? 2 : (guna3 === 'Rajas' ? 1 : 0),
+                            tamas: guna1 === 'Tamas' ? 2 : (guna3 === 'Tamas' ? 1 : 0)
+                        },
+                        pada: pada || 'Dharma',
+                        avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                    };
+
+                    // Initialize game state for ACT 1
+                    window.gameStateManager.playerState.currentAct = 1;
+                    window.gameStateManager.playerState.currentSceneId = 'JOURNEY_START';
+
+                    // Save the character data
+                    window.gameStateManager.saveGame();
+
+                    // Update display
                     document.getElementById('character-name').textContent = nakshatra.name;
                     document.getElementById('character-gana').textContent = nakshatra.gana + ' Gana';
+
+                    console.log('Character initialized:', window.gameStateManager.playerProfile);
+
+                    // Show immediate story access notification
+                    setTimeout(() => {
+                        this.showNotification(`Welcome ${nakshatra.name}! Click "Skip to Story Mode" to begin your journey immediately.`, 'info');
+                    }, 2000);
+                } else {
+                    console.warn('Invalid or missing character data in URL');
+                    // Set default character data
+                    window.gameStateManager.playerProfile = {
+                        nakshatra: 'Uttara Phalguni',
+                        gana: 'Manushya',
+                        shakti: 'To accumulate security',
+                        gunas: { sattva: 1, rajas: 2, tamas: 1 },
+                        pada: 'Dharma',
+                        avatar: 'images/avatars/manushya.png'
+                    };
+                    window.gameStateManager.playerState.currentAct = 1;
+                    window.gameStateManager.playerState.currentSceneId = 'JOURNEY_START';
                 }
-                
+
                 this.updateDisplay();
+                this.initializeStoryEngine();
                 this.initializeStage1();
             }
+
+            // ===== STORY ENGINE INTEGRATION =====
+            initializeStoryEngine() {
+                // Initialize story engine with game state manager
+                if (window.StoryEngine && window.gameStateManager) {
+                    this.storyEngine = new window.StoryEngine(window.gameStateManager);
+                    console.log('Story engine initialized');
+
+                    // Add story interface after master puzzle
+                    this.createStoryInterface();
+                } else {
+                    console.warn('StoryEngine or GameStateManager not available');
+                }
+            }
+
+            createStoryInterface() {\n                // Add story section to the main panel\n                const mainPanel = document.querySelector('.main-panel');\n                const storySection = document.createElement('div');\n                storySection.id = 'story-section';\n                storySection.innerHTML = `\n                    <div style=\"margin: 3rem 0; padding: 2rem; background: rgba(26, 24, 23, 0.6); border: 2px solid rgba(99, 180, 209, 0.3); border-radius: 15px;\">\n                        <h2 style=\"font-family: var(--font-title); font-size: 2rem; color: var(--color-info); text-align: center; margin-bottom: 1.5rem;\">Begin Your Samsara Saga</h2>\n                        <p style=\"text-align: center; font-size: 1.1rem; margin-bottom: 2rem; color: var(--color-text);\">Complete the Master's Trials above, or begin your story journey immediately.</p>\n                        <div style=\"text-align: center;\">\n                            <button class=\"control-btn btn-info\" onclick=\"masterGameState.startStoryMode()\" style=\"font-size: 1.1rem; padding: 1rem 2rem;\">\n                                🌟 Enter the Story Realm\n                            </button>\n                        </div>\n                    </div>\n                    <div id=\"story-gameplay\" style=\"display: none;\">\n                        <div id=\"story-content\" style=\"background: rgba(26, 24, 23, 0.8); border: 2px solid rgba(99, 180, 209, 0.3); border-radius: 15px; padding: 2rem; margin: 2rem 0;\">\n                            <h3 id=\"story-title\" style=\"font-family: var(--font-title); font-size: 1.8rem; color: var(--color-info); margin-bottom: 1rem;\"></h3>\n                            <div id=\"story-text\" style=\"font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem; color: var(--color-text);\"></div>\n                            <div id=\"story-choices\" style=\"display: flex; flex-direction: column; gap: 1rem;\"></div>\n                        </div>\n                    </div>\n                `;\n                \n                // Insert after the master puzzle container\n                const puzzleContainer = document.querySelector('.master-puzzle-container');\n                puzzleContainer.parentNode.insertBefore(storySection, puzzleContainer.nextSibling);\n            }\n            \n            startStoryMode() {\n                console.log('Starting story mode...');\n                \n                // Hide the story intro and show the gameplay\n                const storySection = document.getElementById('story-section');\n                const storyIntro = storySection.children[0];\n                const storyGameplay = document.getElementById('story-gameplay');\n                \n                storyIntro.style.display = 'none';\n                storyGameplay.style.display = 'block';\n                \n                // Load the current scene\n                this.loadCurrentScene();\n            }\n            \n            loadCurrentScene() {\n                if (!this.storyEngine) {\n                    console.error('Story engine not initialized');\n                    return;\n                }\n                \n                const scene = this.storyEngine.getCurrentScene();\n                if (!scene) {\n                    console.error('No current scene found');\n                    return;\n                }\n                \n                // Update story display\n                document.getElementById('story-title').textContent = scene.title || 'Untitled Scene';\n                document.getElementById('story-text').textContent = scene.text || 'No description available.';\n                \n                // Load choices\n                this.loadStoryChoices();\n            }\n            \n            loadStoryChoices() {\n                const choices = this.storyEngine.getAvailableChoices();\n                const choicesContainer = document.getElementById('story-choices');\n                choicesContainer.innerHTML = '';\n                \n                choices.forEach(choice => {\n                    const choiceButton = document.createElement('button');\n                    choiceButton.className = 'control-btn btn-secondary';\n                    choiceButton.style.padding = '1rem 1.5rem';\n                    choiceButton.style.textAlign = 'left';\n                    choiceButton.style.fontSize = '1rem';\n                    choiceButton.textContent = choice.text || 'Unnamed choice';\n                    \n                    choiceButton.addEventListener('click', () => {\n                        this.makeChoice(choice.id || choice.nextScene);\n                    });\n                    \n                    choicesContainer.appendChild(choiceButton);\n                });\n            }\n            \n            makeChoice(choiceId) {\n                console.log('Making choice:', choiceId);\n                \n                if (this.storyEngine.processChoice(choiceId)) {\n                    // Choice was processed successfully, reload the scene\n                    setTimeout(() => {\n                        this.loadCurrentScene();\n                    }, 500);\n                } else {\n                    console.error('Failed to process choice:', choiceId);\n                }\n            }
             
             setupEventListeners() {
                 // Prevent any auto-refresh mechanisms
@@ -1712,6 +1807,7 @@
         
         // ===== GLOBAL FUNCTIONS =====
         let gameState;
+        let masterGameState;
 
         // Global notification function for early error handling
         function showNotification(message, type = 'info') {
@@ -1751,7 +1847,9 @@
         // Initialize game
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                gameState = new MasterGameState();
+                masterGameState = new MasterGameState();
+                gameState = masterGameState; // Keep backward compatibility
+                window.masterGameState = masterGameState; // Make globally accessible
                 console.log('🌟 Samsara Saga Master\'s Trial initialized successfully!');
 
                 // Ensure all elements are properly initialized
@@ -1822,7 +1920,7 @@
             gameState.hintsUsed++;
 
             const hints = {
-                1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180°. Listen for the harmonic convergence.",
+                1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180��. Listen for the harmonic convergence.",
                 2: "The Flower of Life begins at the center and radiates outward. Activate the central node first, then the six surrounding petals in clockwise order.",
                 3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral → Solar → Heart → Throat → Third Eye → Crown."
             };
@@ -1863,8 +1961,10 @@
         }
 
         function skipToNextQuest() {
-            if (confirm('🚨 Skip this profound trial? You will miss the deepest spiritual rewards and cosmic attunement. Continue?')) {
-                continueEpicJourney();
+            if (masterGameState && masterGameState.startStoryMode) {
+                masterGameState.startStoryMode();
+            } else {
+                showNotification('Story mode not yet available. Please wait for initialization.', 'warning');
             }
         }
 
