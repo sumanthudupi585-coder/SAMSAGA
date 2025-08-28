@@ -1709,7 +1709,7 @@
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; text-align: left;">
                                 <div>✨ Harmonic Resonance Master</div>
                                 <div>⬢ Sacred Geometry Sage</div>
-                                <div>���� Chakra Awakening Adept</div>
+                                <div>👑 Chakra Awakening Adept</div>
                                 <div>🌳 Banyan Tree Blessed</div>
                                 <div>🎯 Perfect Cosmic Attunement</div>
                                 <div>🧘 Transcendent Consciousness</div>
@@ -1842,7 +1842,9 @@
         // Initialize game
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                gameState = new MasterGameState();
+                masterGameState = new MasterGameState();
+                gameState = masterGameState; // Keep backward compatibility
+                window.masterGameState = masterGameState; // Make globally accessible
                 console.log('🌟 Samsara Saga Master\'s Trial initialized successfully!');
 
                 // Ensure all elements are properly initialized
@@ -1915,7 +1917,7 @@
             const hints = {
                 1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180°. Listen for the harmonic convergence.",
                 2: "The Flower of Life begins at the center and radiates outward. Activate the central node first, then the six surrounding petals in clockwise order.",
-                3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral → Solar → Heart → Throat → Third Eye → Crown."
+                3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral ��� Solar → Heart → Throat → Third Eye → Crown."
             };
 
             gameState.showFeedback(`Cosmic Guidance: ${hints[gameState.currentStage]}`, 'hint');
