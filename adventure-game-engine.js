@@ -879,13 +879,19 @@ class SpiritualAdventureEngine {
             philosophicalInsights: this.philosophicalInsights,
             interactionHistory: this.interactionHistory,
             unlockedSecrets: this.getUnlockedSecrets(),
-            atmosphericState: this.getCurrentAtmosphericState()
+            atmosphericState: this.getCurrentAtmosphericState(),
+            narrativeProgression: {
+                ...this.narrativeProgression,
+                unlockedNarratives: Array.from(this.narrativeProgression.unlockedNarratives),
+                branchingPaths: Object.fromEntries(this.narrativeProgression.branchingPaths)
+            }
         };
-        
+
         if (this.gameStateManager && this.gameStateManager.worldState) {
             this.gameStateManager.worldState.enhancedAdventureState = enhancedState;
+            this.gameStateManager.worldState.characterProgress = enhancedState;
         }
-        
+
         return enhancedState;
     }
     
