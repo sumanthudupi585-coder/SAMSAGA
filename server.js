@@ -8,6 +8,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { URL } = require('url');
 
 const PORT = 3000;
 
@@ -24,31 +25,44 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
-    console.log(`Request: ${req.url}`);
-    
-    // Handle root URL
-    let filePath = req.url === '/' ? './index.html' : '.' + req.url;
-    
-    // Get the file extension
-    const extname = path.extname(filePath);
-    let contentType = MIME_TYPES[extname] || 'application/octet-stream';
-    
-    // Read the file
+    const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+    const pathname = decodeURIComponent(parsedUrl.pathname);
+    console.log(`Request: ${pathname}${parsedUrl.search || ''}`);
+
+    let filePath = pathname === '/' ? './index.html' : '.' + pathname;
+
+    // Prevent directory traversal
+    const normalizedPath = path.normalize(filePath).replace(/^\.+/, '.');
+
+    let extname = path.extname(normalizedPath);
+    // Default to .html if no extension and a directory path
+    if (!extname && !normalizedPath.endsWith('/')) {
+        // Try to serve file without query that might be an html
+        const asHtml = normalizedPath + '.html';
+        if (fs.existsSync(asHtml)) {
+            extname = '.html';
+            filePath = asHtml;
+        } else {
+            filePath = normalizedPath;
+        }
+    } else {
+        filePath = normalizedPath;
+    }
+
+    const contentType = MIME_TYPES[extname] || 'application/octet-stream';
+
     fs.readFile(filePath, (error, content) => {
         if (error) {
             if (error.code === 'ENOENT') {
-                // File not found
-                fs.readFile('./404.html', (error, content) => {
+                fs.readFile('./404.html', (error404, content404) => {
                     res.writeHead(404, { 'Content-Type': 'text/html' });
-                    res.end(content, 'utf-8');
+                    res.end(content404 || '404 Not Found', 'utf-8');
                 });
             } else {
-                // Server error
-                res.writeHead(500);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end(`Server Error: ${error.code}`);
             }
         } else {
-            // Success
             res.writeHead(200, { 'Content-Type': contentType });
             res.end(content, 'utf-8');
         }

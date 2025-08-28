@@ -39,6 +39,8 @@
 </head>
 <body>
 
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
     <!-- Animated Background -->
     <div id="vignette-overlay"></div>
     <div id="particle-background"></div>
@@ -82,29 +84,12 @@
     <!-- Main wrapper for the entire game interface -->
     <div class="game-wrapper">
         <!-- Main content area for narrative and choices (Left Column) -->
-        <main class="story-panel">
+        <main class="story-panel" id="main-content">
             <div id="story-container" class="section">
-                <div id="story-text" class="text-fade-in">
-                    <p>The cycle turns...</p>
-                    <p>You find yourself at the beginning of a new journey, your past lives echoing in the chambers of your consciousness like distant whispers.</p>
-                    <p>The path ahead is shrouded in mist, but your <span class="highlight-text" id="nakshatra-name">Nakshatra</span> nature guides you forward, illuminating the way with its unique light.</p>
-                </div>
+                <div id="story-text" class="text-fade-in"></div>
             </div>
-            <div id="choices-container" class="text-fade-in-delay-1">
-                <!-- Player choices will be dynamically inserted here -->
-                <button class="choice-button">
-                    <span class="choice-icon"><i class="fas fa-walking"></i></span>
-                    <span class="choice-content">Begin your journey with mindful steps, observing the world around you.</span>
-                </button>
-                <button class="choice-button">
-                    <span class="choice-icon"><i class="fas fa-eye"></i></span>
-                    <span class="choice-content">Close your eyes and turn inward, seeking guidance from your inner wisdom.</span>
-                </button>
-                <button class="choice-button">
-                    <span class="choice-icon"><i class="fas fa-comments"></i></span>
-                    <span class="choice-content">Call out to see if anyone else is nearby who might offer guidance.</span>
-                </button>
-            </div>
+            <div id="puzzle-container" class="text-fade-in-delay-1"></div>
+            <div id="choices-container" class="text-fade-in-delay-1"></div>
         </main>
         
         <!-- Sidebar for player stats and game controls (Right Column) -->
@@ -188,6 +173,13 @@
     <div id="notification-container"></div>
 
     <style>
+        .skip-link { position: fixed; left: -9999px; top: 0; background: var(--color-primary); color: #0a0908; padding: 8px 12px; border-radius: 6px; z-index: 10001; }
+        .skip-link:focus { left: 10px; top: 10px; box-shadow: 0 0 10px var(--color-primary-glow); }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition: none !important; }
+            .page-transition-mandala { animation: none !important; }
+            #particle-background { animation: none !important; }
+        }
         /* --- Gamic UI/UX Revamp Styles --- */
         :root {
             --font-title: 'Cinzel', serif;
@@ -484,10 +476,10 @@
             transition: width 0.5s ease-in-out;
             box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
         }
-        .karma-bar > div { background: linear-gradient(90deg, var(--color-karma), lighten(var(--color-karma), 20%)); }
-        .sattva-bar > div { background: linear-gradient(90deg, var(--color-sattva), lighten(var(--color-sattva), 20%)); }
-        .rajas-bar > div { background: linear-gradient(90deg, var(--color-rajas), lighten(var(--color-rajas), 20%)); }
-        .tamas-bar > div { background: linear-gradient(90deg, var(--color-tamas), lighten(var(--color-tamas), 20%)); }
+        .karma-bar > div { background: linear-gradient(90deg, var(--color-karma), #d9c69a); }
+        .sattva-bar > div { background: linear-gradient(90deg, var(--color-sattva), #9fd2e4); }
+        .rajas-bar > div { background: linear-gradient(90deg, var(--color-rajas), #f09b7c); }
+        .tamas-bar > div { background: linear-gradient(90deg, var(--color-tamas), #8a80a8); }
 
         /* Element Display */
         .element-display {
@@ -723,13 +715,20 @@
             // Set up auto-save
             if (window.gameStateManager) {
                 window.gameStateManager.setupAutoSave(60000); // Auto-save every minute
+            }
 
             if (nakshatraNum && nakshatraData[nakshatraNum]) {
                 const nakshatra = nakshatraData[nakshatraNum];
                 
                 // Update character information
-                document.getElementById('character-name').textContent = nakshatra.name;
-                document.getElementById('nakshatra-name').textContent = nakshatra.name;
+                const characterNameEl = document.getElementById('character-name');
+                if (characterNameEl) characterNameEl.textContent = nakshatra.name;
+                const nakshatraNameEl = document.getElementById('nakshatra-name');
+                if (nakshatraNameEl) nakshatraNameEl.textContent = nakshatra.name;
+                if (window.gameStateManager) {
+                    window.gameStateManager.playerProfile.nakshatra = nakshatra.name;
+                    window.gameStateManager.playerProfile.gana = nakshatra.gana;
+                }
                 
                 // Set character symbol
                 const symbolSvg = document.getElementById('character-symbol-svg');
@@ -805,23 +804,331 @@
                 }, 1000);
             });
 
-            // Set up choice buttons
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Add selection animation
-                    button.classList.add('choice-selected');
-                    
-                    // Wait for animation to complete before proceeding
-                    setTimeout(() => {
-                        // Update story text
-                        updateStory(button.querySelector('.choice-content').textContent);
-                        
-                        // Update karma (for demonstration)
-                        updateKarma(1);
-                    }, 500);
+            // Initialize story engine-driven gameplay
+            const gsm = window.gameStateManager;
+            const storyEngine = new StoryEngine(gsm);
+            const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
+
+            // Set initial act/scene
+            gsm.playerState.currentAct = 1;
+            gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
+
+            function renderScene() {
+                let scene = storyEngine.getCurrentScene();
+                const storyTextEl = document.getElementById('story-text');
+                const choicesEl = document.getElementById('choices-container');
+                const puzzleEl = document.getElementById('puzzle-container');
+
+                // Apply one-time world state triggers on entering a scene
+                if (scene && scene.worldStateTriggers) {
+                    const appliedKey = `scene_applied_${gsm.playerState.currentSceneId}`;
+                    if (!gsm.worldState[appliedKey]) {
+                        Object.entries(scene.worldStateTriggers).forEach(([k, v]) => gsm.updateState(k, v));
+                        gsm.worldState[appliedKey] = true;
+                    }
+                }
+
+                // Fallback if data not ready
+                if (!scene) {
+                    // Try resetting to Act 1 start
+                    gsm.playerState.currentAct = 1;
+                    gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
+                    scene = storyEngine.getCurrentScene();
+                }
+
+                if (!scene) {
+                    storyTextEl.innerHTML = '<p>Preparing Act I...</p>';
+                    choicesEl.innerHTML = '';
+                    const startBtn = document.createElement('button');
+                    startBtn.className = 'choice-button';
+                    startBtn.innerHTML = '<span class="choice-icon"><i class="fas fa-play"></i></span><span class="choice-content">Start Act I</span>';
+                    startBtn.addEventListener('click', () => {
+                        gsm.playerState.currentAct = 1;
+                        gsm.playerState.currentSceneId = 'JOURNEY_START';
+                        renderScene();
+                    });
+                    choicesEl.appendChild(startBtn);
+                    puzzleEl.innerHTML = '';
+                    return;
+                }
+
+                // Render scene text
+                storyTextEl.innerHTML = scene.text ? `<p>${scene.text}</p>` : '';
+
+                // Render puzzle UI if present
+                puzzleEl.innerHTML = '';
+                const puzzle = storyEngine.getCurrentPuzzle();
+                if (puzzle && puzzle.puzzleId) {
+                    const box = document.createElement('div');
+                    box.className = 'puzzle-box';
+                    const title = document.createElement('div');
+                    title.className = 'panel-title';
+                    title.textContent = `Puzzle: ${puzzle.puzzleId}`;
+                    const desc = document.createElement('p');
+                    desc.textContent = puzzle.description || '';
+                    box.appendChild(title);
+                    box.appendChild(desc);
+
+                    if (puzzle.puzzleId === 'BarrierOfNegativity') {
+                        const hasLotus = !!gsm.worldState.has_lotus_petal;
+                        const info = document.createElement('p');
+                        info.textContent = hasLotus ? 'You hold a Lotus Petal imbued with purity.' : 'You feel a sorrowful barrier. Perhaps a pure item could dissolve it...';
+                        box.appendChild(info);
+
+                        const actions = document.createElement('div');
+                        actions.className = 'puzzle-action-row';
+
+                        const touchBtn = document.createElement('button');
+                        touchBtn.className = 'menu-button';
+                        touchBtn.innerHTML = '<i class="fas fa-hand"></i> Touch Barrier';
+                        touchBtn.addEventListener('click', () => {
+                            if (hasLotus) return; // no failure if you already can solve
+                            if (puzzle.defaultFailure && puzzle.defaultFailure.effects && typeof puzzle.defaultFailure.effects.karma === 'number') {
+                                gsm.updateKarma(puzzle.defaultFailure.effects.karma);
+                            }
+                            // brief feedback
+                            showNotification('The barrier repels you with despair.', 'error');
+                        });
+                        actions.appendChild(touchBtn);
+
+                        const useBtn = document.createElement('button');
+                        useBtn.className = 'menu-button';
+                        useBtn.innerHTML = '<i class="fas fa-seedling"></i> Use Lotus Petal';
+                        useBtn.disabled = !hasLotus;
+                        useBtn.title = hasLotus ? '' : 'Find something pure along the river...';
+                        useBtn.addEventListener('click', () => {
+                            const sol = (puzzle.solutions || []).find(s => s.successScene);
+                            if (sol && sol.successScene) {
+                                gsm.playerState.currentSceneId = sol.successScene;
+                                renderScene();
+                            }
+                        });
+                        actions.appendChild(useBtn);
+
+                        box.appendChild(actions);
+                    }
+
+                    if (puzzle.puzzleId === 'BanyanTreeHarmony') {
+                        const fineUnlocked = !!gsm.worldState.banyan_hint_carvings;
+                        const linkUnlocked = !!gsm.worldState.banyan_hint_wind;
+                        const pulseUnlocked = !!gsm.worldState.banyan_hint_pulse;
+                        const manyHints = (fineUnlocked?1:0) + (linkUnlocked?1:0) + (pulseUnlocked?1:0) >= 2;
+
+                        const state = Object.assign({ vitality: 30, wisdom: 70, harmony: 20 }, gsm.worldState.banyan_ring_state || {});
+                        const tol = 5;
+                        const norm = (a) => ((a % 360) + 360) % 360;
+                        const diff = (a,b) => {
+                            const d = Math.abs(norm(a) - norm(b));
+                            return Math.min(d, 360 - d);
+                        };
+                        const near = (a,b,t=tol) => diff(a,b) <= t;
+                        const saveState = () => { gsm.worldState.banyan_ring_state = { ...state }; };
+
+                        const topRow = document.createElement('div');
+                        topRow.className = 'puzzle-action-row';
+                        if (linkUnlocked) {
+                            const linkWrap = document.createElement('label');
+                            linkWrap.className = 'hint-toggle';
+                            const cb = document.createElement('input');
+                            cb.type = 'checkbox';
+                            cb.id = 'link-rings-toggle';
+                            cb.checked = !!gsm.worldState.banyan_link_mode;
+                            const span = document.createElement('span');
+                            span.textContent = 'Link rings';
+                            linkWrap.appendChild(cb); linkWrap.appendChild(span);
+                            cb.addEventListener('change', () => { gsm.worldState.banyan_link_mode = cb.checked; });
+                            topRow.appendChild(linkWrap);
+                        }
+                        box.appendChild(topRow);
+
+                        const controls = document.createElement('div');
+                        controls.className = 'puzzle-ring-grid';
+                        const readouts = {};
+
+                        const makeButton = (label, onClick) => {
+                            const b = document.createElement('button');
+                            b.className = 'menu-button';
+                            b.textContent = label;
+                            b.addEventListener('click', onClick);
+                            return b;
+                        };
+
+                        const rotate = (key, delta) => {
+                            if (gsm.worldState.banyan_link_mode) {
+                                ['vitality','wisdom','harmony'].forEach(k => state[k] = norm(state[k] + delta));
+                            } else {
+                                state[key] = norm(state[key] + delta);
+                            }
+                            Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
+                            updateMeters();
+                            saveState();
+                        };
+
+                        ['vitality','wisdom','harmony'].forEach(key => {
+                            const panel = document.createElement('div');
+                            panel.className = 'detail-item';
+                            const t = document.createElement('div');
+                            t.className = 'profile-title';
+                            t.textContent = key.charAt(0).toUpperCase()+key.slice(1);
+                            const val = document.createElement('div');
+                            val.className = 'text-center puzzle-ring-readout';
+                            val.dataset.key = key;
+                            val.textContent = `${norm(state[key]).toFixed(0)}°`;
+                            readouts[key] = val;
+
+                            const btnRow = document.createElement('div');
+                            btnRow.className = 'puzzle-action-row';
+                            btnRow.appendChild(makeButton('−15°', () => rotate(key, -15)));
+                            if (fineUnlocked) btnRow.appendChild(makeButton('−5°', () => rotate(key, -5)));
+                            if (fineUnlocked) btnRow.appendChild(makeButton('+5°', () => rotate(key, +5)));
+                            btnRow.appendChild(makeButton('+15°', () => rotate(key, +15)));
+
+                            panel.appendChild(t); panel.appendChild(val); panel.appendChild(btnRow);
+                            controls.appendChild(panel);
+                        });
+                        box.appendChild(controls);
+
+                        // Alignment feedback
+                        let metersWrap = null;
+                        const updateMeters = () => {
+                            if (!pulseUnlocked || !metersWrap) return;
+                            const base = state.vitality;
+                            const pairs = [
+                                ['Vitality vs Wisdom', diff(state.vitality, state.wisdom)],
+                                ['Vitality vs Harmony', diff(state.vitality, state.harmony)],
+                                ['Wisdom vs Harmony', diff(state.wisdom, state.harmony)]
+                            ];
+                            metersWrap.innerHTML = '';
+                            pairs.forEach(([label, d]) => {
+                                const row = document.createElement('div'); row.className = 'alignment-meter';
+                                const name = document.createElement('div'); name.className = 'meter-label'; name.textContent = label;
+                                const track = document.createElement('div'); track.className = 'meter-track';
+                                const fill = document.createElement('div'); fill.className = 'meter-fill';
+                                const pct = Math.max(0, 100 - (d/180)*100); // smaller diff => larger pct
+                                fill.style.width = `${pct}%`;
+                                if (d <= tol) fill.classList.add('ok');
+                                track.appendChild(fill);
+                                row.appendChild(name); row.appendChild(track);
+                                metersWrap.appendChild(row);
+                            });
+                        };
+
+                        if (pulseUnlocked) {
+                            const panel = document.createElement('div');
+                            panel.className = 'alignment-panel';
+                            const title = document.createElement('div'); title.className = 'profile-title'; title.textContent = 'Alignment Meter';
+                            metersWrap = document.createElement('div'); metersWrap.className = 'alignment-meters';
+                            panel.appendChild(title); panel.appendChild(metersWrap);
+                            box.appendChild(panel);
+                        }
+
+                        if (manyHints) {
+                            const nudge = document.createElement('button');
+                            nudge.className = 'puzzle-action-button';
+                            nudge.innerHTML = '<i class="fas fa-magnet"></i> Nudge Toward Harmony';
+                            nudge.addEventListener('click', () => {
+                                const step = fineUnlocked ? 5 : 15;
+                                const target = state.vitality;
+                                ['wisdom','harmony'].forEach(k => {
+                                    const a = state[k];
+                                    const d = diff(a, target);
+                                    if (d === 0) return;
+                                    const cw = norm(a + step);
+                                    const ccw = norm(a - step);
+                                    const cwDiff = diff(cw, target);
+                                    const ccwDiff = diff(ccw, target);
+                                    state[k] = cwDiff <= ccwDiff ? cw : ccw;
+                                });
+                                Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
+                                updateMeters();
+                                saveState();
+                            });
+                            box.appendChild(nudge);
+                        }
+
+                        const check = document.createElement('button');
+                        check.className = 'menu-button';
+                        check.innerHTML = '<i class="fas fa-check"></i> Check Alignment';
+                        check.addEventListener('click', () => {
+                            const v = state.vitality, w = state.wisdom, h = state.harmony;
+                            const ok = near(v,w) && near(w,h) && near(v,h);
+                            if (ok) {
+                                gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
+                                delete gsm.worldState.banyan_ring_state;
+                                renderScene();
+                            } else {
+                                showNotification('Closer now—use fine steps, link mode, and watch the meter.', 'error');
+                            }
+                        });
+                        box.appendChild(check);
+
+                        if (fineUnlocked || linkUnlocked || pulseUnlocked) {
+                            const hintBox = document.createElement('div');
+                            hintBox.className = 'puzzle-hint-box';
+                            const hints = [];
+                            if (fineUnlocked) hints.push('The runes imply fine adjustments help.');
+                            if (linkUnlocked) hints.push('Wind teaches: move all together for harmony.');
+                            if (pulseUnlocked) hints.push('The pulse steadies as alignment nears.');
+                            hintBox.innerHTML = `<ul>${hints.map(h => `<li>${h}</li>`).join('')}</ul>`;
+                            box.appendChild(hintBox);
+                        }
+
+                        updateMeters();
+                        saveState();
+                    }
+
+                    puzzleEl.appendChild(box);
+                }
+
+                // Render choices
+                const choices = storyEngine.getAvailableChoices();
+                choicesEl.innerHTML = '';
+
+                // Special unlock: inner sanctum becomes available when temple flags are met
+                if (gsm.playerState.currentSceneId === 'TEMPLE_ENTRANCE' && (gsm.worldState.made_offering && gsm.worldState.solved_puzzle && gsm.worldState.aligned_energy)) {
+                    choices.unshift({ id: 'ENTER_INNER_SANCTUM', text: 'Enter the inner sanctum...', nextScene: 'TEMPLE_INNER_SANCTUM' });
+                }
+
+                choices.forEach((c) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-button';
+                    btn.innerHTML = `<span class="choice-icon"><i class="fas fa-angle-right"></i></span><span class="choice-content">${c.text}</span>`;
+                    btn.dataset.choiceId = c.id;
+                    btn.addEventListener('click', () => {
+                        btn.classList.add('choice-selected');
+                        setTimeout(() => {
+                            if (c.nextScene === 'TEMPLE_INNER_SANCTUM') {
+                                gsm.playerState.currentSceneId = 'TEMPLE_INNER_SANCTUM';
+                            } else {
+                                storyEngine.processChoice(c.id);
+                            }
+                            renderScene();
+                        }, 250);
+                    });
+                    choicesEl.appendChild(btn);
                 });
-            });
+                // Update inventory UI based on game state
+                const invEl = document.getElementById('inventory-list');
+                if (invEl) {
+                    invEl.innerHTML = '';
+                    const items = new Set(gsm.playerState.inventory || []);
+                    if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
+                    if (items.size === 0) {
+                        const li = document.createElement('li');
+                        li.className = 'inventory-empty';
+                        li.textContent = '(Empty)';
+                        invEl.appendChild(li);
+                    } else {
+                        items.forEach((name) => {
+                            const li = document.createElement('li');
+                            li.textContent = name;
+                            invEl.appendChild(li);
+                        });
+                    }
+                }
+            }
+
+            renderScene();
         });
 
         // Set guna values based on nakshatra number

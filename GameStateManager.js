@@ -665,4 +665,75 @@ updateState(key, value) {
 }
 
 // Export as a singleton
-const gameStateManager = new GameStateManager();
+// Initialize singleton and expose globally
+window.gameStateManager = window.gameStateManager || new GameStateManager();
+
+// Auto-save support
+GameStateManager.prototype.setupAutoSave = function(intervalMs) {
+    if (this._autoSaveTimer) {
+        clearInterval(this._autoSaveTimer);
+        this._autoSaveTimer = null;
+    }
+    if (intervalMs && intervalMs > 0) {
+        this._autoSaveTimer = setInterval(() => {
+            try { this.saveGame(); } catch (e) { /* ignore */ }
+        }, intervalMs);
+    }
+};
+
+// Use a single, consistent storage key across the app
+GameStateManager.prototype._storageKey = 'samsaraSagaSave';
+
+GameStateManager.prototype.saveGame = function() {
+    const saveData = {
+        playerProfile: this.playerProfile,
+        playerState: this.playerState,
+        worldState: this.worldState,
+        gameStats: this.gameStats,
+        timestamp: new Date().toISOString()
+    };
+    try {
+        localStorage.setItem(this._storageKey, JSON.stringify(saveData));
+        return true;
+    } catch (err) {
+        console.error('Error saving game:', err);
+        return false;
+    }
+};
+
+GameStateManager.prototype.loadGame = function() {
+    try {
+        const saveData = localStorage.getItem(this._storageKey);
+        if (!saveData) return false;
+        const parsed = JSON.parse(saveData);
+        if (parsed.playerProfile) this.playerProfile = parsed.playerProfile;
+        if (parsed.playerState) this.playerState = parsed.playerState;
+        if (parsed.worldState) this.worldState = parsed.worldState;
+        if (parsed.gameStats) this.gameStats = { ...parsed.gameStats, startTime: Date.now() };
+        // Reset session data
+        this.sessionData = {
+            lastUpdateTime: Date.now(),
+            currentMusic: null,
+            activeEffects: [],
+            pendingNotifications: []
+        };
+        return true;
+    } catch (err) {
+        console.error('Error loading saved game:', err);
+        return false;
+    }
+};
+
+GameStateManager.prototype.hasSavedGame = function() {
+    return localStorage.getItem(this._storageKey) !== null;
+};
+
+GameStateManager.prototype.deleteSavedGame = function() {
+    try {
+        localStorage.removeItem(this._storageKey);
+        return true;
+    } catch (err) {
+        console.error('Error deleting saved game:', err);
+        return false;
+    }
+};

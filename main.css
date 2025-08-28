@@ -397,3 +397,58 @@ hr {
     color: var(--secondary-color);
 }
 }
+
+/* === ENHANCEMENTS: PUZZLE UI & TRANSITIONS === */
+.puzzle-box {
+  background: linear-gradient(145deg, rgba(26,24,23,0.6), rgba(0,0,0,0.4));
+  border: 1px solid rgba(224,150,88,0.3);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  backdrop-filter: blur(8px);
+  margin: 1rem 0;
+}
+.puzzle-action-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.puzzle-ring-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.puzzle-ring-readout { font-variant-numeric: tabular-nums; color: rgba(224,150,88,0.85); }
+.text-center { text-align: center; }
+.puzzle-action-button {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.05));
+  border: 1px solid rgba(224,150,88,0.5);
+  color: inherit;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.puzzle-action-button:hover {
+  background-color: rgba(224,150,88,0.1);
+  border-color: rgba(224,150,88,1);
+  box-shadow: 0 0 15px rgba(224,150,88,0.4);
+  transform: translateY(-2px);
+}
+
+/* Scene transition overlay used by VisualEffects */
+.scene-transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(224,150,88,0.12), rgba(0,0,0,0.9) 60%);
+  opacity: 0;
+  z-index: 5000;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+}
+.scene-transition-overlay.visible { opacity: 1; pointer-events: auto; }
+
+/* Banyan puzzle enhancements */
+.hint-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.85; }
+.hint-toggle input { accent-color: var(--color-accent-highlight); }
+.alignment-panel { margin-top: 0.75rem; }
+.alignment-meters { display: grid; gap: 8px; }
+.alignment-meter { display: grid; grid-template-columns: 1fr 3fr; gap: 10px; align-items: center; }
+.meter-label { color: var(--color-manuscript-ink-secondary); font-size: 0.9rem; }
+.meter-track { height: 8px; background: rgba(0,0,0,0.25); border-radius: 999px; overflow: hidden; }
+.meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, rgba(224,150,88,0.4), rgba(224,150,88,0.8)); transition: width 0.25s ease; }
+.meter-fill.ok { background: linear-gradient(90deg, #4caf50, #81c784); }
+.puzzle-hint-box { margin-top: 0.75rem; padding: 0.75rem 1rem; border: 1px dashed rgba(224,150,88,0.4); border-radius: 8px; background: rgba(224,150,88,0.05); }
+.puzzle-hint-box ul { margin: 0; padding-left: 1rem; }
+.puzzle-hint-box li { line-height: 1.6; }

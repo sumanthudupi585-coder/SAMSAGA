@@ -44,7 +44,7 @@ window.ACT1_STORY_DATA = {
 
     "LISTEN_DEBATE": {
         "title": "The Debate",
-        "text": "The Elder argues passionately, 'The tree is draining our vitality! Its wood is needed for repairs!' The Priestess counters, her voice firm, 'The tree is a sacred ancestor! To harm it is a grave sin.' She poses a riddle to the crowd: "When the root of tradition and the branch of necessity pull the world apart, where does a soul find its balance?"",
+        "text": `The Elder argues passionately, 'The tree is draining our vitality! Its wood is needed for repairs!' The Priestess counters, her voice firm, 'The tree is a sacred ancestor! To harm it is a grave sin.' She poses a riddle to the crowd: "When the root of tradition and the branch of necessity pull the world apart, where does a soul find its balance?"`,
         "choices": [
             { "text": "Return to the square.", "nextScene": "DHARMAPURA_SQUARE" }
         ]
@@ -55,6 +55,10 @@ window.ACT1_STORY_DATA = {
         "title": "The Great Banyan",
         "text": "The Banyan is immense, its bark gnarled and almost stone-like. It feels ancient and powerful, yet there's a subtle wrongness to it, a feeling of stagnant energy.",
         "choices": [
+            { "text": "Attempt to harmonize the tree's energies.", "nextScene": "BANYAN_PUZZLE" },
+            { "text": "Study the carved runes on the trunk (hint)", "nextScene": "BANYAN_HINT_CARVINGS" },
+            { "text": "Listen to the wind through the leaves (hint)", "nextScene": "BANYAN_HINT_WIND" },
+            { "text": "Place your palm on the trunk and feel its pulse (hint)", "nextScene": "BANYAN_HINT_PULSE" },
             // Deva Gana
             { "text": "[Ashwini] Use your healing senses to diagnose the tree.", "nextScene": "BANYAN_SOLUTION_ASHWINI", "condition": (profile) => profile.nakshatra === 'Ashwini' },
             { "text": "[Anuradha] Attempt to commune with the tree's indwelling spirit.", "nextScene": "BANYAN_SOLUTION_ANURADHA", "condition": (profile) => profile.nakshatra === 'Anuradha' },
@@ -1033,30 +1037,71 @@ window.ACT1_STORY_DATA = {
         ]
     },
 
+    "BANYAN_PUZZLE": {
+        "title": "The Sacred Balance",
+        "text": "You focus on the subtle flows within the Banyan. Three energetic rings—Vitality, Wisdom, Harmony—must be aligned to restore balance.",
+        "puzzle": { "puzzleId": "BanyanTreeHarmony" },
+        "choices": [ { "text": "Step back.", "nextScene": "DHARMAPURA_SQUARE" } ]
+    },
+
+    "BANYAN_HINT_CARVINGS": {
+        "title": "Runes of Balance",
+        "text": "Etched along the trunk are circular runes repeating in tight increments. The smallest ticks appear between the larger marks—the design suggests that fine adjustments are as important as bold turns.",
+        "choices": [
+            { "text": "Return to the tree.", "nextScene": "EXAMINE_BANYAN", "worldStateTriggers": { "banyan_hint_carvings": true } }
+        ]
+    },
+
+
+    "BANYAN_HINT_WIND": {
+        "title": "Breath of the Canopy",
+        "text": "Listening closely, you notice gusts move all branches together—what affects one ring affects the whole tree. Perhaps there is a way to link movements so all layers turn in harmony.",
+        "choices": [
+            { "text": "Return to the tree.", "nextScene": "EXAMINE_BANYAN", "worldStateTriggers": { "banyan_hint_wind": true } }
+        ]
+    },
+
+    "BANYAN_HINT_PULSE": {
+        "title": "Living Rhythm",
+        "text": "With your palm on the bark, a subtle pulse emerges. It grows steadier as the energies align, faltering when they drift apart. Trust the rhythm; it will tell you when you're close.",
+        "choices": [
+            { "text": "Return to the tree.", "nextScene": "EXAMINE_BANYAN", "worldStateTriggers": { "banyan_hint_pulse": true } }
+        ]
+    },
+
+    "BANYAN_HARMONY_SUCCESS": {
+        "title": "The Tree Breathes Again",
+        "text": "As the rings align in perfect symmetry, a warm radiance flows through the Banyan. The malaise over Dharmapura begins to lift as the tree exhales a sigh older than the village itself.",
+        "worldStateTriggers": { "banyan_balanced": true },
+        "effects": { "karma": 10 },
+        "choices": [
+            { "text": "Return to the square.", "nextScene": "DHARMAPURA_SQUARE" },
+            { "text": "Prepare for the next trial.", "nextScene": "QUEST_2_START" }
+        ]
+    },
+
     "GAME_CONCLUSION": {
         "title": "Samsara Saga",
         "text": "Your journey through the trials of Dharmapura has transformed both the village and yourself. You have grown into your Nakshatra's full potential, embodying its unique qualities and powers. The village prospers under your guidance, becoming a beacon of harmony between cosmic forces and earthly life. Yet you sense that this is just the beginning of your saga—greater adventures await beyond the horizon, as the wheel of samsara continues to turn.",
         "choices": [
             { "text": "The End... For Now", "nextScene": "JOURNEY_START" }
-            "ACT1_ENDING": {
-    "title": "The First Trial Completed",
-    "text": "As you complete the final challenge, a sense of accomplishment washes over you. The village of Dharmapura seems brighter, its people more at peace. Yet, you sense that your journey has only just begun. A new path opens before you, leading to unknown challenges and greater mysteries.",
-    "choices": [
-        {
-            "id": "continue_to_act2",
-            "text": "Continue your journey...",
-            "nextAct": 2,
-            "effects": {
-                "karma": 10,
-                "dharmicProfile": {
-                    "moksha": 5
+        ]
+    },
+
+    "ACT1_ENDING": {
+        "title": "The First Trial Completed",
+        "text": "As you complete the final challenge, a sense of accomplishment washes over you. The village of Dharmapura seems brighter, its people more at peace. Yet, you sense that your journey has only just begun. A new path opens before you, leading to unknown challenges and greater mysteries.",
+        "choices": [
+            {
+                "id": "continue_to_act2",
+                "text": "Continue your journey...",
+                "nextAct": 2,
+                "effects": {
+                    "karma": 10,
+                    "dharmicProfile": { "moksha": 5 }
                 }
             }
-        }
-    ]
-}
         ]
     }
 
 };
-

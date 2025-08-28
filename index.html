@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div id="cursor-container">
         <svg class="chakra-cursor" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFC58F" stroke-width="1">
             <circle cx="12" cy="12" r="10"/>
@@ -52,7 +53,7 @@
         <div class="nav-title">Samsara Saga</div>
     </nav>
 
-    <main class="screen-container">
+    <main class="screen-container" id="main-content">
         <h1 class="game-title text-fade-in">Samsara Saga</h1>
         <p class="game-subtitle text-fade-in-delay-1">A Journey Through the Cycles of Existence</p>
 
@@ -249,6 +250,13 @@
     </script>
 
     <style>
+        .skip-link { position: absolute; left: -9999px; top: 0; background: var(--color-primary-base); color: #050403; padding: 8px 12px; border-radius: 6px; z-index: 10001; }
+        .skip-link:focus { left: 10px; top: 10px; box-shadow: var(--shadow-glow); }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition: none !important; }
+            .mandala-rotate-1, .mandala-rotate-2, .mandala-rotate-3 { animation: none !important; }
+            .page-transition-mandala { animation: none !important; }
+        }
         :root {
             --color-bg: #0F0C08;
             --color-bg-darker: #050403;
