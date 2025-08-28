@@ -1702,8 +1702,23 @@
         
         // Initialize game
         document.addEventListener('DOMContentLoaded', () => {
-            gameState = new MasterGameState();
-            console.log('🌟 Samsara Saga Master\'s Trial initialized successfully!');
+            try {
+                gameState = new MasterGameState();
+                console.log('🌟 Samsara Saga Master\'s Trial initialized successfully!');
+
+                // Ensure all elements are properly initialized
+                if (!document.getElementById('freq-1') || !document.getElementById('feedback-message')) {
+                    console.error('Critical UI elements missing');
+                    showNotification('Game initialization incomplete. Please refresh the page.', 'error');
+                    return;
+                }
+
+                showNotification('🌟 Master\'s Trial Ready! Begin your cosmic journey...', 'success');
+
+            } catch (error) {
+                console.error('Game initialization failed:', error);
+                showNotification('Failed to initialize game. Please refresh the page.', 'error');
+            }
         });
         
         // Control functions
