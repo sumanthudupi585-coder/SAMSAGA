@@ -392,10 +392,38 @@
                         return { system, isLoaded };
                     });
 
+                    const criticalLoaded = this.criticalSystems.every(system => window[system] !== undefined);
                     const allLoaded = systemStatus.every(status => status.isLoaded);
 
                     if (allLoaded) {
                         console.log('✅ All required systems loaded successfully');
+                        resolve();
+                    } else if (criticalLoaded && waitTime >= maxWaitTime / 2) {
+                        // If critical systems are loaded but others are missing, proceed with warnings
+                        const missingSystems = systemStatus
+                            .filter(status => !status.isLoaded)
+                            .map(status => status.system);
+
+                        console.warn('⚠️ Proceeding with missing non-critical systems:', missingSystems);
+
+                        // Create fallback for missing story data
+                        if (!window.ENHANCED_ACT1_STORY_DATA) {
+                            console.warn('📚 Creating fallback story data...');
+                            window.ENHANCED_ACT1_STORY_DATA = {
+                                AWAKENING_PROLOGUE: {
+                                    title: "The Journey Begins",
+                                    text: "Your spiritual journey is about to unfold. This is a simplified version while the full story system loads.",
+                                    choices: [
+                                        {
+                                            id: "continue",
+                                            text: "Continue your journey",
+                                            nextScene: "AWAKENING_PROLOGUE"
+                                        }
+                                    ]
+                                }
+                            };
+                        }
+
                         resolve();
                     } else if (waitTime >= maxWaitTime) {
                         const missingSystems = systemStatus
