@@ -417,7 +417,7 @@ window.ENHANCED_ACT1_STORY_DATA = {
         The Elder, the Priestess, and the villagers have gathered, drawn by an inexplicable sense that resolution is at hand. The ancient tree's leaves rustle with anticipation, as if it too knows that change comes.
         
         Your journey has prepared you for this moment. You possess:
-        ${this.getPlayerKnowledge()}
+        ${window.ENHANCED_ACT1_STORY_DATA?.getPlayerKnowledge?.() || "• The wisdom gained through your unique journey"}
         
         The time has come to heal not just the tree, but the deeper wound of separation that afflicts this entire community.`,
         "choices": [
@@ -527,10 +527,10 @@ window.ENHANCED_ACT1_STORY_DATA = {
         "text": `As you prepare to leave Dharmapura, you reflect on the profound transformation that has occurred—not just in the village, but within yourself. You arrived as a newly awakened being, uncertain of your purpose. You leave as one who has begun to understand the deeper patterns of existence.
         
         **What you have learned:**
-        ${this.getPhilosophicalSummary()}
+        ${window.ENHANCED_ACT1_STORY_DATA?.getPhilosophicalSummary?.() || "• Understanding of integration between sacred and mundane"}
         
         **Your character has grown:**
-        ${this.getAttributeSummary()}
+        ${window.ENHANCED_ACT1_STORY_DATA?.getAttributeSummary?.() || "• Wisdom: Enhanced through careful observation and learning"}
         
         The village gathers to bid you farewell, but this isn't an ending—it's a graduation. You have completed your first great teaching, learned your first profound lesson about the nature of reality.
         
