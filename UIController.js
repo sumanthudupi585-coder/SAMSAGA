@@ -43,7 +43,212 @@ class UIController {
         // Initialize UI
         this.initUI();
     }
+/**
+ * Initialize game menu
+ */
+initGameMenu() {
+    // Create menu button
+    const menuButton = document.createElement('button');
+    menuButton.className = 'menu-button';
+    menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+    menuButton.addEventListener('click', () => {
+        this.toggleGameMenu();
+    });
+    
+    // Create game menu
+    const gameMenu = document.createElement('div');
+    gameMenu.className = 'game-menu';
+    gameMenu.innerHTML = `
+        <div class="game-menu-content">
+            <h3>Game Menu</h3>
+            <button class="menu-item" data-action="continue">Continue Game</button>
+            <button class="menu-item" data-action="save">Save Game</button>
+            <button class="menu-item" data-action="load">Load Game</button>
+            <button class="menu-item" data-action="character">Character Profile</button>
+            <button class="menu-item" data-action="quit">Quit to Main Menu</button>
+        </div>
+    `;
+    
+    // Add event listeners to menu items
+    const menuItems = gameMenu.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const action = item.dataset.action;
+            this.handleMenuAction(action);
+        });
+    });
+    
+    // Add to document
+    document.body.appendChild(menuButton);
+    document.body.appendChild(gameMenu);
+    
+    // Store references
+    this.elements.menuButton = menuButton;
+    this.elements.gameMenu = gameMenu;
+    
+    // Hide menu initially
+    this.hideGameMenu();
+}
 
+/**
+ * Toggle game menu
+ */
+toggleGameMenu() {
+    if (this.elements.gameMenu.classList.contains('active')) {
+        this.hideGameMenu();
+    } else {
+        this.showGameMenu();
+    }
+}
+
+/**
+ * Show game menu
+ */
+showGameMenu() {
+    // Pause game
+    this.pauseGame();
+    
+    // Show menu
+    this.elements.gameMenu.classList.add('active');
+}
+
+/**
+ * Hide game menu
+ */
+hideGameMenu() {
+    // Hide menu
+    this.elements.gameMenu.classList.remove('active');
+    
+    // Resume game
+    this.resumeGame();
+}
+
+/**
+ * Handle menu action
+ */
+handleMenuAction(action) {
+    switch (action) {
+        case 'continue':
+            this.hideGameMenu();
+            break;
+        case 'save':
+            this.saveGame();
+            this.hideGameMenu();
+            break;
+        case 'load':
+            this.loadGame();
+            this.hideGameMenu();
+            break;
+        case 'character':
+            this.hideGameMenu();
+            if (window.navigationManager) {
+                window.navigationManager.navigateToCharacterProfile();
+            } else {
+                window.location.href = 'character-profile.html';
+            }
+            break;
+        case 'quit':
+            if (confirm('Are you sure you want to quit? Any unsaved progress will be lost.')) {
+                this.quitToMainMenu();
+            }
+            break;
+        default:
+            console.error(`Unknown menu action: ${action}`);
+    }
+}
+
+/**
+ * Save game
+ */
+saveGame() {
+    const success = this.gameStateManager.saveGame();
+    
+    if (success) {
+        this.showNotification('Game saved successfully');
+    } else {
+        this.showNotification('Failed to save game', 'error');
+    }
+}
+
+/**
+ * Load game
+ */
+loadGame() {
+    const success = this.gameStateManager.loadGame();
+    
+    if (success) {
+        this.showNotification('Game loaded successfully');
+        this.render();
+    } else {
+        this.showNotification('Failed to load game', 'error');
+    }
+}
+
+/**
+ * Quit to main menu
+ */
+quitToMainMenu() {
+    // Save game before quitting
+    this.gameStateManager.saveGame();
+    
+    // Navigate to main menu
+    if (window.navigationManager) {
+        window.navigationManager.navigateToMainMenu();
+    } else {
+        window.location.href = 'index.html';
+    }
+}
+
+/**
+ * Show notification
+ */
+showNotification(message, type = 'success') {
+    // Create notification element if it doesn't exist
+    if (!this.elements.notification) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        document.body.appendChild(notification);
+        this.elements.notification = notification;
+    }
+    
+    // Set notification content and type
+    this.elements.notification.textContent = message;
+    this.elements.notification.className = `notification ${type}`;
+    
+    // Show notification
+    this.elements.notification.classList.add('active');
+    
+    // Hide notification after a delay
+    setTimeout(() => {
+        this.elements.notification.classList.remove('active');
+    }, 3000);
+}
+
+/**
+ * Pause game
+ */
+pauseGame() {
+    // Set game paused flag
+    this.gamePaused = true;
+    
+    // Pause audio
+    if (this.audioManager) {
+        this.audioManager.pauseMusic();
+    }
+}
+
+/**
+ * Resume game
+ */
+resumeGame() {
+    // Clear game paused flag
+    this.gamePaused = false;
+    
+    // Resume audio
+    if (this.audioManager) {
+        this.audioManager.resumeMusic();
+    }
+}
     /**
      * Initialize UI elements that might not exist in the HTML
      */
