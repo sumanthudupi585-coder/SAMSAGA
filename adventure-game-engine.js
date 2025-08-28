@@ -175,6 +175,94 @@ class SpiritualAdventureEngine {
             }]
         ]);
     }
+
+    initializeProgressiveNarratives() {
+        // Initialize progressive narrative system
+        this.narrativeProgression = {
+            currentLayer: 1,
+            unlockedNarratives: new Set(['basic_exploration']),
+            narrativeHistory: [],
+            branchingPaths: new Map()
+        };
+
+        // Define narrative progression layers
+        this.narrativeLayers = {
+            1: {
+                themes: ['introduction', 'discovery', 'wonder'],
+                complexity: 'simple',
+                philosophicalDepth: 'surface'
+            },
+            2: {
+                themes: ['mystery', 'connection', 'understanding'],
+                complexity: 'moderate',
+                philosophicalDepth: 'intermediate'
+            },
+            3: {
+                themes: ['transformation', 'transcendence', 'unity'],
+                complexity: 'complex',
+                philosophicalDepth: 'profound'
+            }
+        };
+
+        // Setup narrative adaptation triggers
+        this.setupNarrativeAdaptation();
+    }
+
+    createInteractiveEnvironment() {
+        // Initialize interactive environment system
+        this.interactiveEnvironment = {
+            activeElements: new Map(),
+            environmentalResponses: new Map(),
+            interactionPatterns: new Map(),
+            atmosphericTriggers: new Map()
+        };
+
+        // Setup environmental interaction patterns
+        this.setupEnvironmentalInteractions();
+
+        // Initialize atmospheric triggers
+        this.setupAtmosphericTriggers();
+
+        // Create responsive environment based on current location
+        this.createResponsiveEnvironment(this.currentLocation || 'DHARMAPURA_SQUARE');
+    }
+
+    loadCharacterProgress() {
+        // Load character progress from game state
+        if (this.gameStateManager && this.gameStateManager.worldState) {
+            const savedProgress = this.gameStateManager.worldState.characterProgress;
+
+            if (savedProgress) {
+                // Restore character abilities
+                if (savedProgress.characterAbilities) {
+                    this.characterAbilities = { ...this.characterAbilities, ...savedProgress.characterAbilities };
+                }
+
+                // Restore discoveries
+                if (savedProgress.discoveries) {
+                    this.discoveries = new Set(savedProgress.discoveries);
+                }
+
+                // Restore philosophical insights
+                if (savedProgress.philosophicalInsights) {
+                    this.philosophicalInsights = savedProgress.philosophicalInsights;
+                }
+
+                // Restore narrative progression
+                if (savedProgress.narrativeProgression) {
+                    this.narrativeProgression = savedProgress.narrativeProgression;
+                }
+
+                // Restore interaction history
+                if (savedProgress.interactionHistory) {
+                    this.interactionHistory = savedProgress.interactionHistory;
+                }
+            }
+        }
+
+        // Apply loaded progress to current environment
+        this.applyProgressToEnvironment();
+    }
     
     // Enhanced puzzle creation with multi-layered complexity
     createEnhancedBanyanTreeHarmony() {
