@@ -1,0 +1,732 @@
+/**
+ * Enhanced Atmospheric UI System
+ * Creates an immersive spiritual adventure interface with mystery exploration,
+ * environmental storytelling, and progressive discovery mechanics
+ */
+
+/* === Core Atmospheric Foundation === */
+:root {
+    /* Enhanced color palette for mystery and spirituality */
+    --color-mystery-deep: #0d0b08;
+    --color-mystery-medium: #1a1512;
+    --color-mystery-light: #2a2117;
+    
+    /* Spiritual energy colors */
+    --color-spiritual-gold: #ffc58f;
+    --color-spiritual-deep: #e09658;
+    --color-ancient-wisdom: #d4af37;
+    --color-mystical-blue: #4a90e2;
+    --color-karmic-purple: #8b7d9b;
+    --color-shadow-red: #8b4513;
+    
+    /* Discovery and interaction states */
+    --color-discoverable: rgba(255, 197, 143, 0.3);
+    --color-discovered: rgba(255, 197, 143, 0.8);
+    --color-secret: rgba(212, 175, 55, 0.6);
+    --color-ability-unlock: rgba(74, 144, 226, 0.8);
+    
+    /* Atmospheric effects */
+    --glow-intensity: 0 0 20px;
+    --mystery-glow: 0 0 15px rgba(212, 175, 55, 0.4);
+    --discovery-glow: 0 0 25px rgba(255, 197, 143, 0.6);
+    --secret-glow: 0 0 30px rgba(212, 175, 55, 0.8);
+    
+    /* Transition timing for atmospheric effects */
+    --transition-mystery: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-discovery: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-atmospheric: all 1.2s ease-in-out;
+}
+
+/* === Enhanced Main Game Container === */
+.enhanced-adventure-game {
+    position: relative;
+    min-height: 100vh;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(74, 144, 226, 0.02) 0%, transparent 50%),
+        linear-gradient(135deg, var(--color-mystery-deep) 0%, var(--color-mystery-medium) 100%);
+    overflow: hidden;
+}
+
+/* === Atmospheric Background Effects === */
+.atmospheric-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.mystical-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255, 197, 143, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.08) 1px, transparent 1px);
+    background-size: 60px 60px, 80px 80px;
+    animation: mystical-drift 120s linear infinite;
+}
+
+@keyframes mystical-drift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(-30px, -30px) rotate(120deg); }
+    66% { transform: translate(30px, -60px) rotate(240deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+.spiritual-energy-streams {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, transparent 0%, rgba(255, 197, 143, 0.05) 50%, transparent 100%),
+        linear-gradient(-45deg, transparent 0%, rgba(212, 175, 55, 0.03) 50%, transparent 100%);
+    animation: energy-flow 30s ease-in-out infinite;
+}
+
+@keyframes energy-flow {
+    0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.6; transform: scale(1.05) rotate(1deg); }
+}
+
+/* === Enhanced Story Interface === */
+.mystery-story-container {
+    position: relative;
+    background: 
+        linear-gradient(135deg, rgba(26, 21, 18, 0.9) 0%, rgba(42, 33, 23, 0.8) 100%);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: var(--transition-mystery);
+}
+
+.mystery-story-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        transparent 0%, 
+        rgba(255, 197, 143, 0.1) 30%, 
+        transparent 60%, 
+        rgba(212, 175, 55, 0.05) 100%);
+    border-radius: 16px;
+    pointer-events: none;
+    opacity: 0;
+    transition: var(--transition-atmospheric);
+}
+
+.mystery-story-container.discovering::before {
+    opacity: 1;
+}
+
+.atmospheric-story-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+}
+
+.atmospheric-story-text .discovery-highlight {
+    color: var(--color-spiritual-gold);
+    text-shadow: var(--discovery-glow);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-discovery);
+    border-bottom: 1px dotted var(--color-spiritual-gold);
+}
+
+.atmospheric-story-text .discovery-highlight:hover {
+    color: var(--color-ancient-wisdom);
+    text-shadow: var(--secret-glow);
+    transform: scale(1.02);
+}
+
+.atmospheric-story-text .secret-knowledge {
+    color: var(--color-ancient-wisdom);
+    text-shadow: var(--secret-glow);
+    font-style: italic;
+    position: relative;
+    opacity: 0;
+    animation: revelation 2s ease-out forwards;
+}
+
+@keyframes revelation {
+    0% { 
+        opacity: 0; 
+        transform: translateY(10px) scale(0.95); 
+        filter: blur(2px);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+        filter: blur(0);
+    }
+}
+
+/* === Environmental Interaction System === */
+.environmental-elements {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.interactive-element {
+    position: relative;
+    background: rgba(26, 21, 18, 0.7);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition-mystery);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.interactive-element::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-discoverable);
+    opacity: 0;
+    transition: var(--transition-discovery);
+    border-radius: 12px;
+}
+
+.interactive-element.discoverable::before {
+    opacity: 1;
+    animation: discoverable-pulse 3s ease-in-out infinite;
+}
+
+.interactive-element.discovered {
+    border-color: var(--color-discovered);
+    box-shadow: var(--discovery-glow);
+}
+
+.interactive-element.secret {
+    border-color: var(--color-secret);
+    box-shadow: var(--secret-glow);
+}
+
+.interactive-element.requires-ability {
+    border-color: var(--color-ability-unlock);
+    box-shadow: var(--glow-intensity) var(--color-ability-unlock);
+    opacity: 0.6;
+}
+
+.interactive-element.requires-ability::after {
+    content: '🔒';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    opacity: 0.7;
+}
+
+@keyframes discoverable-pulse {
+    0%, 100% { 
+        box-shadow: 0 0 10px var(--color-discoverable);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 20px var(--color-discovered);
+        transform: scale(1.02);
+    }
+}
+
+.element-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--color-spiritual-deep);
+    text-shadow: var(--glow-intensity) var(--color-spiritual-deep);
+    transition: var(--transition-mystery);
+}
+
+.interactive-element:hover .element-icon {
+    transform: scale(1.1) rotate(5deg);
+    color: var(--color-spiritual-gold);
+    text-shadow: var(--discovery-glow);
+}
+
+.element-title {
+    font-family: var(--font-title);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--color-spiritual-gold);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.element-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    opacity: 0.9;
+}
+
+.element-ability-requirement {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(74, 144, 226, 0.2);
+    border: 1px solid rgba(74, 144, 226, 0.4);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--color-mystical-blue);
+    text-align: center;
+}
+
+/* === Enhanced Character Progression Display === */
+.character-abilities-panel {
+    background: rgba(26, 21, 18, 0.8);
+    border: 2px solid rgba(255, 197, 143, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+}
+
+.character-abilities-panel::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at center, rgba(255, 197, 143, 0.1) 0%, transparent 30%);
+    animation: consciousness-expansion 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes consciousness-expansion {
+    0%, 100% { 
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% { 
+        transform: scale(1.2) rotate(180deg);
+        opacity: 0.6;
+    }
+}
+
+.abilities-title {
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    text-align: center;
+    color: var(--color-ancient-wisdom);
+    margin-bottom: 2rem;
+    text-shadow: var(--mystery-glow);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+}
+
+.ability-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: var(--transition-mystery);
+    position: relative;
+    z-index: 2;
+}
+
+.ability-item.enhanced {
+    border-color: var(--color-ability-unlock);
+    box-shadow: var(--glow-intensity) var(--color-ability-unlock);
+    animation: ability-enhancement 1s ease-out;
+}
+
+@keyframes ability-enhancement {
+    0% { 
+        transform: scale(1);
+        box-shadow: none;
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 30px var(--color-ability-unlock);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: var(--glow-intensity) var(--color-ability-unlock);
+    }
+}
+
+.ability-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+    color: var(--color-spiritual-deep);
+}
+
+.ability-details {
+    flex: 1;
+}
+
+.ability-name {
+    font-weight: bold;
+    color: var(--color-spiritual-gold);
+    margin-bottom: 0.3rem;
+    text-transform: capitalize;
+}
+
+.ability-description {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+
+.ability-level {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.level-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 197, 143, 0.3);
+    border: 1px solid rgba(255, 197, 143, 0.5);
+    transition: var(--transition-discovery);
+}
+
+.level-indicator.active {
+    background: var(--color-spiritual-gold);
+    border-color: var(--color-ancient-wisdom);
+    box-shadow: 0 0 8px var(--color-spiritual-gold);
+}
+
+/* === Discovery and Secret Notification System === */
+.discovery-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: 
+        linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(255, 197, 143, 0.8) 100%);
+    color: var(--color-mystery-deep);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    border: 2px solid var(--color-ancient-wisdom);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        var(--secret-glow);
+    max-width: 400px;
+    z-index: 1000;
+    transform: translateX(120%);
+    transition: var(--transition-discovery);
+    backdrop-filter: blur(10px);
+}
+
+.discovery-notification.show {
+    transform: translateX(0);
+}
+
+.discovery-notification.secret {
+    background: 
+        linear-gradient(135deg, rgba(139, 125, 155, 0.9) 0%, rgba(74, 144, 226, 0.8) 100%);
+    border-color: var(--color-mystical-blue);
+    animation: secret-revelation 2s ease-out;
+}
+
+@keyframes secret-revelation {
+    0% { 
+        transform: translateX(120%) scale(0.8);
+        opacity: 0;
+        filter: blur(5px);
+    }
+    50% { 
+        transform: translateX(-10%) scale(1.05);
+        opacity: 1;
+        filter: blur(0);
+    }
+    100% { 
+        transform: translateX(0) scale(1);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.notification-icon {
+    font-size: 2rem;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.notification-title {
+    font-family: var(--font-title);
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.notification-content {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.philosophical-insight {
+    font-style: italic;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border-left: 4px solid currentColor;
+    margin-top: 1rem;
+}
+
+/* === Enhanced Puzzle Interface === */
+.mystery-puzzle-container {
+    position: relative;
+    background: 
+        radial-gradient(circle at center, rgba(212, 175, 55, 0.1) 0%, transparent 70%),
+        linear-gradient(135deg, rgba(26, 21, 18, 0.9) 0%, rgba(42, 33, 23, 0.8) 100%);
+    border: 3px solid transparent;
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 15px 45px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.mystery-puzzle-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        var(--color-spiritual-gold), 
+        var(--color-ancient-wisdom), 
+        var(--color-mystical-blue), 
+        var(--color-karmic-purple),
+        var(--color-spiritual-gold));
+    background-size: 400% 400%;
+    border-radius: 20px;
+    z-index: -1;
+    animation: mystical-border 8s ease-in-out infinite;
+}
+
+@keyframes mystical-border {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+}
+
+.puzzle-phase-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.phase-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 197, 143, 0.3);
+    border: 1px solid rgba(255, 197, 143, 0.5);
+    transition: var(--transition-discovery);
+}
+
+.phase-dot.active {
+    background: var(--color-spiritual-gold);
+    box-shadow: 0 0 15px var(--color-spiritual-gold);
+    animation: phase-activation 0.6s ease-out;
+}
+
+.phase-dot.completed {
+    background: var(--color-ancient-wisdom);
+    box-shadow: 0 0 10px var(--color-ancient-wisdom);
+}
+
+@keyframes phase-activation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+.puzzle-title {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    text-align: center;
+    color: var(--color-ancient-wisdom);
+    margin-bottom: 1rem;
+    text-shadow: var(--mystery-glow);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.puzzle-philosophical-context {
+    text-align: center;
+    font-style: italic;
+    color: var(--color-spiritual-gold);
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(255, 197, 143, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 197, 143, 0.3);
+}
+
+/* === Hidden Mechanics Reveal System === */
+.hidden-mechanics-container {
+    position: relative;
+    margin-top: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--transition-atmospheric);
+}
+
+.hidden-mechanics-container.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hidden-mechanics-title {
+    font-family: var(--font-title);
+    color: var(--color-karmic-purple);
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 15px var(--color-karmic-purple);
+}
+
+.hidden-mechanic {
+    background: rgba(139, 125, 155, 0.1);
+    border: 1px solid rgba(139, 125, 155, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: mechanic-revelation 1s ease-out forwards;
+}
+
+.hidden-mechanic:nth-child(2) { animation-delay: 0.2s; }
+.hidden-mechanic:nth-child(3) { animation-delay: 0.4s; }
+.hidden-mechanic:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes mechanic-revelation {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.mechanic-name {
+    font-weight: bold;
+    color: var(--color-karmic-purple);
+    margin-bottom: 0.5rem;
+}
+
+.mechanic-description {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* === Responsive Design for Enhanced Experience === */
+@media (max-width: 768px) {
+    .environmental-elements {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .mystery-story-container,
+    .character-abilities-panel,
+    .mystery-puzzle-container {
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .puzzle-title {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+    }
+    
+    .discovery-notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* === Accessibility Enhancements === */
+@media (prefers-reduced-motion: reduce) {
+    .mystical-particles,
+    .spiritual-energy-streams,
+    .character-abilities-panel::before,
+    .mystery-puzzle-container::before {
+        animation: none !important;
+    }
+    
+    .interactive-element.discoverable::before {
+        animation: none !important;
+        opacity: 0.5;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .interactive-element {
+        border-width: 3px;
+    }
+    
+    .ability-level-indicator.active {
+        border-width: 2px;
+    }
+    
+    .discovery-highlight {
+        text-decoration: underline;
+        text-decoration-color: var(--color-spiritual-gold);
+    }
+}
+
+/* === Focus and Interaction States === */
+.interactive-element:focus-visible,
+.discovery-highlight:focus-visible {
+    outline: 3px solid var(--color-ability-unlock);
+    outline-offset: 2px;
+}
+
+.interactive-element[tabindex]:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.3),
+        var(--discovery-glow);
+}

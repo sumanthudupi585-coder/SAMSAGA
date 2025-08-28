@@ -16,6 +16,8 @@
     
     <!-- Link to the external CSS files -->
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="atmospheric-ui-system.css">
+    <link rel="stylesheet" href="fixed-banyan-puzzle.css">
 
     <!-- Data files first -->
     <script src="ACT1storyData.js"></script>
@@ -34,6 +36,10 @@
     <script src="AudioManager.js"></script>
     <script src="UIController.js"></script>
     <script src="VisualEffects.js"></script>
+    <script src="adventure-game-engine.js"></script>
+    <script src="enhanced-puzzle-systems.js"></script>
+    <script src="complete-gameplay-overhaul.js"></script>
+    <script src="fixed-banyan-puzzle.js"></script>
     <script src="navigation.js"></script>
 
 </head>
@@ -804,8 +810,13 @@
                 }, 1000);
             });
 
-            // Initialize story engine-driven gameplay
+            // Initialize enhanced adventure gameplay system
             const gsm = window.gameStateManager;
+
+            // Initialize the complete gameplay overhaul
+            const gameplayOverhaul = initializeCompleteGameplayOverhaul(gsm);
+
+            // Keep original story engine for compatibility
             const storyEngine = new StoryEngine(gsm);
             const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
 
@@ -884,236 +895,94 @@
                     box.appendChild(desc);
 
                     if (puzzle.puzzleId === 'BarrierOfNegativity') {
-                        const info = document.createElement('p');
-                        info.textContent = 'Drag a pure item from your inventory onto the barrier.';
-                        box.appendChild(info);
+                        // Use the enhanced psychological transformation puzzle
+                        box.innerHTML = '';
 
-                        const dndWrap = document.createElement('div');
-                        dndWrap.className = 'puzzle-action-row';
+                        // Check if enhanced overhaul is active
+                        if (window.gameplayOverhaul) {
+                            window.gameplayOverhaul.loadEnhancedPuzzle('BarrierOfNegativity');
+                        } else {
+                            // Fallback to simplified drag-and-drop version
+                            const info = document.createElement('p');
+                            info.textContent = 'Drag a pure item from your inventory onto the barrier.';
+                            box.appendChild(info);
 
-                        const drop = document.createElement('div');
-                        drop.id = 'barrier-drop-zone';
-                        drop.className = 'drop-zone';
-                        drop.style.minHeight = '140px';
-                        drop.style.display = 'flex';
-                        drop.style.alignItems = 'center';
-                        drop.style.justifyContent = 'center';
-                        drop.style.border = '1px dashed rgba(224,150,88,0.5)';
-                        drop.innerHTML = '<i class="fas fa-shield-virus"></i> Drop here';
+                            const dndWrap = document.createElement('div');
+                            dndWrap.className = 'puzzle-action-row';
 
-                        const inv = document.createElement('div');
-                        inv.className = 'inventory-source';
-                        inv.innerHTML = '<h4>Your Inventory</h4>';
+                            const drop = document.createElement('div');
+                            drop.id = 'barrier-drop-zone';
+                            drop.className = 'drop-zone';
+                            drop.style.minHeight = '140px';
+                            drop.style.display = 'flex';
+                            drop.style.alignItems = 'center';
+                            drop.style.justifyContent = 'center';
+                            drop.style.border = '1px dashed rgba(224,150,88,0.5)';
+                            drop.innerHTML = '<i class="fas fa-shield-virus"></i> Drop here';
 
-                        const invList = document.createElement('div');
-                        const items = new Set(gsm.playerState.inventory || []);
-                        if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
-                        items.forEach(name => {
-                            const el = document.createElement('div');
-                            el.className = 'draggable-item';
-                            el.draggable = true;
-                            el.dataset.itemName = name;
-                            el.textContent = name;
-                            el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', name));
-                            invList.appendChild(el);
-                        });
-                        inv.appendChild(invList);
+                            const inv = document.createElement('div');
+                            inv.className = 'inventory-source';
+                            inv.innerHTML = '<h4>Your Inventory</h4>';
 
-                        dndWrap.appendChild(drop);
-                        dndWrap.appendChild(inv);
-                        box.appendChild(dndWrap);
+                            const invList = document.createElement('div');
+                            const items = new Set(gsm.playerState.inventory || []);
+                            if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
+                            items.forEach(name => {
+                                const el = document.createElement('div');
+                                el.className = 'draggable-item';
+                                el.draggable = true;
+                                el.dataset.itemName = name;
+                                el.textContent = name;
+                                el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', name));
+                                invList.appendChild(el);
+                            });
+                            inv.appendChild(invList);
 
-                        const validItems = (window.PUZZLES && window.PUZZLES.BarrierOfNegativity && window.PUZZLES.BarrierOfNegativity.mechanics && window.PUZZLES.BarrierOfNegativity.mechanics.solution && window.PUZZLES.BarrierOfNegativity.mechanics.solution.validItems) || ['Lotus Petal'];
+                            dndWrap.appendChild(drop);
+                            dndWrap.appendChild(inv);
+                            box.appendChild(dndWrap);
 
-                        drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.boxShadow = '0 0 15px rgba(224,150,88,0.6)'; });
-                        drop.addEventListener('dragleave', () => { drop.style.boxShadow = 'none'; });
-                        drop.addEventListener('drop', (e) => {
-                            e.preventDefault();
-                            drop.style.boxShadow = 'none';
-                            const itemName = e.dataTransfer.getData('text/plain');
-                            if (validItems.includes(itemName)) {
-                                const sol = (puzzle.solutions || []).find(s => s.successScene);
-                                const next = (sol && sol.successScene) || 'PURIFY_CRYSTAL_SUCCESS';
-                                gsm.playerState.currentSceneId = next;
-                                renderScene();
-                            } else {
-                                if (puzzle.defaultFailure && puzzle.defaultFailure.effects && typeof puzzle.defaultFailure.effects.karma === 'number') {
-                                    gsm.updateKarma(puzzle.defaultFailure.effects.karma);
+                            const validItems = ['Lotus Petal'];
+
+                            drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.boxShadow = '0 0 15px rgba(224,150,88,0.6)'; });
+                            drop.addEventListener('dragleave', () => { drop.style.boxShadow = 'none'; });
+                            drop.addEventListener('drop', (e) => {
+                                e.preventDefault();
+                                drop.style.boxShadow = 'none';
+                                const itemName = e.dataTransfer.getData('text/plain');
+                                if (validItems.includes(itemName)) {
+                                    const sol = (puzzle.solutions || []).find(s => s.successScene);
+                                    const next = (sol && sol.successScene) || 'PURIFY_CRYSTAL_SUCCESS';
+                                    gsm.playerState.currentSceneId = next;
+                                    renderScene();
+                                } else {
+                                    drop.classList.add('shake');
+                                    setTimeout(() => drop.classList.remove('shake'), 600);
+                                    showNotification('The barrier repels impure intent.', 'error');
                                 }
-                                drop.classList.add('shake');
-                                setTimeout(() => drop.classList.remove('shake'), 600);
-                                showNotification('The barrier repels impure intent.', 'error');
-                            }
-                        });
+                            });
+                        }
                     }
 
                     if (puzzle.puzzleId === 'BanyanTreeHarmony') {
-                        const fineUnlocked = !!gsm.worldState.banyan_hint_carvings;
-                        const linkUnlocked = !!gsm.worldState.banyan_hint_wind;
-                        const pulseUnlocked = !!gsm.worldState.banyan_hint_pulse;
-                        const manyHints = (fineUnlocked?1:0) + (linkUnlocked?1:0) + (pulseUnlocked?1:0) >= 2;
+                        // Use the enhanced multi-stage puzzle with deep complexity
+                        box.innerHTML = '';
 
-                        const state = Object.assign({ vitality: 30, wisdom: 70, harmony: 20 }, gsm.worldState.banyan_ring_state || {});
-                        const tol = 5;
-                        const norm = (a) => ((a % 360) + 360) % 360;
-                        const diff = (a,b) => {
-                            const d = Math.abs(norm(a) - norm(b));
-                            return Math.min(d, 360 - d);
-                        };
-                        const near = (a,b,t=tol) => diff(a,b) <= t;
-                        const saveState = () => { gsm.worldState.banyan_ring_state = { ...state }; };
-
-                        const topRow = document.createElement('div');
-                        topRow.className = 'puzzle-action-row';
-                        if (linkUnlocked) {
-                            const linkWrap = document.createElement('label');
-                            linkWrap.className = 'hint-toggle';
-                            const cb = document.createElement('input');
-                            cb.type = 'checkbox';
-                            cb.id = 'link-rings-toggle';
-                            cb.checked = !!gsm.worldState.banyan_link_mode;
-                            const span = document.createElement('span');
-                            span.textContent = 'Link rings';
-                            linkWrap.appendChild(cb); linkWrap.appendChild(span);
-                            cb.addEventListener('change', () => { gsm.worldState.banyan_link_mode = cb.checked; });
-                            topRow.appendChild(linkWrap);
+                        // Check if enhanced overhaul is active
+                        if (window.gameplayOverhaul) {
+                            window.gameplayOverhaul.loadEnhancedPuzzle('BanyanTreeHarmony');
+                        } else {
+                            // Fallback to fixed puzzle
+                            const fixedPuzzle = new window.FixedBanyanTreeHarmony(
+                                box,
+                                gsm,
+                                () => {
+                                    gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
+                                    renderScene();
+                                }
+                            );
+                            window.currentBanyanPuzzle = fixedPuzzle;
                         }
-                        box.appendChild(topRow);
-
-                        const controls = document.createElement('div');
-                        controls.className = 'puzzle-ring-grid';
-                        const readouts = {};
-
-                        const makeButton = (label, onClick) => {
-                            const b = document.createElement('button');
-                            b.className = 'menu-button';
-                            b.textContent = label;
-                            b.addEventListener('click', onClick);
-                            return b;
-                        };
-
-                        const rotate = (key, delta) => {
-                            if (gsm.worldState.banyan_link_mode) {
-                                ['vitality','wisdom','harmony'].forEach(k => state[k] = norm(state[k] + delta));
-                            } else {
-                                state[key] = norm(state[key] + delta);
-                            }
-                            Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
-                            updateMeters();
-                            saveState();
-                        };
-
-                        ['vitality','wisdom','harmony'].forEach(key => {
-                            const panel = document.createElement('div');
-                            panel.className = 'detail-item';
-                            const t = document.createElement('div');
-                            t.className = 'profile-title';
-                            t.textContent = key.charAt(0).toUpperCase()+key.slice(1);
-                            const val = document.createElement('div');
-                            val.className = 'text-center puzzle-ring-readout';
-                            val.dataset.key = key;
-                            val.textContent = `${norm(state[key]).toFixed(0)}°`;
-                            readouts[key] = val;
-
-                            const btnRow = document.createElement('div');
-                            btnRow.className = 'puzzle-action-row';
-                            btnRow.appendChild(makeButton('−15°', () => rotate(key, -15)));
-                            if (fineUnlocked) btnRow.appendChild(makeButton('−5°', () => rotate(key, -5)));
-                            if (fineUnlocked) btnRow.appendChild(makeButton('+5°', () => rotate(key, +5)));
-                            btnRow.appendChild(makeButton('+15°', () => rotate(key, +15)));
-
-                            panel.appendChild(t); panel.appendChild(val); panel.appendChild(btnRow);
-                            controls.appendChild(panel);
-                        });
-                        box.appendChild(controls);
-
-                        // Alignment feedback
-                        let metersWrap = null;
-                        const updateMeters = () => {
-                            if (!pulseUnlocked || !metersWrap) return;
-                            const base = state.vitality;
-                            const pairs = [
-                                ['Vitality vs Wisdom', diff(state.vitality, state.wisdom)],
-                                ['Vitality vs Harmony', diff(state.vitality, state.harmony)],
-                                ['Wisdom vs Harmony', diff(state.wisdom, state.harmony)]
-                            ];
-                            metersWrap.innerHTML = '';
-                            pairs.forEach(([label, d]) => {
-                                const row = document.createElement('div'); row.className = 'alignment-meter';
-                                const name = document.createElement('div'); name.className = 'meter-label'; name.textContent = label;
-                                const track = document.createElement('div'); track.className = 'meter-track';
-                                const fill = document.createElement('div'); fill.className = 'meter-fill';
-                                const pct = Math.max(0, 100 - (d/180)*100); // smaller diff => larger pct
-                                fill.style.width = `${pct}%`;
-                                if (d <= tol) fill.classList.add('ok');
-                                track.appendChild(fill);
-                                row.appendChild(name); row.appendChild(track);
-                                metersWrap.appendChild(row);
-                            });
-                        };
-
-                        if (pulseUnlocked) {
-                            const panel = document.createElement('div');
-                            panel.className = 'alignment-panel';
-                            const title = document.createElement('div'); title.className = 'profile-title'; title.textContent = 'Alignment Meter';
-                            metersWrap = document.createElement('div'); metersWrap.className = 'alignment-meters';
-                            panel.appendChild(title); panel.appendChild(metersWrap);
-                            box.appendChild(panel);
-                        }
-
-                        if (manyHints) {
-                            const nudge = document.createElement('button');
-                            nudge.className = 'puzzle-action-button';
-                            nudge.innerHTML = '<i class="fas fa-magnet"></i> Nudge Toward Harmony';
-                            nudge.addEventListener('click', () => {
-                                const step = fineUnlocked ? 5 : 15;
-                                const target = state.vitality;
-                                ['wisdom','harmony'].forEach(k => {
-                                    const a = state[k];
-                                    const d = diff(a, target);
-                                    if (d === 0) return;
-                                    const cw = norm(a + step);
-                                    const ccw = norm(a - step);
-                                    const cwDiff = diff(cw, target);
-                                    const ccwDiff = diff(ccw, target);
-                                    state[k] = cwDiff <= ccwDiff ? cw : ccw;
-                                });
-                                Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
-                                updateMeters();
-                                saveState();
-                            });
-                            box.appendChild(nudge);
-                        }
-
-                        const check = document.createElement('button');
-                        check.className = 'menu-button';
-                        check.innerHTML = '<i class="fas fa-check"></i> Check Alignment';
-                        check.addEventListener('click', () => {
-                            const v = state.vitality, w = state.wisdom, h = state.harmony;
-                            const ok = near(v,w) && near(w,h) && near(v,h);
-                            if (ok) {
-                                gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
-                                delete gsm.worldState.banyan_ring_state;
-                                renderScene();
-                            } else {
-                                showNotification('Closer now—use fine steps, link mode, and watch the meter.', 'error');
-                            }
-                        });
-                        box.appendChild(check);
-
-                        if (fineUnlocked || linkUnlocked || pulseUnlocked) {
-                            const hintBox = document.createElement('div');
-                            hintBox.className = 'puzzle-hint-box';
-                            const hints = [];
-                            if (fineUnlocked) hints.push('The runes imply fine adjustments help.');
-                            if (linkUnlocked) hints.push('Wind teaches: move all together for harmony.');
-                            if (pulseUnlocked) hints.push('The pulse steadies as alignment nears.');
-                            hintBox.innerHTML = `<ul>${hints.map(h => `<li>${h}</li>`).join('')}</ul>`;
-                            box.appendChild(hintBox);
-                        }
-
-                        updateMeters();
-                        saveState();
                     }
 
                     puzzleEl.appendChild(box);
