@@ -354,14 +354,65 @@ class GameplayOverhaulEngine {
             
             <!-- Enhanced Character & Discovery Panel -->
             <div class="enhanced-side-panel">
+                <!-- Character Summary (Nakshatra) -->
+                <div class="character-summary">
+                    <div class="character-symbol">
+                        <svg viewBox="0 0 100 100" id="character-symbol-svg"></svg>
+                    </div>
+                    <h2 class="character-name" id="character-name">Jiva</h2>
+                </div>
+
+                <!-- Traditional Player Attributes -->
+                <div class="player-attributes-panel panel-section">
+                    <h3 class="panel-title">Spiritual Attributes</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Karma</span>
+                            <div class="stat-bar karma-bar"><div id="karma-fill" style="width: 50%;"></div></div>
+                            <span id="karma-value" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sattva</span>
+                            <div class="stat-bar sattva-bar"><div id="sattva-fill" style="width: 30%;"></div></div>
+                            <span id="sattva-value" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rajas</span>
+                            <div class="stat-bar rajas-bar"><div id="rajas-fill" style="width: 80%;"></div></div>
+                            <span id="rajas-value" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tamas</span>
+                            <div class="stat-bar tamas-bar"><div id="tamas-fill" style="width: 10%;"></div></div>
+                            <span id="tamas-value" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Elemental Affinity -->
+                <div class="elemental-affinity-panel panel-section">
+                    <h3 class="panel-title">Elemental Affinity</h3>
+                    <div class="element-display" id="element-display">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Inventory -->
+                <div class="inventory-panel panel-section">
+                    <h3 class="panel-title">Inventory</h3>
+                    <ul id="inventory-list">
+                        <li class="inventory-empty">(Empty)</li>
+                    </ul>
+                </div>
+
                 <!-- Enhanced Character Progression -->
-                <div class="character-abilities-panel">
-                    <div class="abilities-title">Spiritual Awakening</div>
+                <div class="character-abilities-panel panel-section">
+                    <h3 class="panel-title">Spiritual Awakening</h3>
                     <div class="ability-items" id="ability-items">
                         <!-- Abilities will be populated dynamically -->
                     </div>
                 </div>
-                
+
                 <!-- Discovery Journal -->
                 <div class="discovery-journal-panel">
                     <div class="journal-title">📖 Discovery Journal</div>
