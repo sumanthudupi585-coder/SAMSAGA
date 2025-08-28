@@ -1811,30 +1811,42 @@
         }
         
         function getStageHint() {
+            if (!gameState) {
+                showNotification('Game not yet initialized. Please wait...', 'warning');
+                return;
+            }
+
             gameState.hintsUsed++;
-            
+
             const hints = {
                 1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180°. Listen for the harmonic convergence.",
                 2: "The Flower of Life begins at the center and radiates outward. Activate the central node first, then the six surrounding petals in clockwise order.",
                 3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral → Solar → Heart → Throat → Third Eye → Crown."
             };
-            
+
             gameState.showFeedback(`Cosmic Guidance: ${hints[gameState.currentStage]}`, 'hint');
-            
+
             // Small karma penalty for hints
             gameState.playerStats.karma = Math.max(0, gameState.playerStats.karma - 5);
             gameState.updateDisplay();
         }
-        
+
         function resetCurrentStage() {
+            if (!gameState) {
+                showNotification('Game not yet initialized. Please wait...', 'warning');
+                return;
+            }
+
             switch (gameState.currentStage) {
                 case 1:
                     // Reset to random positions
                     for (let i = 1; i <= 3; i++) {
                         const slider = document.getElementById(`freq-${i}`);
-                        const randomAngle = Math.floor(Math.random() * 360);
-                        slider.value = randomAngle;
-                        gameState.updateFrequency(i);
+                        if (slider) {
+                            const randomAngle = Math.floor(Math.random() * 360);
+                            slider.value = randomAngle;
+                            gameState.updateFrequency(i);
+                        }
                     }
                     break;
                 case 2:
@@ -1846,22 +1858,34 @@
             }
             gameState.showFeedback('Stage reset. Begin anew with deeper understanding.', 'info');
         }
-        
+
         function skipToNextQuest() {
             if (confirm('🚨 Skip this profound trial? You will miss the deepest spiritual rewards and cosmic attunement. Continue?')) {
                 continueEpicJourney();
             }
         }
-        
+
         function saveProgress() {
+            if (!gameState) {
+                showNotification('Game not yet initialized. Nothing to save.', 'warning');
+                return;
+            }
             gameState.saveProgress();
         }
-        
+
         function viewGrandDesign() {
+            if (!gameState) {
+                showNotification('Game not yet initialized. Please wait...', 'warning');
+                return;
+            }
             gameState.showNotification('The Grand Design reveals itself only to those who complete all trials...', 'info');
         }
-        
+
         function enterMeditation() {
+            if (!gameState) {
+                showNotification('Game not yet initialized. Please wait...', 'warning');
+                return;
+            }
             gameState.playerStats.karma += 10;
             gameState.playerStats.attunement = Math.min(100, gameState.playerStats.attunement + 2);
             gameState.updateDisplay();
