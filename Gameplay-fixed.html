@@ -818,31 +818,31 @@
             // Initialize enhanced adventure gameplay system
             const gsm = window.gameStateManager;
 
-            // Load character data from URL parameters first
-            const urlParams = new URLSearchParams(window.location.search);
-            const nakshatraNum = urlParams.get('nakshatra');
-            const pada = urlParams.get('pada');
-            const guna1 = urlParams.get('guna1');
-            const guna3 = urlParams.get('guna3');
+            // URL parameters already parsed above, reuse them
+            console.log('Initializing gameplay with parameters:', { nakshatraNum, pada, guna1: urlParams.get('guna1'), guna3 });
 
-            console.log('Initializing gameplay with parameters:', { nakshatraNum, pada, guna1, guna3 });
-
-            // Ensure player profile is set up from URL parameters
+            // Ensure complete player profile is set up in game state manager
             if (nakshatraNum && nakshatraData[nakshatraNum]) {
                 const nakshatra = nakshatraData[nakshatraNum];
-                gsm.playerProfile = {
-                    nakshatra: nakshatra.name,
-                    gana: nakshatra.gana,
-                    shakti: nakshatra.shakti,
-                    gunas: {
-                        sattva: nakshatra.gunas?.sattva || 0,
-                        rajas: nakshatra.gunas?.rajas || 0,
-                        tamas: nakshatra.gunas?.tamas || 0
-                    },
-                    avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
-                };
 
-                // Set pada and guna selections
+                // Initialize complete player profile if not already done
+                if (!gsm.playerProfile.shakti) {
+                    gsm.playerProfile = {
+                        ...gsm.playerProfile,
+                        nakshatra: nakshatra.name,
+                        gana: nakshatra.gana,
+                        shakti: nakshatra.shakti,
+                        gunas: {
+                            sattva: nakshatra.gunas?.sattva || 0,
+                            rajas: nakshatra.gunas?.rajas || 0,
+                            tamas: nakshatra.gunas?.tamas || 0
+                        },
+                        avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                    };
+                }
+
+                // Set additional URL parameters
+                const guna1 = urlParams.get('guna1');
                 if (pada) gsm.updateState('pada', pada);
                 if (guna1) gsm.updateState('guna1', guna1);
                 if (guna3) gsm.updateState('guna3', guna3);
