@@ -981,6 +981,64 @@ class SpiritualAdventureEngine {
         console.log(`Ability Enhanced: ${abilityName} (Level ${level})`);
         console.log(`Description: ${description}`);
     }
+
+    getUnlockedSecrets() {
+        return Array.from(this.unlockedSecrets || []);
+    }
+
+    getCurrentAtmosphericState() {
+        return {
+            currentLocation: this.currentLocation,
+            activeEffects: this.getActiveAtmosphericEffects(),
+            environmentalComplexity: this.environmentalComplexity || 'simple',
+            philosophicalDepth: this.philosophicalDepth || 'surface'
+        };
+    }
+
+    getActiveAtmosphericEffects() {
+        // Return currently active atmospheric effects
+        const effects = [];
+        this.atmosphericTriggers.forEach((trigger, triggerName) => {
+            if (trigger.condition && trigger.condition()) {
+                effects.push({
+                    name: triggerName,
+                    effect: trigger.effect,
+                    visual: trigger.visual
+                });
+            }
+        });
+        return effects;
+    }
+
+    restoreUnlockedMechanics() {
+        // Restore mechanics based on current ability levels
+        Object.entries(this.characterAbilities).forEach(([abilityName, level]) => {
+            for (let i = 1; i <= level; i++) {
+                this.unlockNewMechanics(abilityName, i);
+            }
+        });
+    }
+
+    restoreAtmosphericState(atmosphericState) {
+        if (!atmosphericState) return;
+
+        this.currentLocation = atmosphericState.currentLocation || this.currentLocation;
+        this.environmentalComplexity = atmosphericState.environmentalComplexity || 'simple';
+        this.philosophicalDepth = atmosphericState.philosophicalDepth || 'surface';
+
+        // Restore active atmospheric effects
+        if (atmosphericState.activeEffects) {
+            atmosphericState.activeEffects.forEach(effect => {
+                this.reactivateAtmosphericEffect(effect);
+            });
+        }
+    }
+
+    reactivateAtmosphericEffect(effect) {
+        // Reactivate atmospheric effect
+        console.log(`Reactivating atmospheric effect: ${effect.name}`);
+        // Implementation would restore visual and audio effects
+    }
 }
 
 // Export for use in the main game
