@@ -130,6 +130,9 @@ body.high-contrast-mode {
 .narrative-container {
   grid-area: narrative;
   padding: var(--spacing-unit) 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
 }
 
 /* Marginalia for stats/inventory (Manusha Pada) */
