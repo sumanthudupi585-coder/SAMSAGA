@@ -28,9 +28,16 @@
 
     getCurrentScene() {
       const storyData = this.getActiveStoryData();
-      if (!storyData || !Array.isArray(storyData.scenes)) return null;
+      if (!storyData) return null;
       const currentSceneId = this.gameStateManager.playerState.currentSceneId;
-      const scene = storyData.scenes.find((s) => s.id === currentSceneId) || null;
+
+      let scene = null;
+      if (Array.isArray(storyData.scenes)) {
+        scene = storyData.scenes.find((s) => s.id === currentSceneId) || null;
+      } else if (typeof storyData === 'object') {
+        scene = storyData[currentSceneId] || null;
+      }
+
       if (!scene) console.error(`Scene with ID "${currentSceneId}" not found in Act ${this.gameStateManager.playerState.currentAct}`);
       return scene;
     }
@@ -43,23 +50,34 @@
       const gameState = this.gameStateManager.getState();
       const baseChoices = Array.isArray(scene.choices) ? scene.choices : [];
 
-      const standardChoices = baseChoices.filter((choice) => {
-        if (!choice.condition) return true;
-        const conditionFunc = typeof choice.condition === 'string' ? new Function('gameState', `return ${choice.condition}`) : choice.condition;
+      const evalCondition = (cond) => {
+        if (!cond) return true;
         try {
-          return !!conditionFunc(gameState);
+          if (typeof cond === 'function') {
+            return !!(cond(gameState) || cond(gameState.playerProfile));
+          }
+          const fn = new Function('gameState', `return ${cond}`);
+          return !!fn(gameState);
         } catch (e) {
-          console.error(`Error evaluating condition for choice "${choice.id}":`, e);
+          console.error('Error evaluating condition:', e);
           return false;
         }
-      });
+      };
+
+      const standardChoices = baseChoices
+        .filter((choice) => evalCondition(choice.condition))
+        .map((c) => ({ id: c.id || c.nextScene || c.text, ...c }));
+
+      const interactionChoices = Array.isArray(scene.interactions)
+        ? scene.interactions.map((i) => ({ id: i.id || i.scene || `${i.verb}_${i.noun}`, text: `${i.verb} ${i.noun}`, nextScene: i.scene }))
+        : [];
 
       const special = [
         ...this.getNakshatraSpecialChoices(scene),
         ...this.getGanaSpecialChoices(scene),
       ];
 
-      return [...standardChoices, ...special];
+      return [...standardChoices, ...interactionChoices, ...special];
     }
 
     getNakshatraSpecialChoices(scene) {
@@ -81,32 +99,21 @@
       const scene = this.getCurrentScene();
       if (!scene) return false;
 
-      // locate choice in choices or interactions
-      let choice = null;
-      if (Array.isArray(scene.choices)) choice = scene.choices.find((c) => c.id === choiceId) || null;
-      if (!choice && Array.isArray(scene.interactions)) choice = scene.interactions.find((i) => i.id === choiceId) || null;
+      const allChoices = this.getAvailableChoices();
+      const choice = allChoices.find((c) => c.id === choiceId) || null;
       if (!choice) {
         console.error(`Choice with ID "${choiceId}" not found in current scene`);
         return false;
       }
 
-      // Effects
-      if (choice.effects) {
-        this.processEffects(choice.effects);
-      }
-
-      // World state triggers
+      if (choice.effects) this.processEffects(choice.effects);
       if (choice.worldStateTriggers) {
-        Object.entries(choice.worldStateTriggers).forEach(([key, value]) => {
-          this.gameStateManager.updateState(key, value);
-        });
+        Object.entries(choice.worldStateTriggers).forEach(([key, value]) => this.gameStateManager.updateState(key, value));
       }
 
-      // Act change
-      if (choice.nextAct) return this.transitionToAct(choice.nextAct);
+      if (choice.nextAct !== undefined) return this.transitionToAct(choice.nextAct);
       if (choice.transitionToAct !== undefined) return this.transitionToAct(choice.transitionToAct);
 
-      // Scene change
       if (choice.nextScene) {
         this.gameStateManager.playerState.currentSceneId = choice.nextScene;
         return true;
