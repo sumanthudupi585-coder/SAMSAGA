@@ -909,9 +909,61 @@
                     }
 
                     if (puzzle.puzzleId === 'BanyanTreeHarmony') {
-                        const state = { vitality: 30, wisdom: 70, harmony: 20 };
+                        const fineUnlocked = !!gsm.worldState.banyan_hint_carvings;
+                        const linkUnlocked = !!gsm.worldState.banyan_hint_wind;
+                        const pulseUnlocked = !!gsm.worldState.banyan_hint_pulse;
+                        const manyHints = (fineUnlocked?1:0) + (linkUnlocked?1:0) + (pulseUnlocked?1:0) >= 2;
+
+                        const state = Object.assign({ vitality: 30, wisdom: 70, harmony: 20 }, gsm.worldState.banyan_ring_state || {});
+                        const tol = 5;
+                        const norm = (a) => ((a % 360) + 360) % 360;
+                        const diff = (a,b) => {
+                            const d = Math.abs(norm(a) - norm(b));
+                            return Math.min(d, 360 - d);
+                        };
+                        const near = (a,b,t=tol) => diff(a,b) <= t;
+                        const saveState = () => { gsm.worldState.banyan_ring_state = { ...state }; };
+
+                        const topRow = document.createElement('div');
+                        topRow.className = 'puzzle-action-row';
+                        if (linkUnlocked) {
+                            const linkWrap = document.createElement('label');
+                            linkWrap.className = 'hint-toggle';
+                            const cb = document.createElement('input');
+                            cb.type = 'checkbox';
+                            cb.id = 'link-rings-toggle';
+                            cb.checked = !!gsm.worldState.banyan_link_mode;
+                            const span = document.createElement('span');
+                            span.textContent = 'Link rings';
+                            linkWrap.appendChild(cb); linkWrap.appendChild(span);
+                            cb.addEventListener('change', () => { gsm.worldState.banyan_link_mode = cb.checked; });
+                            topRow.appendChild(linkWrap);
+                        }
+                        box.appendChild(topRow);
+
                         const controls = document.createElement('div');
                         controls.className = 'puzzle-ring-grid';
+                        const readouts = {};
+
+                        const makeButton = (label, onClick) => {
+                            const b = document.createElement('button');
+                            b.className = 'menu-button';
+                            b.textContent = label;
+                            b.addEventListener('click', onClick);
+                            return b;
+                        };
+
+                        const rotate = (key, delta) => {
+                            if (gsm.worldState.banyan_link_mode) {
+                                ['vitality','wisdom','harmony'].forEach(k => state[k] = norm(state[k] + delta));
+                            } else {
+                                state[key] = norm(state[key] + delta);
+                            }
+                            Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
+                            updateMeters();
+                            saveState();
+                        };
+
                         ['vitality','wisdom','harmony'].forEach(key => {
                             const panel = document.createElement('div');
                             panel.className = 'detail-item';
@@ -921,31 +973,108 @@
                             const val = document.createElement('div');
                             val.className = 'text-center puzzle-ring-readout';
                             val.dataset.key = key;
-                            val.textContent = `${state[key]}°`;
-                            const btn = document.createElement('button');
-                            btn.className = 'menu-button';
-                            btn.textContent = 'Rotate +15°';
-                            btn.addEventListener('click', () => {
-                                state[key] = (state[key] + 15) % 360;
-                                val.textContent = `${state[key]}°`;
-                            });
-                            panel.appendChild(t); panel.appendChild(val); panel.appendChild(btn);
+                            val.textContent = `${norm(state[key]).toFixed(0)}°`;
+                            readouts[key] = val;
+
+                            const btnRow = document.createElement('div');
+                            btnRow.className = 'puzzle-action-row';
+                            btnRow.appendChild(makeButton('−15°', () => rotate(key, -15)));
+                            if (fineUnlocked) btnRow.appendChild(makeButton('−5°', () => rotate(key, -5)));
+                            if (fineUnlocked) btnRow.appendChild(makeButton('+5°', () => rotate(key, +5)));
+                            btnRow.appendChild(makeButton('+15°', () => rotate(key, +15)));
+
+                            panel.appendChild(t); panel.appendChild(val); panel.appendChild(btnRow);
                             controls.appendChild(panel);
                         });
+                        box.appendChild(controls);
+
+                        // Alignment feedback
+                        let metersWrap = null;
+                        const updateMeters = () => {
+                            if (!pulseUnlocked || !metersWrap) return;
+                            const base = state.vitality;
+                            const pairs = [
+                                ['Vitality vs Wisdom', diff(state.vitality, state.wisdom)],
+                                ['Vitality vs Harmony', diff(state.vitality, state.harmony)],
+                                ['Wisdom vs Harmony', diff(state.wisdom, state.harmony)]
+                            ];
+                            metersWrap.innerHTML = '';
+                            pairs.forEach(([label, d]) => {
+                                const row = document.createElement('div'); row.className = 'alignment-meter';
+                                const name = document.createElement('div'); name.className = 'meter-label'; name.textContent = label;
+                                const track = document.createElement('div'); track.className = 'meter-track';
+                                const fill = document.createElement('div'); fill.className = 'meter-fill';
+                                const pct = Math.max(0, 100 - (d/180)*100); // smaller diff => larger pct
+                                fill.style.width = `${pct}%`;
+                                if (d <= tol) fill.classList.add('ok');
+                                track.appendChild(fill);
+                                row.appendChild(name); row.appendChild(track);
+                                metersWrap.appendChild(row);
+                            });
+                        };
+
+                        if (pulseUnlocked) {
+                            const panel = document.createElement('div');
+                            panel.className = 'alignment-panel';
+                            const title = document.createElement('div'); title.className = 'profile-title'; title.textContent = 'Alignment Meter';
+                            metersWrap = document.createElement('div'); metersWrap.className = 'alignment-meters';
+                            panel.appendChild(title); panel.appendChild(metersWrap);
+                            box.appendChild(panel);
+                        }
+
+                        if (manyHints) {
+                            const nudge = document.createElement('button');
+                            nudge.className = 'puzzle-action-button';
+                            nudge.innerHTML = '<i class="fas fa-magnet"></i> Nudge Toward Harmony';
+                            nudge.addEventListener('click', () => {
+                                const step = fineUnlocked ? 5 : 15;
+                                const target = state.vitality;
+                                ['wisdom','harmony'].forEach(k => {
+                                    const a = state[k];
+                                    const d = diff(a, target);
+                                    if (d === 0) return;
+                                    const cw = norm(a + step);
+                                    const ccw = norm(a - step);
+                                    const cwDiff = diff(cw, target);
+                                    const ccwDiff = diff(ccw, target);
+                                    state[k] = cwDiff <= ccwDiff ? cw : ccw;
+                                });
+                                Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
+                                updateMeters();
+                                saveState();
+                            });
+                            box.appendChild(nudge);
+                        }
+
                         const check = document.createElement('button');
                         check.className = 'menu-button';
                         check.innerHTML = '<i class="fas fa-check"></i> Check Alignment';
                         check.addEventListener('click', () => {
-                            const ok = Object.values(state).every(a => Math.min(Math.abs(a-0), 360-Math.abs(a-0)) <= 5);
+                            const v = state.vitality, w = state.wisdom, h = state.harmony;
+                            const ok = near(v,w) && near(w,h) && near(v,h);
                             if (ok) {
                                 gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
+                                delete gsm.worldState.banyan_ring_state;
                                 renderScene();
                             } else {
-                                showNotification('Not yet aligned. Keep rotating the rings.', 'error');
+                                showNotification('Closer now—use fine steps, link mode, and watch the meter.', 'error');
                             }
                         });
-                        box.appendChild(controls);
                         box.appendChild(check);
+
+                        if (fineUnlocked || linkUnlocked || pulseUnlocked) {
+                            const hintBox = document.createElement('div');
+                            hintBox.className = 'puzzle-hint-box';
+                            const hints = [];
+                            if (fineUnlocked) hints.push('The runes imply fine adjustments help.');
+                            if (linkUnlocked) hints.push('Wind teaches: move all together for harmony.');
+                            if (pulseUnlocked) hints.push('The pulse steadies as alignment nears.');
+                            hintBox.innerHTML = `<ul>${hints.map(h => `<li>${h}</li>`).join('')}</ul>`;
+                            box.appendChild(hintBox);
+                        }
+
+                        updateMeters();
+                        saveState();
                     }
 
                     puzzleEl.appendChild(box);
