@@ -577,10 +577,35 @@ const ENHANCED_ACT1_STORY_DATA = {
     // ===== STORY DATA COMPLETE =====
 };
 
+// Validate story data structure
+try {
+    // Basic validation
+    if (!ENHANCED_ACT1_STORY_DATA.AWAKENING_PROLOGUE) {
+        throw new Error('Missing AWAKENING_PROLOGUE scene');
+    }
+
+    if (!ENHANCED_ACT1_STORY_DATA.DHARMAPURA_OBSERVATION) {
+        throw new Error('Missing DHARMAPURA_OBSERVATION scene');
+    }
+
+    const sceneCount = Object.keys(ENHANCED_ACT1_STORY_DATA).length;
+    console.log(`📚 Story data validation passed. ${sceneCount} scenes loaded.`);
+
+} catch (error) {
+    console.error('❌ Story data validation failed:', error);
+}
+
 // Export for integration with other systems
 if (typeof window !== 'undefined') {
     window.ENHANCED_ACT1_STORY_DATA = ENHANCED_ACT1_STORY_DATA;
-    console.log('✅ ENHANCED_ACT1_STORY_DATA loaded successfully');
+    console.log('✅ ENHANCED_ACT1_STORY_DATA exported to window successfully');
+
+    // Immediate verification
+    if (window.ENHANCED_ACT1_STORY_DATA === ENHANCED_ACT1_STORY_DATA) {
+        console.log('✅ Export verification successful');
+    } else {
+        console.error('❌ Export verification failed');
+    }
 } else {
     console.error('❌ Window object not available for ENHANCED_ACT1_STORY_DATA export');
 }
