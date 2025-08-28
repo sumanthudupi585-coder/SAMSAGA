@@ -447,7 +447,7 @@ class UltraEnhancedProgressionSystem {
         this.checkLevelUp(category);
         
         // Provide feedback
-        this.providePro gressionFeedback(`+${Math.round(finalAmount)} ${this.formatDimensionName(category)} XP from ${source}`);
+        this.provideProgressionFeedback(`+${Math.round(finalAmount)} ${this.formatDimensionName(category)} XP from ${source}`);
         
         // Update displays
         this.updateDimensionDisplay(category);
@@ -641,7 +641,7 @@ class UltraEnhancedProgressionSystem {
         const impactFunction = impactMap[impact];
         if (impactFunction) {
             impactFunction();
-            this.providePro gressionFeedback(`🌟 Gameplay Enhancement Activated: ${this.formatImpactName(impact)}`);
+            this.provideProgressionFeedback(`🌟 Gameplay Enhancement Activated: ${this.formatImpactName(impact)}`);
         }
     }
     
@@ -881,7 +881,7 @@ class UltraEnhancedProgressionSystem {
         this.createAchievementCelebrationEffect(achievement.name);
         
         // Provide feedback
-        this.providePro gressionFeedback(`🏆 Achievement Unlocked: ${achievement.name}!`);
+        this.provideProgressionFeedback(`🏆 Achievement Unlocked: ${achievement.name}!`);
         
         // Audio celebration
         this.playAchievementSound();
@@ -1034,7 +1034,7 @@ class UltraEnhancedProgressionSystem {
         return Math.round((totalLevels / maxPossibleLevels) * 100);
     }
     
-    providePro gressionFeedback(message) {
+    provideProgressionFeedback(message) {
         const feedbackMessages = document.getElementById('feedback-messages');
         if (feedbackMessages) {
             const messageElement = document.createElement('div');
