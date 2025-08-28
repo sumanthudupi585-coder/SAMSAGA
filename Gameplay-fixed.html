@@ -1710,6 +1710,12 @@
         function updateFrequency(chamber) {
             gameState.updateFrequency(chamber);
         }
+
+        function adjustFrequency(chamber) {
+            if (gameState) {
+                gameState.adjustFrequency(chamber);
+            }
+        }
         
         function checkCurrentStage() {
             switch (gameState.currentStage) {
