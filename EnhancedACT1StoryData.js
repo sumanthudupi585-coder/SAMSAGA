@@ -574,39 +574,7 @@ const ENHANCED_ACT1_STORY_DATA = {
         ]
     },
     
-    // ===== UTILITY FUNCTIONS =====
-
-    getPlayerKnowledge: function() {
-        // This would dynamically generate based on actual player choices
-        const knowledge = [];
-        if (window.unifiedGameFlow?.worldState?.observation_depth === 'profound') {
-            knowledge.push("• Deep understanding of the patterns connecting all things");
-        }
-        if (window.unifiedGameFlow?.worldState?.villager_trust === 'high') {
-            knowledge.push("• Strong bonds of trust with the community");
-        }
-        if (window.unifiedGameFlow?.playerProfile?.acquiredKnowledge?.includes('Aikya')) {
-            knowledge.push("• The practice of Aikya (Unity Consciousness)");
-        }
-
-        return knowledge.length > 0 ? knowledge.join('\n        ') : "• The wisdom gained through your unique journey";
-    },
-
-    getPhilosophicalSummary: function() {
-        // Generate based on actual philosophical progress
-        return `• Understanding of integration between sacred and mundane
-        • Experience with compassionate action and deep listening
-        • Knowledge of how spiritual disconnection manifests in communities
-        • Practice with unity consciousness and healing meditation`;
-    },
-
-    getAttributeSummary: function() {
-        // Generate based on actual attribute growth
-        return `• Wisdom: Enhanced through careful observation and learning
-        • Compassion: Deepened through service to others
-        • Spiritual Insight: Expanded through sacred practices
-        • Determination: Strengthened through overcoming challenges`;
-    }
+    // ===== STORY DATA COMPLETE =====
 };
 
 // Export for integration with other systems
