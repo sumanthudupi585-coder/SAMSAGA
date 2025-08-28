@@ -631,9 +631,9 @@ class CinematicUISystem {
         // Update scene content with cinematic reveal
         this.revealSceneContent(sceneData);
         
-        // Load choices
-        this.loadChoices(sceneData.choices || []);
-        
+        // Load choices (including special nakshatra/gana choices)
+        this.loadChoices(sceneData.choices || [], sceneData);
+
         // Handle special scene features
         this.handleSpecialFeatures(sceneData);
         
@@ -1075,7 +1075,7 @@ class CinematicUISystem {
         const icons = {
             wisdom: '🧠',
             compassion: '💝',
-            spiritual_insight: '👁️',
+            spiritual_insight: '��️',
             determination: '💪',
             detachment: '🕊️'
         };
