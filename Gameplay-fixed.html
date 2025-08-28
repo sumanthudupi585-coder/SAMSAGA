@@ -1917,7 +1917,7 @@
             const hints = {
                 1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180°. Listen for the harmonic convergence.",
                 2: "The Flower of Life begins at the center and radiates outward. Activate the central node first, then the six surrounding petals in clockwise order.",
-                3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral ��� Solar → Heart → Throat → Third Eye → Crown."
+                3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral → Solar → Heart → Throat → Third Eye → Crown."
             };
 
             gameState.showFeedback(`Cosmic Guidance: ${hints[gameState.currentStage]}`, 'hint');
@@ -1956,8 +1956,10 @@
         }
 
         function skipToNextQuest() {
-            if (confirm('🚨 Skip this profound trial? You will miss the deepest spiritual rewards and cosmic attunement. Continue?')) {
-                continueEpicJourney();
+            if (masterGameState && masterGameState.startStoryMode) {
+                masterGameState.startStoryMode();
+            } else {
+                showNotification('Story mode not yet available. Please wait for initialization.', 'warning');
             }
         }
 
