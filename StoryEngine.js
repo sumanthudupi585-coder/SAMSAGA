@@ -29,7 +29,43 @@ getFirstSceneIdForAct(act) {
     
     return firstScenes[act] || "JOURNEY_START";
 }
-
+    /**
+ * Process a choice selection
+ */
+processChoice(choiceId) {
+    const scene = this.getCurrentScene();
+    const choice = scene.choices.find(c => c.id === choiceId);
+    
+    if (!choice) {
+        console.error(`Choice with ID "${choiceId}" not found in current scene`);
+        return false;
+    }
+    
+    // Process effects
+    if (choice.effects) {
+        this.processEffects(choice.effects);
+    }
+    
+    // Process world state triggers
+    if (choice.worldStateTriggers) {
+        Object.entries(choice.worldStateTriggers).forEach(([key, value]) => {
+            this.gameStateManager.updateState(key, value);
+        });
+    }
+    
+    // Check for act transition
+    if (choice.nextAct) {
+        return this.transitionToNextAct();
+    }
+    
+    // Move to next scene
+    if (choice.nextScene) {
+        this.gameStateManager.playerState.currentSceneId = choice.nextScene;
+        return true;
+    }
+    
+    return false;
+}
 /**
  * Transition to the next act
  */
