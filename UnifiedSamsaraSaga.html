@@ -251,6 +251,22 @@
         console.log('UnifiedGameFlow available:', typeof window.UnifiedGameFlow);
         console.log('ENHANCED_ACT1_STORY_DATA available:', typeof window.ENHANCED_ACT1_STORY_DATA);
         console.log('CinematicUISystem available:', typeof window.CinematicUISystem);
+
+        // Additional debugging
+        if (window.ENHANCED_ACT1_STORY_DATA) {
+            console.log('✅ Story data loaded with scenes:', Object.keys(window.ENHANCED_ACT1_STORY_DATA).length);
+        } else {
+            console.error('❌ ENHANCED_ACT1_STORY_DATA is not available');
+            // Try to manually check if the file loaded
+            console.log('Available window properties containing "ACT":',
+                Object.keys(window).filter(key => key.toUpperCase().includes('ACT')));
+        }
+
+        // Check for any JavaScript errors
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript Error:', e.error);
+            console.error('File:', e.filename, 'Line:', e.lineno);
+        });
     </script>
     
     <!-- Main Application Script -->
