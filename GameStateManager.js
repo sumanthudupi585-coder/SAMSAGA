@@ -460,34 +460,69 @@ deleteSavedGame() {
         return this.playerState.specialItems.some(i => i.id === itemId);
     }
 
-    /**
-     * Update karma value
-     */
-    updateKarma(amount) {
-        this.playerState.karma += amount;
-        
-        // Update stats
-        if (amount > 0) {
-            this.gameStats.karmaGained += amount;
-            this.playerState.progression.karmaGained += amount;
-        } else if (amount < 0) {
-            this.gameStats.karmaLost += Math.abs(amount);
-            this.playerState.progression.karmaLost += Math.abs(amount);
-        }
-        
-        return this.playerState.karma;
-    }
+   /**
+ * Update karma value
+ */
+updateKarma(amount) {
+    this.playerState.karma += amount;
+    return this.playerState.karma;
+}
 
-    /**
-     * Update a dharmic profile value
-     */
-    updateDharmicProfile(aspect, amount) {
-        if (aspect in this.playerState.dharmicProfile) {
-            this.playerState.dharmicProfile[aspect] += amount;
-            return this.playerState.dharmicProfile[aspect];
-        }
-        return null;
+/**
+ * Update dharmic profile
+ */
+updateDharmicProfile(aspect, value) {
+    if (aspect in this.playerState.dharmicProfile) {
+        this.playerState.dharmicProfile[aspect] += value;
+        return true;
     }
+    return false;
+}
+
+/**
+ * Add item to inventory
+ */
+addToInventory(item) {
+    if (!this.playerState.inventory.includes(item)) {
+        this.playerState.inventory.push(item);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Remove item from inventory
+ */
+removeFromInventory(item) {
+    const index = this.playerState.inventory.indexOf(item);
+    if (index !== -1) {
+        this.playerState.inventory.splice(index, 1);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Check if player has an item
+ */
+hasItem(item) {
+    return this.playerState.inventory.includes(item);
+}
+
+/**
+ * Update state value
+ */
+updateState(key, value) {
+    // Check if key is in playerState
+    if (key in this.playerState) {
+        this.playerState[key] = value;
+        return true;
+    }
+    
+    // Otherwise, update worldState
+    this.worldState[key] = value;
+    return true;
+}
 
     /**
      * Track a scene visit
