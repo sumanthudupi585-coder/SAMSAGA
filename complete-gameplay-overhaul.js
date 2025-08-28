@@ -1169,7 +1169,137 @@ class GameplayOverhaulEngine {
             effect();
         }
     }
-    
+
+    adjustBackgroundEffects() {
+        // Adjust background atmospheric effects based on current state
+        const atmosphericBg = document.querySelector('.atmospheric-background');
+        if (atmosphericBg) {
+            // Adjust intensity based on discoveries and abilities
+            const intensity = Math.min(1, (this.adventureEngine.discoveries.size + Object.values(this.adventureEngine.characterAbilities).reduce((a, b) => a + b, 0)) / 10);
+            atmosphericBg.style.opacity = 0.3 + (intensity * 0.4);
+        }
+
+        // Update particle density
+        this.updateParticleDensity();
+    }
+
+    createGeometricLightPatterns() {
+        // Create geometric light patterns effect
+        console.log('Creating geometric light patterns...');
+
+        const effect = document.createElement('div');
+        effect.className = 'geometric-light-effect';
+        effect.innerHTML = `
+            <div class="sacred-geometry-pattern">
+                <div class="mandala-light"></div>
+                <div class="fibonacci-spiral"></div>
+                <div class="golden-ratio-grid"></div>
+            </div>
+        `;
+
+        document.body.appendChild(effect);
+
+        // Animate and remove after duration
+        setTimeout(() => {
+            effect.classList.add('fade-out');
+            setTimeout(() => effect.remove(), 1000);
+        }, 3000);
+    }
+
+    createAncientTextGlow() {
+        // Create ancient text glowing effect
+        console.log('Creating ancient text glow...');
+
+        const effect = document.createElement('div');
+        effect.className = 'ancient-text-glow-effect';
+        effect.innerHTML = `
+            <div class="sanskrit-symbols">
+                <div class="symbol">ॐ</div>
+                <div class="symbol">सत्</div>
+                <div class="symbol">चित्</div>
+                <div class="symbol">आनन्द</div>
+            </div>
+        `;
+
+        document.body.appendChild(effect);
+
+        // Animate and remove after duration
+        setTimeout(() => {
+            effect.classList.add('fade-out');
+            setTimeout(() => effect.remove(), 1000);
+        }, 4000);
+    }
+
+    createPurificationWaves() {
+        // Create purification wave effects
+        console.log('Creating purification waves...');
+
+        const effect = document.createElement('div');
+        effect.className = 'purification-wave-effect';
+        effect.innerHTML = `
+            <div class="energy-waves">
+                <div class="wave wave-1"></div>
+                <div class="wave wave-2"></div>
+                <div class="wave wave-3"></div>
+            </div>
+        `;
+
+        document.body.appendChild(effect);
+
+        // Animate and remove after duration
+        setTimeout(() => {
+            effect.classList.add('fade-out');
+            setTimeout(() => effect.remove(), 1000);
+        }, 3500);
+    }
+
+    createKarmicMemoryEchoes() {
+        // Create karmic memory echo effects
+        console.log('Creating karmic memory echoes...');
+
+        const effect = document.createElement('div');
+        effect.className = 'karmic-memory-effect';
+        effect.innerHTML = `
+            <div class="memory-echoes">
+                <div class="echo past-life"></div>
+                <div class="echo present-moment"></div>
+                <div class="echo future-potential"></div>
+            </div>
+        `;
+
+        document.body.appendChild(effect);
+
+        // Animate and remove after duration
+        setTimeout(() => {
+            effect.classList.add('fade-out');
+            setTimeout(() => effect.remove(), 1000);
+        }, 4500);
+    }
+
+    updateParticleDensity() {
+        // Update particle density based on spiritual progress
+        const particleContainer = document.querySelector('.mystical-particles');
+        if (particleContainer) {
+            const baseDensity = 20;
+            const progressMultiplier = 1 + (this.adventureEngine.discoveries.size * 0.1);
+            const newDensity = Math.min(50, baseDensity * progressMultiplier);
+
+            // Update particle count if significantly different
+            const currentParticles = particleContainer.children.length;
+            if (Math.abs(currentParticles - newDensity) > 5) {
+                // Clear and recreate particles with new density
+                const atmosphereType = this.getCurrentAtmosphereType();
+                this.createLocationParticles(particleContainer, atmosphereType);
+            }
+        }
+    }
+
+    getCurrentAtmosphereType() {
+        // Get current atmosphere type based on location
+        const location = this.adventureEngine.locations[this.currentLocation];
+        return location ? this.getParticleType(location.atmosphere) : 'golden-motes';
+    }
+
     // Enhanced interaction systems
     enterMeditationMode() {
         // Create meditation interface
