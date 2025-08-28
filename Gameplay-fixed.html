@@ -853,6 +853,13 @@
                 ACT3: !!window.ACT3_STORY_DATA
             });
 
+            if (window.ACT1_STORY_DATA) {
+                console.log('ACT1 scenes available:', Object.keys(window.ACT1_STORY_DATA));
+                console.log('JOURNEY_START scene:', window.ACT1_STORY_DATA.JOURNEY_START);
+            } else {
+                console.error('ACT1_STORY_DATA not loaded!');
+            }
+
             // Set initial act/scene
             gsm.playerState.currentAct = 1;
             const firstSceneId = storyEngine.getFirstSceneIdForAct(1);
