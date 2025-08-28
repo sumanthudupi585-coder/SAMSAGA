@@ -682,6 +682,19 @@
     padding-right: 0.5rem;
 }
 
+.choices-container {
+    max-height: 20vh;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.choices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 100%;
+}
+
 .mechanic-name {
     font-weight: bold;
     color: var(--color-karmic-purple);
