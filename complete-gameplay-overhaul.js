@@ -831,7 +831,304 @@ class GameplayOverhaulEngine {
             effect();
         }
     }
-    
+
+    unlockBasicExploration() {
+        // Unlock basic exploration features
+        console.log('Basic exploration unlocked');
+
+        // Enable basic environmental interactions
+        this.enableBasicInteractions();
+
+        // Show tutorial hints for new players
+        this.showBasicExplorationHints();
+
+        // Unlock basic discovery mechanics
+        this.unlockBasicDiscoveryMechanics();
+    }
+
+    unlockIntermediateMysteries() {
+        // Unlock intermediate mystery content
+        console.log('Intermediate mysteries unlocked');
+
+        // Enable advanced environmental storytelling
+        this.enableAdvancedStorytelling();
+
+        // Unlock deeper philosophical content
+        this.unlockIntermediatePhilosophy();
+
+        // Enable mystery investigation tools
+        this.enableMysteryInvestigationTools();
+    }
+
+    unlockAdvancedSpiritualContent() {
+        // Unlock advanced spiritual content
+        console.log('Advanced spiritual content unlocked');
+
+        // Enable transcendent experiences
+        this.enableTranscendentExperiences();
+
+        // Unlock advanced meditation techniques
+        this.unlockAdvancedMeditation();
+
+        // Enable consciousness exploration
+        this.enableConsciousnessExploration();
+    }
+
+    unlockTranscendentMysteries() {
+        // Unlock the highest level of mysteries
+        console.log('Transcendent mysteries unlocked');
+
+        // Enable cosmic consciousness experiences
+        this.enableCosmicConsciousness();
+
+        // Unlock reality transformation abilities
+        this.unlockRealityTransformation();
+
+        // Enable unity consciousness mechanics
+        this.enableUnityConsciousness();
+    }
+
+    revealSecretAreas(areaIds) {
+        // Reveal hidden areas to the player
+        areaIds.forEach(areaId => {
+            console.log(`Secret area revealed: ${areaId}`);
+
+            // Add area to accessible locations
+            this.secretAreas.add(areaId);
+
+            // Create notification for discovered area
+            this.showSecretAreaNotification(areaId);
+
+            // Update treasure map with new area
+            this.updateTreasureMapWithSecretArea(areaId);
+        });
+    }
+
+    // Helper methods for unlocked content
+    enableBasicInteractions() {
+        // Enable basic environmental interactions
+        this.basicInteractionsEnabled = true;
+
+        // Add hover effects to discoverable elements
+        this.addBasicHoverEffects();
+    }
+
+    showBasicExplorationHints() {
+        // Show helpful hints for new players
+        this.showHint('Click on glowing elements to discover secrets!', 'exploration');
+    }
+
+    unlockBasicDiscoveryMechanics() {
+        // Enable basic discovery mechanics
+        this.discoveryMechanics = {
+            highlighting: true,
+            tooltips: true,
+            basicFeedback: true
+        };
+    }
+
+    enableAdvancedStorytelling() {
+        // Enable more complex narrative elements
+        this.advancedStorytellingEnabled = true;
+
+        // Unlock branching narratives
+        this.unlockBranchingNarratives();
+    }
+
+    unlockIntermediatePhilosophy() {
+        // Unlock deeper philosophical content
+        this.philosophicalDepth = 'intermediate';
+
+        // Enable philosophical choice mechanics
+        this.enablePhilosophicalChoices();
+    }
+
+    enableMysteryInvestigationTools() {
+        // Enable investigation tools in UI
+        const investigationPanel = document.getElementById('treasure-hunt-panel');
+        if (investigationPanel) {
+            investigationPanel.style.display = 'block';
+        }
+
+        // Show clue collection interface
+        this.showClueCollectionInterface();
+    }
+
+    enableTranscendentExperiences() {
+        // Enable transcendent experience mechanics
+        this.transcendentExperiencesEnabled = true;
+
+        // Unlock reality-shifting visuals
+        this.unlockRealityShiftingVisuals();
+    }
+
+    unlockAdvancedMeditation() {
+        // Unlock advanced meditation techniques
+        this.advancedMeditationUnlocked = true;
+
+        // Add advanced meditation options
+        this.addAdvancedMeditationOptions();
+    }
+
+    enableConsciousnessExploration() {
+        // Enable consciousness exploration mechanics
+        this.consciousnessExplorationEnabled = true;
+
+        // Unlock inner journey mechanics
+        this.unlockInnerJourneyMechanics();
+    }
+
+    enableCosmicConsciousness() {
+        // Enable cosmic consciousness experiences
+        this.cosmicConsciousnessEnabled = true;
+
+        // Unlock universal perspective mechanics
+        this.unlockUniversalPerspective();
+    }
+
+    unlockRealityTransformation() {
+        // Unlock reality transformation abilities
+        this.realityTransformationUnlocked = true;
+
+        // Enable environmental manipulation
+        this.enableEnvironmentalManipulation();
+    }
+
+    enableUnityConsciousness() {
+        // Enable unity consciousness mechanics
+        this.unityConsciousnessEnabled = true;
+
+        // Unlock non-dual awareness features
+        this.unlockNonDualAwareness();
+    }
+
+    showSecretAreaNotification(areaId) {
+        // Show notification for discovered secret area
+        const areaNames = {
+            'HIDDEN_MEDITATION_CAVE': 'Hidden Meditation Cave',
+            'ANCIENT_LIBRARY_RUINS': 'Ancient Library Ruins',
+            'COSMIC_CONSCIOUSNESS_CHAMBER': 'Cosmic Consciousness Chamber'
+        };
+
+        const areaName = areaNames[areaId] || areaId;
+        this.showNotification(`🗺️ Secret area discovered: ${areaName}!`, 'success');
+    }
+
+    updateTreasureMapWithSecretArea(areaId) {
+        // Update treasure map to show new secret area
+        const mapContainer = document.getElementById('map-locations');
+        if (mapContainer) {
+            const areaElement = document.createElement('div');
+            areaElement.className = 'secret-area-marker';
+            areaElement.dataset.areaId = areaId;
+            areaElement.innerHTML = `
+                <div class="area-icon">🏛️</div>
+                <div class="area-name">${areaId.replace(/_/g, ' ')}</div>
+            `;
+            mapContainer.appendChild(areaElement);
+        }
+    }
+
+    showHint(message, type = 'info') {
+        // Show helpful hint to player
+        const hint = document.createElement('div');
+        hint.className = `exploration-hint ${type}`;
+        hint.innerHTML = `
+            <div class="hint-icon">💡</div>
+            <div class="hint-message">${message}</div>
+        `;
+
+        document.body.appendChild(hint);
+
+        // Auto-remove hint after delay
+        setTimeout(() => {
+            hint.classList.add('fade-out');
+            setTimeout(() => hint.remove(), 500);
+        }, 4000);
+    }
+
+    addBasicHoverEffects() {
+        // Add CSS class for basic hover effects
+        document.body.classList.add('basic-interactions-enabled');
+    }
+
+    unlockBranchingNarratives() {
+        // Enable branching narrative mechanics
+        this.branchingNarrativesEnabled = true;
+    }
+
+    enablePhilosophicalChoices() {
+        // Enable philosophical choice mechanics
+        this.philosophicalChoicesEnabled = true;
+    }
+
+    showClueCollectionInterface() {
+        // Show the clue collection interface
+        const cluePanel = document.getElementById('clue-collection');
+        if (cluePanel) {
+            cluePanel.classList.add('active');
+        }
+    }
+
+    unlockRealityShiftingVisuals() {
+        // Unlock reality-shifting visual effects
+        this.realityShiftingVisualsEnabled = true;
+    }
+
+    addAdvancedMeditationOptions() {
+        // Add advanced meditation options to meditation interface
+        this.advancedMeditationOptions = [
+            'Consciousness Expansion',
+            'Karmic Healing',
+            'Unity Realization',
+            'Transcendent Awareness'
+        ];
+    }
+
+    unlockInnerJourneyMechanics() {
+        // Unlock inner journey exploration mechanics
+        this.innerJourneyMechanicsEnabled = true;
+    }
+
+    unlockUniversalPerspective() {
+        // Unlock universal perspective mechanics
+        this.universalPerspectiveEnabled = true;
+    }
+
+    enableEnvironmentalManipulation() {
+        // Enable environmental manipulation abilities
+        this.environmentalManipulationEnabled = true;
+    }
+
+    unlockNonDualAwareness() {
+        // Unlock non-dual awareness features
+        this.nonDualAwarenessEnabled = true;
+    }
+
+    showNotification(message, type = 'info') {
+        // Show notification to player
+        const notification = document.createElement('div');
+        notification.className = `game-notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+
+        // Add to notification container or body
+        const container = document.getElementById('notification-container') || document.body;
+        container.appendChild(notification);
+
+        // Show notification with animation
+        setTimeout(() => notification.classList.add('show'), 10);
+
+        // Auto-remove after delay
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 500);
+        }, 3000);
+    }
+
     // Atmospheric and environmental effects
     updateAtmosphericEffects(discoveryId, result) {
         // Update atmospheric meters
