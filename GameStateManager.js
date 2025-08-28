@@ -221,28 +221,75 @@ class GameStateManager {
     }
 
     /**
-     * Save the current game state to localStorage
-     */
-    saveGame() {
-        // Update total play time before saving
-        this.updatePlayTime();
-        
-        const saveData = {
-            playerProfile: this.playerProfile,
-            playerState: this.playerState,
-            worldState: this.worldState,
-            gameStats: this.gameStats,
-            saveDate: new Date().toISOString()
-        };
+ * Save game to localStorage
+ */
+saveGame() {
+    const saveData = {
+        playerProfile: this.playerProfile,
+        playerState: this.playerState,
+        worldState: this.worldState,
+        timestamp: new Date().toISOString()
+    };
+    
+    try {
+        localStorage.setItem('samsagaSaveGame', JSON.stringify(saveData));
+        console.log("Game saved successfully");
+        return true;
+    } catch (error) {
+        console.error("Error saving game:", error);
+        return false;
+    }
+}
 
-        try {
-            localStorage.setItem('samsaraSagaSave', JSON.stringify(saveData));
-            return true;
-        } catch (error) {
-            console.error("Failed to save game:", error);
+/**
+ * Load game from localStorage
+ */
+loadGame() {
+    try {
+        const saveData = localStorage.getItem('samsagaSaveGame');
+        if (!saveData) {
+            console.error("No saved game found");
             return false;
         }
+        
+        const parsedData = JSON.parse(saveData);
+        
+        // Restore player profile
+        this.playerProfile = parsedData.playerProfile;
+        
+        // Restore player state
+        this.playerState = parsedData.playerState;
+        
+        // Restore world state
+        this.worldState = parsedData.worldState;
+        
+        console.log("Game loaded successfully");
+        return true;
+    } catch (error) {
+        console.error("Error loading saved game:", error);
+        return false;
     }
+}
+
+/**
+ * Check if a saved game exists
+ */
+hasSavedGame() {
+    return localStorage.getItem('samsagaSaveGame') !== null;
+}
+
+/**
+ * Delete saved game
+ */
+deleteSavedGame() {
+    try {
+        localStorage.removeItem('samsagaSaveGame');
+        return true;
+    } catch (error) {
+        console.error("Error deleting saved game:", error);
+        return false;
+    }
+}
 
     /**
      * Load a saved game from localStorage
