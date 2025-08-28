@@ -877,10 +877,26 @@
             });
 
             function renderScene() {
+                console.log('Rendering scene...', {
+                    currentAct: gsm.playerState.currentAct,
+                    currentSceneId: gsm.playerState.currentSceneId
+                });
+
                 let scene = storyEngine.getCurrentScene();
+                console.log('Scene retrieved:', scene);
+
                 const storyTextEl = document.getElementById('story-text');
                 const choicesEl = document.getElementById('choices-container');
                 const puzzleEl = document.getElementById('puzzle-container');
+
+                if (!storyTextEl || !choicesEl || !puzzleEl) {
+                    console.error('Story UI elements not found!', {
+                        storyTextEl: !!storyTextEl,
+                        choicesEl: !!choicesEl,
+                        puzzleEl: !!puzzleEl
+                    });
+                    return;
+                }
 
                 // Apply one-time world state triggers on entering a scene
                 if (scene && scene.worldStateTriggers) {
