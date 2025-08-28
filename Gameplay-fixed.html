@@ -1642,11 +1642,18 @@
             
             showFeedback(message, type = 'info') {
                 const feedback = document.getElementById('feedback-message');
+                if (!feedback) {
+                    console.warn('Feedback element not found');
+                    return;
+                }
+
                 feedback.textContent = message;
                 feedback.className = `feedback-message feedback-${type} show`;
-                
+
                 setTimeout(() => {
-                    feedback.classList.remove('show');
+                    if (feedback) {
+                        feedback.classList.remove('show');
+                    }
                 }, 4000);
             }
             
