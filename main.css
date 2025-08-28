@@ -438,3 +438,17 @@ hr {
   pointer-events: none;
 }
 .scene-transition-overlay.visible { opacity: 1; pointer-events: auto; }
+
+/* Banyan puzzle enhancements */
+.hint-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.85; }
+.hint-toggle input { accent-color: var(--color-accent-highlight); }
+.alignment-panel { margin-top: 0.75rem; }
+.alignment-meters { display: grid; gap: 8px; }
+.alignment-meter { display: grid; grid-template-columns: 1fr 3fr; gap: 10px; align-items: center; }
+.meter-label { color: var(--color-manuscript-ink-secondary); font-size: 0.9rem; }
+.meter-track { height: 8px; background: rgba(0,0,0,0.25); border-radius: 999px; overflow: hidden; }
+.meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, rgba(224,150,88,0.4), rgba(224,150,88,0.8)); transition: width 0.25s ease; }
+.meter-fill.ok { background: linear-gradient(90deg, #4caf50, #81c784); }
+.puzzle-hint-box { margin-top: 0.75rem; padding: 0.75rem 1rem; border: 1px dashed rgba(224,150,88,0.4); border-radius: 8px; background: rgba(224,150,88,0.05); }
+.puzzle-hint-box ul { margin: 0; padding-left: 1rem; }
+.puzzle-hint-box li { line-height: 1.6; }
