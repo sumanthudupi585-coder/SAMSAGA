@@ -217,7 +217,11 @@
         }
         function getGanaIcon(e){return{Deva:'fas fa-sun',Manushya:'fas fa-handshake',Rakshasa:'fas fa-fire'}[e]||'fas fa-star'}
         function setGunaValues(e){const t={sattva:[8,17,22,27,20,21,25,26,19,23,24],rajas:[1,5,7,2,4,6,3,9],tamas:[13,15,11,12,10,14,16,18]};let n=t.sattva.includes(e)?2:1,o=t.rajas.includes(e)?2:1,a=t.tamas.includes(e)?2:1;'Sattva'===userAnswers.guna1&&n++,'Rajas'===userAnswers.guna1&&o++,'Tamas'===userAnswers.guna1&&a++,'Sattva'===userAnswers.guna3&&n++,'Rajas'===userAnswers.guna3&&o++,'Tamas'===userAnswers.guna3&&a++,document.getElementById('sattva-value').textContent=n,document.getElementById('rajas-value').textContent=o,document.getElementById('tamas-value').textContent=a}
-        document.addEventListener('DOMContentLoaded',()=>{document.querySelector('.oracle-container').addEventListener('click',e=>{if(!e.target.matches('.option')&&!e.target.closest('.option'))return;const t=e.target.matches('.option')?e.target:e.target.closest('.option'),n=t.dataset.value;document.querySelectorAll(`#${currentQuestion} .option`).forEach(e=>e.classList.remove('choice-selected')),t.classList.add('choice-selected'),setTimeout(()=>{switch(currentQuestion){case'q1':userAnswers.gana=n,showScreen('q2');break;case'q2':userAnswers.guna1=n,populateShaktiQuestion(),showScreen('q3');break;case'q3':
+        document.addEventListener('DOMContentLoaded',()=>{
+            // Initialize from URL parameters if present
+            initializeFromURL();
+
+            document.querySelector('.oracle-container').addEventListener('click',e=>{if(!e.target.matches('.option')&&!e.target.closest('.option'))return;const t=e.target.matches('.option')?e.target:e.target.closest('.option'),n=t.dataset.value;document.querySelectorAll(`#${currentQuestion} .option`).forEach(e=>e.classList.remove('choice-selected')),t.classList.add('choice-selected'),setTimeout(()=>{switch(currentQuestion){case'q1':userAnswers.gana=n,showScreen('q2');break;case'q2':userAnswers.guna1=n,populateShaktiQuestion(),showScreen('q3');break;case'q3':
                     // Validate the nakshatra number before setting it
                     const nakshatraNum = parseInt(n, 10);
                     if (Number.isNaN(nakshatraNum) || nakshatraNum < 1 || nakshatraNum > 27) {
