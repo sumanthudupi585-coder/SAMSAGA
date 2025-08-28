@@ -600,4 +600,9 @@ window.ENHANCED_ACT1_STORY_DATA = {
 };
 
 // Export for integration with other systems
-window.ENHANCED_ACT1_STORY_DATA = ENHANCED_ACT1_STORY_DATA;
+if (typeof window !== 'undefined') {
+    window.ENHANCED_ACT1_STORY_DATA = ENHANCED_ACT1_STORY_DATA;
+    console.log('✅ ENHANCED_ACT1_STORY_DATA loaded successfully');
+} else {
+    console.error('❌ Window object not available for ENHANCED_ACT1_STORY_DATA export');
+}
