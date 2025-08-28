@@ -859,6 +859,20 @@
                 puzzleEl.innerHTML = '';
                 const puzzle = storyEngine.getCurrentPuzzle();
                 if (puzzle && puzzle.puzzleId) {
+                    // Skip puzzles already completed to avoid repeat and flicker
+                    if (
+                        (puzzle.puzzleId === 'BanyanTreeHarmony' && gsm.worldState.banyan_balanced) ||
+                        (puzzle.puzzleId === 'BarrierOfNegativity' && gsm.worldState.river_purified) ||
+                        (gsm.worldState[`${puzzle.puzzleId}_completed`] === true)
+                    ) {
+                        const sol = (puzzle.solutions || []).find(s => s.successScene);
+                        if (sol && sol.successScene) {
+                            gsm.playerState.currentSceneId = sol.successScene;
+                            renderScene();
+                            return;
+                        }
+                    }
+
                     const box = document.createElement('div');
                     box.className = 'puzzle-box';
                     const title = document.createElement('div');
@@ -1000,31 +1014,6 @@
                             val.dataset.key = key;
                             val.textContent = `${norm(state[key]).toFixed(0)}°`;
                             readouts[key] = val;
-
-                            // Drag to rotate support
-                            let dragging = false, startX = 0, startAngle = 0;
-                            const onDown = (e) => { dragging = true; startX = e.clientX || e.touches?.[0]?.clientX || 0; startAngle = state[key]; };
-                            const onMove = (e) => {
-                                if (!dragging) return;
-                                const x = e.clientX || e.touches?.[0]?.clientX || 0;
-                                const dx = x - startX;
-                                const delta = Math.round(dx / 2); // sensitivity
-                                const newAngle = norm(startAngle + delta);
-                                if (gsm.worldState.banyan_link_mode) {
-                                    ['vitality','wisdom','harmony'].forEach(k => state[k] = norm(newAngle));
-                                } else {
-                                    state[key] = newAngle;
-                                }
-                                Object.entries(readouts).forEach(([k, el]) => el.textContent = `${norm(state[k]).toFixed(0)}°`);
-                                updateMeters();
-                            };
-                            const onUp = () => { dragging = false; saveState(); };
-                            val.addEventListener('mousedown', onDown);
-                            val.addEventListener('touchstart', onDown, { passive: true });
-                            window.addEventListener('mousemove', onMove);
-                            window.addEventListener('touchmove', onMove, { passive: true });
-                            window.addEventListener('mouseup', onUp);
-                            window.addEventListener('touchend', onUp);
 
                             const btnRow = document.createElement('div');
                             btnRow.className = 'puzzle-action-row';
