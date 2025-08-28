@@ -379,12 +379,238 @@ class UnifiedGameFlow {
             phase: newPhase,
             timestamp: Date.now()
         });
-        
+
         // Unlock new features based on phase
         this.unlockPhaseFeatures(newPhase);
-        
+
         // Trigger phase-specific events
         this.triggerPhaseEvents(newPhase);
+    }
+
+    /**
+     * Unlock new features based on game phase
+     */
+    unlockPhaseFeatures(phase) {
+        const phaseFeatures = {
+            [this.gamePhases.CHARACTER_CREATION]: [
+                'basic_navigation',
+                'character_display'
+            ],
+            [this.gamePhases.PHILOSOPHICAL_AWAKENING]: [
+                'philosophical_insights',
+                'attribute_display',
+                'decision_tracking'
+            ],
+            [this.gamePhases.ACT_1_INTRODUCTION]: [
+                'story_progression',
+                'choice_consequences',
+                'karma_tracking'
+            ],
+            [this.gamePhases.ACT_1_TRIALS]: [
+                'puzzle_system',
+                'quest_tracking',
+                'inventory_management',
+                'meditation_ability'
+            ],
+            [this.gamePhases.ACT_1_MASTERY]: [
+                'advanced_choices',
+                'philosophical_mastery',
+                'character_abilities',
+                'achievement_system'
+            ],
+            [this.gamePhases.ACT_2_JOURNEY]: [
+                'expanded_world',
+                'advanced_puzzles',
+                'relationship_system'
+            ],
+            [this.gamePhases.ACT_3_TRANSCENDENCE]: [
+                'cosmic_awareness',
+                'reality_manipulation',
+                'enlightened_choices'
+            ],
+            [this.gamePhases.ENLIGHTENMENT]: [
+                'complete_mastery',
+                'universal_consciousness',
+                'cosmic_influence'
+            ]
+        };
+
+        const newFeatures = phaseFeatures[phase] || [];
+
+        // Add new features to available features
+        newFeatures.forEach(feature => {
+            if (!this.experienceState.availableFeatures.includes(feature)) {
+                this.experienceState.availableFeatures.push(feature);
+                console.log(`🔓 Feature unlocked: ${feature}`);
+            }
+        });
+
+        // Notify UI about new features if available
+        if (window.gameUI && window.gameUI.onFeaturesUnlocked) {
+            window.gameUI.onFeaturesUnlocked(newFeatures);
+        }
+    }
+
+    /**
+     * Trigger phase-specific events and setup
+     */
+    triggerPhaseEvents(phase) {
+        console.log(`🎭 Triggering events for phase: ${phase}`);
+
+        switch (phase) {
+            case this.gamePhases.CHARACTER_CREATION:
+                this.onCharacterCreationPhase();
+                break;
+
+            case this.gamePhases.PHILOSOPHICAL_AWAKENING:
+                this.onPhilosophicalAwakeningPhase();
+                break;
+
+            case this.gamePhases.ACT_1_INTRODUCTION:
+                this.onAct1IntroductionPhase();
+                break;
+
+            case this.gamePhases.ACT_1_TRIALS:
+                this.onAct1TrialsPhase();
+                break;
+
+            case this.gamePhases.ACT_1_MASTERY:
+                this.onAct1MasteryPhase();
+                break;
+
+            case this.gamePhases.ACT_2_JOURNEY:
+                this.onAct2JourneyPhase();
+                break;
+
+            case this.gamePhases.ACT_3_TRANSCENDENCE:
+                this.onAct3TranscendencePhase();
+                break;
+
+            case this.gamePhases.ENLIGHTENMENT:
+                this.onEnlightenmentPhase();
+                break;
+
+            default:
+                console.warn(`Unknown phase: ${phase}`);
+        }
+
+        // Dispatch custom event for UI systems
+        if (typeof document !== 'undefined') {
+            document.dispatchEvent(new CustomEvent('phaseAdvanced', {
+                detail: {
+                    phase: phase,
+                    features: this.experienceState.availableFeatures,
+                    playerProfile: this.playerProfile
+                }
+            }));
+        }
+    }
+
+    /**
+     * Character Creation phase setup
+     */
+    onCharacterCreationPhase() {
+        console.log('🌱 Entering Character Creation phase');
+        // Set up character creation specific elements
+        this.worldState.currentScene = 'CHARACTER_SELECTION';
+    }
+
+    /**
+     * Philosophical Awakening phase setup
+     */
+    onPhilosophicalAwakeningPhase() {
+        console.log('🧘 Entering Philosophical Awakening phase');
+        // Initialize philosophical tracking
+        this.worldState.currentScene = 'AWAKENING_PROLOGUE';
+
+        // Award initial philosophical insight
+        if (this.playerProfile.nakshatra) {
+            this.addJourneyMilestone('awakening_begins', {
+                nakshatra: this.playerProfile.nakshatra,
+                message: `The ${this.playerProfile.nakshatra} star awakens within you...`
+            });
+        }
+    }
+
+    /**
+     * Act 1 Introduction phase setup
+     */
+    onAct1IntroductionPhase() {
+        console.log('📖 Entering Act 1 Introduction phase');
+        this.worldState.currentAct = 1;
+        this.worldState.currentScene = 'JOURNEY_START';
+
+        // Initialize story tracking
+        this.worldState.completedTrials = [];
+        this.worldState.activeQuests = [];
+    }
+
+    /**
+     * Act 1 Trials phase setup
+     */
+    onAct1TrialsPhase() {
+        console.log('⚔️ Entering Act 1 Trials phase');
+
+        // Unlock meditation ability if not already present
+        if (!this.experienceState.availableFeatures.includes('meditation_ability')) {
+            this.experienceState.availableFeatures.push('meditation_ability');
+        }
+
+        // Initialize trial tracking
+        this.addJourneyMilestone('trials_begin', {
+            message: 'The trials of Dharmapura await...'
+        });
+    }
+
+    /**
+     * Act 1 Mastery phase setup
+     */
+    onAct1MasteryPhase() {
+        console.log('🏆 Entering Act 1 Mastery phase');
+
+        // Calculate mastery achievements
+        const totalPhilosophicalLevel = Object.values(this.playerProfile.philosophicalUnderstanding)
+            .reduce((sum, understanding) => sum + understanding.level, 0);
+
+        if (totalPhilosophicalLevel >= 4) {
+            this.addJourneyMilestone('philosophical_mastery', {
+                level: totalPhilosophicalLevel,
+                message: 'Your understanding of cosmic principles deepens...'
+            });
+        }
+    }
+
+    /**
+     * Act 2 Journey phase setup
+     */
+    onAct2JourneyPhase() {
+        console.log('🌄 Entering Act 2 Journey phase');
+        this.worldState.currentAct = 2;
+        this.worldState.unlockedRegions.push('EXPANDED_WORLD');
+    }
+
+    /**
+     * Act 3 Transcendence phase setup
+     */
+    onAct3TranscendencePhase() {
+        console.log('✨ Entering Act 3 Transcendence phase');
+        this.worldState.currentAct = 3;
+        this.worldState.unlockedRegions.push('COSMIC_REALMS');
+    }
+
+    /**
+     * Enlightenment phase setup
+     */
+    onEnlightenmentPhase() {
+        console.log('🌟 Entering Enlightenment phase');
+
+        // Mark complete enlightenment
+        this.addJourneyMilestone('enlightenment_achieved', {
+            message: 'The cycle of Samsara is transcended...',
+            finalAttributes: { ...this.playerProfile.attributes },
+            finalPhilosophicalLevel: Object.values(this.playerProfile.philosophicalUnderstanding)
+                .reduce((sum, understanding) => sum + understanding.level, 0)
+        });
     }
     
     /**

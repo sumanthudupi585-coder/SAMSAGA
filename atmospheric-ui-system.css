@@ -40,8 +40,8 @@
 /* === Enhanced Main Game Container === */
 .enhanced-adventure-game {
     position: relative;
-    min-height: 100vh;
-    background: 
+    height: 100vh;
+    background:
         radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(74, 144, 226, 0.02) 0%, transparent 50%),
         linear-gradient(135deg, var(--color-mystery-deep) 0%, var(--color-mystery-medium) 100%);
@@ -647,6 +647,52 @@
         opacity: 1;
         transform: translateX(0) scale(1);
     }
+}
+
+/* === HEIGHT CONSTRAINTS FOR VIEWPORT === */
+.cinematic-ui-container {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-interface {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.game-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+}
+
+.story-display {
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.scene-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.choices-container {
+    max-height: 20vh;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.choices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 100%;
 }
 
 .mechanic-name {

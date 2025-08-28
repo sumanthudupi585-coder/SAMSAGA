@@ -81,6 +81,8 @@
 
 html {
   scroll-behavior: smooth;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -89,9 +91,11 @@ body {
   font-family: var(--font-family-narrative);
   font-size: var(--font-size-body);
   line-height: var(--line-height-narrative);
-  min-height: 100vh;
+  height: 100vh;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 /* High Contrast Mode Toggle */
@@ -121,7 +125,8 @@ body.high-contrast-mode {
     "header header header"
     ".  narrative  ."
     "footer footer footer";
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   padding: 0 var(--spacing-unit);
 }
 
@@ -129,6 +134,9 @@ body.high-contrast-mode {
 .narrative-container {
   grid-area: narrative;
   padding: var(--spacing-unit) 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
 }
 
 /* Marginalia for stats/inventory (Manusha Pada) */
