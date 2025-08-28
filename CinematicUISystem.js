@@ -823,8 +823,10 @@ class CinematicUISystem {
         this.showChoiceSelection(choice);
         
         // Process choice through game flow
-        if (this.gameFlow && this.gameFlow.recordDecision) {
+        if (this.gameFlow && typeof this.gameFlow.recordDecision === 'function') {
             this.gameFlow.recordDecision(choice);
+        } else {
+            console.log('✨ Choice recorded (gameFlow method not available):', choice.text);
         }
         
         // Handle scene transition
@@ -1195,7 +1197,7 @@ class CinematicUISystem {
         const saveBtn = document.getElementById('save-game');
         if (saveBtn) {
             saveBtn.addEventListener('click', () => {
-                if (this.gameFlow && this.gameFlow.saveGameProgress) {
+                if (this.gameFlow && typeof this.gameFlow.saveGameProgress === 'function') {
                     const success = this.gameFlow.saveGameProgress();
                     this.showNotification(
                         success ? 'Journey saved successfully!' : 'Failed to save journey',
@@ -1350,7 +1352,7 @@ class CinematicUISystem {
         this.updateProgressIndicators();
         
         // Update theme if needed
-        if (this.gameFlow) {
+        if (this.gameFlow && typeof this.gameFlow.getGameStatus === 'function') {
             const status = this.gameFlow.getGameStatus();
             const newTheme = status.ui?.visualTheme || 'dawn';
             if (newTheme !== this.currentTheme) {
@@ -1363,8 +1365,8 @@ class CinematicUISystem {
      * Update all progress indicators
      */
     updateProgressIndicators() {
-        if (!this.gameFlow) return;
-        
+        if (!this.gameFlow || typeof this.gameFlow.getGameStatus !== 'function') return;
+
         const status = this.gameFlow.getGameStatus();
         
         // Update stats in footer
