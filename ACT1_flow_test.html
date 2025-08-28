@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Act 1 Flow Test - Samsara Saga</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+        .scene-info {
+            background: #3a3a3a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #4a2a2a;
+        }
+        .success {
+            border-left-color: #4CAF50;
+        }
+        .warning {
+            border-left-color: #ff9800;
+            background: #4a3a2a;
+        }
+        .test-result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .pass {
+            background: #2d5a2d;
+            border: 1px solid #4CAF50;
+        }
+        .fail {
+            background: #5a2d2d;
+            border: 1px solid #f44336;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .nakshatra-test {
+            background: #3a3a5a;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Act 1 Story Flow Validation Test</h1>
+        <p>This page tests the complete Act 1 narrative flow and validates all scene connections.</p>
+        
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="testSceneConnections()">Test Scene Connections</button>
+        <button onclick="testNakshatraChoices()">Test Nakshatra Coverage</button>
+        <button onclick="testQuestFlow()">Test Quest Progression</button>
+        
+        <div id="test-results"></div>
+    </div>
+
+    <script src="ACT1storyData.js"></script>
+    <script>
+        let testResults = [];
+        
+        function logResult(test, passed, message) {
+            testResults.push({
+                test: test,
+                passed: passed,
+                message: message
+            });
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = testResults.map(result => `
+                <div class="test-result ${result.passed ? 'pass' : 'fail'}">
+                    <strong>${result.test}:</strong> ${result.passed ? 'PASS' : 'FAIL'}<br>
+                    ${result.message}
+                </div>
+            `).join('');
+        }
+        
+        function runAllTests() {
+            testResults = [];
+            testSceneConnections();
+            testNakshatraChoices();
+            testQuestFlow();
+            testTempleLogic();
+        }
+        
+        function testSceneConnections() {
+            const storyData = window.ACT1_STORY_DATA;
+            const allScenes = Object.keys(storyData);
+            let brokenConnections = [];
+            
+            // Check all nextScene references
+            for (const [sceneId, scene] of Object.entries(storyData)) {
+                // Check choices
+                if (scene.choices) {
+                    scene.choices.forEach((choice, index) => {
+                        if (choice.nextScene && !allScenes.includes(choice.nextScene)) {
+                            brokenConnections.push(`${sceneId} -> choice[${index}] -> ${choice.nextScene}`);
+                        }
+                    });
+                }
+                
+                // Check interactions
+                if (scene.interactions) {
+                    scene.interactions.forEach((interaction, index) => {
+                        if (interaction.scene && !allScenes.includes(interaction.scene)) {
+                            brokenConnections.push(`${sceneId} -> interaction[${index}] -> ${interaction.scene}`);
+                        }
+                    });
+                }
+            }
+            
+            if (brokenConnections.length === 0) {
+                logResult('Scene Connections', true, 'All scene references are valid.');
+            } else {
+                logResult('Scene Connections', false, 'Broken connections found: ' + brokenConnections.join(', '));
+            }
+        }
+        
+        function testNakshatraChoices() {
+            const storyData = window.ACT1_STORY_DATA;
+            const expectedNakshatras = [
+                'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu',
+                'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni', 'Hasta',
+                'Chitra', 'Swati', 'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'Purva Ashadha',
+                'Uttara Ashadha', 'Shravana', 'Dhanishtha', 'Shatabhisha', 'Purva Bhadrapada',
+                'Uttara Bhadrapada', 'Revati'
+            ];
+            
+            const scenesToCheck = ['EXAMINE_BANYAN', 'TALK_ELDER', 'TALK_PRIESTESS', 'OBSERVE_VILLAGERS', 'EXAMINE_WATER', 'SPEAK_TAX_COLLECTOR', 'EXAMINE_TEMPLE_PILLARS'];
+            
+            let missingNakshatras = [];
+            
+            scenesToCheck.forEach(sceneId => {
+                const scene = storyData[sceneId];
+                if (scene && scene.choices) {
+                    const foundNakshatras = [];
+                    scene.choices.forEach(choice => {
+                        const match = choice.text.match(/\[([^\]]+)\]/);
+                        if (match) {
+                            foundNakshatras.push(match[1]);
+                        }
+                    });
+                    
+                    const missing = expectedNakshatras.filter(n => !foundNakshatras.includes(n));
+                    if (missing.length > 0) {
+                        missingNakshatras.push(`${sceneId}: missing ${missing.join(', ')}`);
+                    }
+                }
+            });
+            
+            if (missingNakshatras.length === 0) {
+                logResult('Nakshatra Coverage', true, 'All 27 Nakshatras are represented in key scenes.');
+            } else {
+                logResult('Nakshatra Coverage', false, 'Missing Nakshatras: ' + missingNakshatras.join('; '));
+            }
+        }
+        
+        function testQuestFlow() {
+            const storyData = window.ACT1_STORY_DATA;
+            const expectedFlow = [
+                'JOURNEY_START',
+                'DHARMAPURA_SQUARE',  // Quest 1 start
+                'DILEMMA_RESOLUTION', // Quest 1 end
+                'QUEST_2_START',
+                'PURIFY_CRYSTAL_SUCCESS', // Quest 2 end
+                'QUEST_3_START',
+                'TAX_RESOLUTION', // Quest 3 end
+                'QUEST_4_START',
+                'TEMPLE_RESOLUTION', // Quest 4 end
+                'QUEST_5_START',
+                'ALIGNMENT_RESOLUTION', // Quest 5 end
+                'GAME_CONCLUSION',
+                'ACT1_ENDING'
+            ];
+            
+            let missingScenes = expectedFlow.filter(sceneId => !storyData[sceneId]);
+            
+            if (missingScenes.length === 0) {
+                logResult('Quest Flow', true, 'All main quest scenes are present.');
+            } else {
+                logResult('Quest Flow', false, 'Missing scenes: ' + missingScenes.join(', '));
+            }
+        }
+        
+        function testTempleLogic() {
+            const storyData = window.ACT1_STORY_DATA;
+            const templeEntrance = storyData['TEMPLE_ENTRANCE'];
+            
+            // Check if temple entrance has the conditional choice to enter
+            const hasEntranceChoice = templeEntrance.choices && 
+                templeEntrance.choices.some(choice => 
+                    choice.nextScene === 'TEMPLE_INNER_SANCTUM' && 
+                    choice.condition
+                );
+            
+            if (hasEntranceChoice) {
+                logResult('Temple Logic', true, 'Temple entrance has proper conditional logic for entry.');
+            } else {
+                logResult('Temple Logic', false, 'Temple entrance missing conditional entry logic.');
+            }
+            
+            // Check temple pillars have Nakshatra offerings
+            const templePillars = storyData['EXAMINE_TEMPLE_PILLARS'];
+            const hasNakshatraOfferings = templePillars.choices && 
+                templePillars.choices.filter(choice => choice.text.includes('[')).length >= 27;
+            
+            if (hasNakshatraOfferings) {
+                logResult('Temple Offerings', true, 'Temple has Nakshatra-specific offerings.');
+            } else {
+                logResult('Temple Offerings', false, 'Temple missing Nakshatra-specific offerings.');
+            }
+        }
+        
+        // Run basic validation on page load
+        window.addEventListener('load', () => {
+            if (window.ACT1_STORY_DATA) {
+                logResult('Story Data Load', true, `ACT1_STORY_DATA loaded with ${Object.keys(window.ACT1_STORY_DATA).length} scenes.`);
+            } else {
+                logResult('Story Data Load', false, 'ACT1_STORY_DATA not found.');
+            }
+        });
+    </script>
+</body>
+</html>
