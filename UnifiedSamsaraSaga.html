@@ -380,68 +380,66 @@
              * Wait for all required systems to be available
              */
             async waitForSystems() {
-                const maxWaitTime = 10000; // 10 seconds
-                const checkInterval = 100; // 100ms
-                let waitTime = 0;
-                
-                return new Promise((resolve, reject) => {
-                    const checkSystems = () => {
-                    const systemStatus = this.requiredSystems.map(system => {
-                        const isLoaded = window[system] !== undefined;
-                        console.log(`System ${system}: ${isLoaded ? '✅ Loaded' : '❌ Missing'}`);
-                        return { system, isLoaded };
-                    });
+                console.log('⏳ Waiting for systems to load...');
 
-                    const criticalLoaded = this.criticalSystems.every(system => window[system] !== undefined);
-                    const allLoaded = systemStatus.every(status => status.isLoaded);
+                // Give scripts more time to load and execute
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
-                    if (allLoaded) {
-                        console.log('✅ All required systems loaded successfully');
-                        resolve();
-                    } else if (criticalLoaded && waitTime >= maxWaitTime / 2) {
-                        // If critical systems are loaded but others are missing, proceed with warnings
-                        const missingSystems = systemStatus
-                            .filter(status => !status.isLoaded)
-                            .map(status => status.system);
+                // Check what we have
+                const systemCheck = {
+                    UnifiedGameFlow: typeof window.UnifiedGameFlow !== 'undefined',
+                    CinematicUISystem: typeof window.CinematicUISystem !== 'undefined',
+                    ENHANCED_ACT1_STORY_DATA: typeof window.ENHANCED_ACT1_STORY_DATA !== 'undefined'
+                };
 
-                        console.warn('⚠️ Proceeding with missing non-critical systems:', missingSystems);
+                console.log('📋 System availability check:', systemCheck);
 
-                        // Create fallback for missing story data
-                        if (!window.ENHANCED_ACT1_STORY_DATA) {
-                            console.warn('📚 Creating fallback story data...');
-                            window.ENHANCED_ACT1_STORY_DATA = {
-                                AWAKENING_PROLOGUE: {
-                                    title: "The Journey Begins",
-                                    text: "Your spiritual journey is about to unfold. This is a simplified version while the full story system loads.",
-                                    choices: [
-                                        {
-                                            id: "continue",
-                                            text: "Continue your journey",
-                                            nextScene: "AWAKENING_PROLOGUE"
-                                        }
-                                    ]
-                                }
-                            };
+                // If we have the critical systems, proceed
+                if (systemCheck.UnifiedGameFlow) {
+                    console.log('✅ Critical systems available, proceeding...');
+
+                    // Create fallback story data if missing
+                    if (!systemCheck.ENHANCED_ACT1_STORY_DATA) {
+                        console.warn('📚 Creating fallback story data...');
+                        window.ENHANCED_ACT1_STORY_DATA = this.createFallbackStoryData();
+                    }
+
+                    return true;
+                } else {
+                    throw new Error('Critical system UnifiedGameFlow failed to load');
+                }
+            }
+
+            /**
+             * Create fallback story data
+             */
+            createFallbackStoryData() {
+                return {
+                    AWAKENING_PROLOGUE: {
+                        title: "The Journey Begins",
+                        subtitle: "Your spiritual adventure starts here...",
+                        text: "Your consciousness awakens to a world of infinite possibilities. Though the full story system is still loading, your journey of self-discovery begins now.",
+                        atmosphericDescription: "A gentle breeze carries the promise of adventure and wisdom.",
+                        choices: [
+                            {
+                                id: "explore",
+                                text: "🌟 Begin exploring your spiritual path",
+                                nextScene: "AWAKENING_PROLOGUE",
+                                philosophicalTheme: "beginning"
+                            },
+                            {
+                                id: "meditate",
+                                text: "🧘 Take a moment to center yourself",
+                                nextScene: "AWAKENING_PROLOGUE",
+                                philosophicalTheme: "mindfulness"
+                            }
+                        ],
+                        meditation: {
+                            available: true,
+                            text: "Center yourself before beginning this sacred journey"
                         }
-
-                        resolve();
-                    } else if (waitTime >= maxWaitTime) {
-                        const missingSystems = systemStatus
-                            .filter(status => !status.isLoaded)
-                            .map(status => status.system);
-
-                        console.error('❌ System loading timeout. Missing systems:', missingSystems);
-                        console.log('Debug info - Available window properties:', Object.keys(window).filter(key => key.includes('ACT') || key.includes('Game') || key.includes('UI')));
-
-                        reject(new Error(`Required systems failed to load: ${missingSystems.join(', ')}`));
-                    } else {
-                        waitTime += checkInterval;
-                        setTimeout(checkSystems, checkInterval);
                     }
                 };
-                    
-                    checkSystems();
-                });
             }
             
             /**
