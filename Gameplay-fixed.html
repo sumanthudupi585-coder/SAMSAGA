@@ -723,6 +723,10 @@
                 // Update character information
                 document.getElementById('character-name').textContent = nakshatra.name;
                 document.getElementById('nakshatra-name').textContent = nakshatra.name;
+                if (window.gameStateManager) {
+                    window.gameStateManager.playerProfile.nakshatra = nakshatra.name;
+                    window.gameStateManager.playerProfile.gana = nakshatra.gana;
+                }
                 
                 // Set character symbol
                 const symbolSvg = document.getElementById('character-symbol-svg');
