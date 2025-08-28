@@ -115,7 +115,18 @@
       if (choice.transitionToAct !== undefined) return this.transitionToAct(choice.transitionToAct);
 
       if (choice.nextScene) {
-        this.gameStateManager.playerState.currentSceneId = choice.nextScene;
+        const target = choice.nextScene;
+        if (this.sceneExists(target)) {
+          this.gameStateManager.playerState.currentSceneId = target;
+        } else {
+          // Fallback routing for missing scenes
+          let fallback = null;
+          if (/^RIVER_/i.test(target)) fallback = 'FOLLOW_UPSTREAM';
+          else if (/^BANYAN_/i.test(target)) fallback = 'DHARMAPURA_SQUARE';
+          else if (target === 'TEMPLE_PUZZLE') fallback = 'TEMPLE_ENTRANCE';
+          else fallback = 'RIVERBANK';
+          this.gameStateManager.playerState.currentSceneId = this.sceneExists(fallback) ? fallback : this.getFirstSceneIdForAct(this.gameStateManager.playerState.currentAct);
+        }
         return true;
       }
 
@@ -157,6 +168,16 @@
     getCurrentPuzzle() {
       const scene = this.getCurrentScene();
       return scene && scene.puzzle ? scene.puzzle : null;
+    }
+
+    // Utility: check if a scene id exists in current act
+    sceneExists(sceneId) {
+      const storyData = this.getActiveStoryData();
+      if (!storyData) return false;
+      if (Array.isArray(storyData.scenes)) {
+        return !!storyData.scenes.find((s) => s.id === sceneId);
+      }
+      return Object.prototype.hasOwnProperty.call(storyData, sceneId);
     }
   }
 
