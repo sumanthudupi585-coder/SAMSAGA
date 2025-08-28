@@ -641,7 +641,149 @@ class GameplayOverhaulEngine {
             this.showPhilosophicalInsights();
         });
     }
-    
+
+    toggleExplorationMode() {
+        // Toggle exploration mode on/off
+        this.explorationMode = !this.explorationMode;
+
+        const explorationBtn = document.getElementById('exploration-mode-btn');
+        if (explorationBtn) {
+            if (this.explorationMode) {
+                explorationBtn.classList.add('active');
+                explorationBtn.querySelector('.btn-text').textContent = 'Exit Explore';
+            } else {
+                explorationBtn.classList.remove('active');
+                explorationBtn.querySelector('.btn-text').textContent = 'Explore';
+            }
+        }
+
+        // Update UI based on mode
+        this.updateExplorationModeUI();
+    }
+
+    toggleTreasureHuntPanel() {
+        // Toggle treasure hunt panel visibility
+        const treasurePanel = document.getElementById('treasure-hunt-panel');
+        if (treasurePanel) {
+            const isVisible = treasurePanel.style.display !== 'none';
+            treasurePanel.style.display = isVisible ? 'none' : 'block';
+
+            const treasureBtn = document.getElementById('treasure-hunt-btn');
+            if (treasureBtn) {
+                if (isVisible) {
+                    treasureBtn.classList.remove('active');
+                } else {
+                    treasureBtn.classList.add('active');
+                }
+            }
+        }
+    }
+
+    showPhilosophicalInsights() {
+        // Show philosophical insights to the player
+        const insights = this.adventureEngine.philosophicalInsights || [];
+
+        if (insights.length === 0) {
+            this.showNotification('No philosophical insights discovered yet. Continue exploring!', 'info');
+            return;
+        }
+
+        // Create insights modal
+        const insightsModal = document.createElement('div');
+        insightsModal.className = 'insights-modal active';
+        insightsModal.innerHTML = `
+            <div class="insights-content">
+                <div class="insights-header">
+                    <h2>📖 Philosophical Insights</h2>
+                    <button class="close-insights">&times;</button>
+                </div>
+                <div class="insights-body">
+                    ${insights.map((insight, index) => `
+                        <div class="insight-item">
+                            <div class="insight-number">${index + 1}</div>
+                            <div class="insight-content">
+                                <div class="insight-teaching">"${insight.teaching}"</div>
+                                <div class="insight-source">— ${insight.source}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(insightsModal);
+
+        // Setup close handler
+        insightsModal.querySelector('.close-insights').addEventListener('click', () => {
+            insightsModal.remove();
+        });
+
+        // Close on background click
+        insightsModal.addEventListener('click', (e) => {
+            if (e.target === insightsModal) {
+                insightsModal.remove();
+            }
+        });
+    }
+
+    updateExplorationModeUI() {
+        // Update UI based on exploration mode
+        const gameInterface = document.querySelector('.enhanced-adventure-game');
+        if (gameInterface) {
+            if (this.explorationMode) {
+                gameInterface.classList.add('exploration-mode');
+            } else {
+                gameInterface.classList.remove('exploration-mode');
+            }
+        }
+    }
+
+    showInsufficientAbilityMessage(elementId) {
+        // Show message when player lacks required ability
+        const element = this.adventureEngine.locations[this.currentLocation]?.interactableElements.find(el => el.id === elementId);
+
+        if (element && element.requiresAbility) {
+            const abilityName = element.requiresAbility.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            const requiredLevel = element.level || 1;
+
+            this.showNotification(
+                `This requires ${abilityName} (Level ${requiredLevel}). Continue exploring to develop your spiritual abilities.`,
+                'error'
+            );
+        }
+    }
+
+    checkForUnlockedContent() {
+        // Check if any new content should be unlocked
+        const totalDiscoveries = this.adventureEngine.discoveries.size + this.philosophicalDiscoveries.length;
+
+        // Check for new mystery level
+        const newMysteryLevel = Math.floor(totalDiscoveries / 3) + 1;
+        if (newMysteryLevel > this.mysteryLevel) {
+            this.mysteryLevel = newMysteryLevel;
+            this.showNotification(`🔮 Mystery Level ${this.mysteryLevel} Unlocked!`, 'achievement');
+            this.adaptContentToMysteryLevel();
+        }
+
+        // Check for specific unlock thresholds
+        this.checkSpecificUnlocks(totalDiscoveries);
+    }
+
+    checkSpecificUnlocks(totalDiscoveries) {
+        // Check for specific content unlocks
+        const unlockThresholds = {
+            3: () => this.showNotification('🌟 Advanced exploration features unlocked!', 'achievement'),
+            6: () => this.showNotification('🔮 Mystical abilities enhanced!', 'achievement'),
+            9: () => this.showNotification('✨ Transcendent content accessible!', 'achievement'),
+            12: () => this.showNotification('🏆 Master Explorer Achievement Unlocked!', 'achievement')
+        };
+
+        const unlock = unlockThresholds[totalDiscoveries];
+        if (unlock) {
+            unlock();
+        }
+    }
+
     handleElementInteraction(elementDiv) {
         const elementId = elementDiv.dataset.elementId;
         
