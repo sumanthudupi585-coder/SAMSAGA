@@ -329,7 +329,35 @@ class UltraEnhancedAtmosphericSystem {
             }
         };
     }
-    
+
+    applyLightingEffects() {
+        // Apply dynamic lighting effects to the cinematic canvas
+        if (!this.cinematicContext) return;
+
+        const canvas = this.cinematicCanvas;
+        const ctx = this.cinematicContext;
+
+        // Create gradient based on spiritual and karma levels
+        const gradient = ctx.createRadialGradient(
+            canvas.width / 2, canvas.height / 2, 0,
+            canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
+        );
+
+        // Adjust colors based on karma influence
+        const karmaHue = this.lightingSystem.karmaInfluence > 0 ? 45 :
+                        this.lightingSystem.karmaInfluence < 0 ? 0 : 30;
+        const spiritualAlpha = this.lightingSystem.globalIllumination * 0.3;
+
+        gradient.addColorStop(0, `hsla(${karmaHue}, 70%, 60%, ${spiritualAlpha})`);
+        gradient.addColorStop(1, `hsla(${karmaHue}, 50%, 30%, 0)`);
+
+        // Apply lighting overlay
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
     initializeParticlePhysics() {
         // Advanced particle system with physics simulation
         this.particleEngine = {
