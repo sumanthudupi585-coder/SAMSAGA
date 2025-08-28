@@ -566,6 +566,104 @@ class UltraEnhancedAtmosphericSystem {
         this.renderDiscoveryEffects();
         this.renderCinematicElements();
     }
+
+    renderParticles() {
+        // Render particle effects to the cinematic canvas
+        if (!this.cinematicContext || !this.particleEngine) return;
+
+        const ctx = this.cinematicContext;
+        this.particleEngine.particles.forEach(particle => {
+            if (particle.life > 0) {
+                ctx.save();
+                ctx.globalAlpha = particle.life;
+                ctx.fillStyle = particle.color || '#FFC58F';
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        });
+    }
+
+    renderLighting() {
+        // Render dynamic lighting effects
+        if (!this.cinematicContext || !this.lightingSystem) return;
+
+        // Lighting effects are handled in applyLightingEffects
+        this.applyLightingEffects();
+    }
+
+    renderDiscoveryEffects() {
+        // Render discovery and interaction effects
+        if (!this.cinematicContext) return;
+
+        // Placeholder for discovery visual effects
+        // Can be expanded based on discovery system needs
+    }
+
+    renderCinematicElements() {
+        // Render cinematic overlays and effects
+        if (!this.cinematicContext) return;
+
+        // Placeholder for cinematic effects like transitions, overlays, etc.
+        // Can be expanded based on cinematic needs
+    }
+
+    updateParticlePhysics(particle, deltaTime) {
+        // Update particle physics
+        if (!particle) return;
+
+        // Apply forces
+        particle.vx += (this.particleEngine.forces.gravity?.x || 0) * deltaTime;
+        particle.vy += (this.particleEngine.forces.gravity?.y || 0) * deltaTime;
+
+        // Update position
+        particle.x += particle.vx * deltaTime * 60;
+        particle.y += particle.vy * deltaTime * 60;
+
+        // Apply bounds checking
+        const canvas = this.cinematicCanvas;
+        if (canvas) {
+            if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -0.8;
+            if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -0.8;
+        }
+    }
+
+    updateParticleBehavior(particle, deltaTime) {
+        // Update particle behavior patterns
+        if (!particle || !particle.behavior) return;
+
+        switch (particle.behavior) {
+            case 'mystical_drift':
+                particle.vx += (Math.sin(Date.now() * 0.001) * 0.1);
+                particle.vy += (Math.cos(Date.now() * 0.001) * 0.1);
+                break;
+            case 'gentle_fall':
+                particle.vy += 0.1;
+                particle.vx += (Math.sin(Date.now() * 0.002) * 0.05);
+                break;
+            case 'sacred_flow':
+                const angle = Date.now() * 0.001;
+                particle.vx = Math.cos(angle) * 0.5;
+                particle.vy = Math.sin(angle) * 0.5;
+                break;
+        }
+    }
+
+    updateInteractiveElements(deltaTime) {
+        // Update interactive environmental elements
+        // Placeholder for interactive element updates
+    }
+
+    updateDiscoveryProgress(deltaTime) {
+        // Update discovery system progress
+        // Placeholder for discovery progress updates
+    }
+
+    getCurrentPlayerState() {
+        // Get current player state for atmospheric adjustments
+        return window.gameStateManager ? window.gameStateManager.getState() : {};
+    }
 }
 
 // Export for use in main game
