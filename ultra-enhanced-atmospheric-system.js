@@ -508,33 +508,6 @@ class UltraEnhancedAtmosphericSystem {
         }
     }
     
-    // Performance optimization for 60fps gameplay
-    optimizePerformance() {
-        // Use requestAnimationFrame for smooth 60fps
-        this.frameRate = 60;
-        this.lastFrameTime = 0;
-        this.deltaTime = 0;
-        
-        this.startOptimizedRenderLoop();
-    }
-    
-    startOptimizedRenderLoop() {
-        const renderFrame = (currentTime) => {
-            this.deltaTime = currentTime - this.lastFrameTime;
-            this.lastFrameTime = currentTime;
-            
-            // Only update if frame rate is optimal
-            if (this.deltaTime >= (1000 / this.frameRate)) {
-                this.updateAllSystems(this.deltaTime);
-                this.renderAllEffects();
-            }
-            
-            requestAnimationFrame(renderFrame);
-        };
-        
-        requestAnimationFrame(renderFrame);
-    }
-    
     // Utility methods for calculations
     calculateSpiritualLevel(playerState) {
         const progression = playerState.progression || {};
