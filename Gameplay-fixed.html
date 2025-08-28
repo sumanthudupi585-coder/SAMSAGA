@@ -3,859 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samsara Saga - Journey Through Existence</title>
+    <title>Samsara Saga - Master's Journey</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Marcellus&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Link to the external CSS files -->
-    <link rel="stylesheet" href="main.css">
-    <link rel="stylesheet" href="atmospheric-ui-system.css">
-    <link rel="stylesheet" href="fixed-banyan-puzzle.css">
-</head>
-<body>
-    <a href="#main-content" class="skip-link">Skip to content</a>
-
-    <!-- Animated Background -->
-    <div id="vignette-overlay"></div>
-    <div id="particle-background"></div>
-
-    <!-- Custom Cursor -->
-    <div id="cursor-container">
-        <svg class="chakra-cursor" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e09658" stroke-width="1">
-            <circle cx="12" cy="12" r="10"/>
-            <g transform="translate(12,12)">
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(0)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(30)"/>                
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(60)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(90)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(120)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(150)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(180)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(210)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(240)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(270)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(300)"/>
-                <path d="M0,-10 L 2,-8 L 0,-6 L -2,-8 Z" transform="rotate(330)"/>
-            </g>
-            <circle cx="12" cy="12" r="2" fill="#e09658"/>
-        </svg>
-    </div>
-
-    <!-- Page Transition Effect -->
-    <div class="page-transition">
-        <div class="page-transition-mandala"></div>
-    </div>
-
-    <!-- Top Bar with Title and Menu -->
-    <header class="game-header">
-        <div class="header-title">Samsara Saga</div>
-        <button class="menu-toggle-button" id="menu-button">
-            <i class="fas fa-bars"></i>
-            <span>Menu</span>
-        </button>
-    </header>
-
-    <!-- Main wrapper for the entire game interface -->
-    <div class="game-wrapper">
-        <!-- Main content area for narrative and choices (Left Column) -->
-        <main class="story-panel" id="main-content">
-            <div id="story-container" class="section">
-                <div id="story-text" class="text-fade-in">
-                    <p>Loading your journey...</p>
-                </div>
-            </div>
-            <div id="puzzle-container" class="text-fade-in-delay-1"></div>
-            <div id="choices-container" class="text-fade-in-delay-1">
-                <button class="choice-button" onclick="initializeGame()">
-                    <span class="choice-icon"><i class="fas fa-play"></i></span>
-                    <span class="choice-content">Begin Journey</span>
-                </button>
-            </div>
-        </main>
-        
-        <!-- Sidebar for player stats and game controls (Right Column) -->
-        <aside class="status-panel">
-            <div class="character-summary">
-                <div class="character-symbol">
-                    <svg viewBox="0 0 100 100" id="character-symbol-svg">
-                        <circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/>
-                        <circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>
-                        <circle cx="50" cy="50" r="5" fill="#e09658"/>
-                    </svg>
-                </div>
-                <h2 class="character-name" id="character-name">Jiva</h2>
-            </div>
-            
-            <div class="panel-section">
-                <h3 class="panel-title">Spiritual Attributes</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-label">Karma</span> 
-                        <div class="stat-bar karma-bar"><div id="karma-fill" style="width: 50%;"></div></div>
-                        <span id="karma-value" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Sattva</span> 
-                        <div class="stat-bar sattva-bar"><div id="sattva-fill" style="width: 30%;"></div></div>
-                        <span id="sattva-value" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Rajas</span> 
-                        <div class="stat-bar rajas-bar"><div id="rajas-fill" style="width: 80%;"></div></div>
-                        <span id="rajas-value" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Tamas</span> 
-                        <div class="stat-bar tamas-bar"><div id="tamas-fill" style="width: 10%;"></div></div>
-                        <span id="tamas-value" class="stat-value">0</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="panel-section">
-                 <h3 class="panel-title">Elemental Affinity</h3>
-                 <div class="element-display" id="element-display">
-                    <div class="element-icon"><i class="fas fa-star"></i></div>
-                    <div class="element-name">Ether</div>
-                 </div>
-            </div>
-            
-            <div class="panel-section">
-                <h3 class="panel-title">Inventory</h3>
-                <ul id="inventory-list">
-                    <li class="inventory-empty">(Empty)</li>
-                </ul>
-            </div>
-
-            <div class="game-controls">
-                <button class="control-button" id="new-game-btn">
-                    <i class="fas fa-sync-alt"></i> Begin Anew
-                </button>
-            </div>
-        </aside>
-    </div>
-
-    <!-- Game Menu Modal -->
-    <div class="modal" id="game-menu-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Game Menu</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="menu-buttons">
-                    <button class="menu-button" id="character-profile-btn"><i class="fas fa-user"></i><span>Character Profile</span></button>
-                    <button class="menu-button" id="save-game-btn"><i class="fas fa-save"></i><span>Save Game</span></button>
-                    <button class="menu-button" id="load-game-btn"><i class="fas fa-folder-open"></i><span>Load Game</span></button>
-                    <button class="menu-button" id="settings-btn"><i class="fas fa-cog"></i><span>Settings</span></button>
-                    <button class="menu-button" id="help-btn"><i class="fas fa-question-circle"></i><span>Help</span></button>
-                    <button class="menu-button" id="exit-game-btn"><i class="fas fa-sign-out-alt"></i><span>Exit to Main Menu</span></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification System -->
-    <div id="notification-container"></div>
-
-    <!-- Load all JavaScript files with proper error handling -->
-    <script>
-        // Global variables for game state
-        window.gameInitialized = false;
-        window.gameStateManager = null;
-        window.storyEngine = null;
-        window.currentScene = null;
-        
-        // Script loading with dependencies
-        const scriptsToLoad = [
-            'nakshatraData.js',
-            'ACT1storyData.js',
-            'ACT2storyData.js', 
-            'ACT3storyData.js',
-            'GameStateManager.js',
-            'StoryEngine.js'
-        ];
-        
-        let loadedScripts = 0;
-        const totalScripts = scriptsToLoad.length;
-        
-        function loadScript(src) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.onload = () => {
-                    console.log(`✓ Loaded: ${src}`);
-                    loadedScripts++;
-                    resolve();
-                };
-                script.onerror = () => {
-                    console.error(`✗ Failed to load: ${src}`);
-                    reject(new Error(`Failed to load ${src}`));
-                };
-                document.head.appendChild(script);
-            });
-        }
-        
-        // Load scripts sequentially
-        async function loadAllScripts() {
-            try {
-                for (const script of scriptsToLoad) {
-                    await loadScript(script);
-                }
-                console.log('✓ All core scripts loaded successfully');
-                
-                // Try to load optional enhancement scripts
-                const optionalScripts = [
-                    'puzzles.js',
-                    'PuzzleEngine.js',
-                    'fixed-banyan-puzzle.js'
-                ];
-                
-                for (const script of optionalScripts) {
-                    try {
-                        await loadScript(script);
-                    } catch (e) {
-                        console.warn(`Optional script ${script} failed to load, continuing without it`);
-                    }
-                }
-                
-                // Initialize game after all scripts are loaded
-                setTimeout(initializeGameSafely, 100);
-                
-            } catch (error) {
-                console.error('Critical script loading failed:', error);
-                showError('Failed to load game. Please refresh the page.');
-            }
-        }
-        
-        function initializeGameSafely() {
-            try {
-                console.log('🎮 Initializing Samsara Saga...');
-                
-                // Initialize GameStateManager
-                if (typeof GameStateManager !== 'undefined') {
-                    window.gameStateManager = new GameStateManager();
-                    console.log('✓ GameStateManager initialized');
-                } else {
-                    throw new Error('GameStateManager not available');
-                }
-                
-                // Initialize StoryEngine
-                if (typeof StoryEngine !== 'undefined') {
-                    window.storyEngine = new StoryEngine(window.gameStateManager);
-                    console.log('✓ StoryEngine initialized');
-                } else {
-                    throw new Error('StoryEngine not available');
-                }
-                
-                // Set up character from URL parameters
-                setupCharacterFromURL();
-                
-                // Initialize the story
-                initializeStory();
-                
-                // Set up event listeners
-                setupEventListeners();
-                
-                window.gameInitialized = true;
-                console.log('🌟 Game successfully initialized!');
-                
-            } catch (error) {
-                console.error('Game initialization failed:', error);
-                showError('Game initialization failed. Please refresh the page.');
-            }
-        }
-        
-        function setupCharacterFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nakshatraNum = urlParams.get('nakshatra');
-            const pada = urlParams.get('pada');
-            const guna1 = urlParams.get('guna1');
-            const guna3 = urlParams.get('guna3');
-            
-            if (nakshatraNum && window.nakshatraData && window.nakshatraData[nakshatraNum]) {
-                const nakshatra = window.nakshatraData[nakshatraNum];
-                
-                // Set up player profile
-                window.gameStateManager.playerProfile = {
-                    nakshatra: nakshatra.name,
-                    gana: nakshatra.gana,
-                    shakti: nakshatra.shakti,
-                    gunas: nakshatra.gunas || { sattva: 0, rajas: 0, tamas: 0 },
-                    avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
-                };
-                
-                // Update character display
-                updateCharacterDisplay(nakshatra, nakshatraNum);
-                
-                console.log(`✓ Character set up: ${nakshatra.name}`);
-            } else {
-                // Set default character
-                window.gameStateManager.playerProfile = {
-                    nakshatra: 'Ashwini',
-                    gana: 'Deva',
-                    shakti: 'To heal quickly',
-                    gunas: { sattva: 2, rajas: 1, tamas: 0 },
-                    avatar: 'images/avatars/deva.png'
-                };
-                console.log('✓ Default character set up');
-            }
-        }
-        
-        function updateCharacterDisplay(nakshatra, nakshatraNum) {
-            // Update character name
-            const characterNameEl = document.getElementById('character-name');
-            if (characterNameEl) characterNameEl.textContent = nakshatra.name;
-            
-            // Update character symbol
-            const symbolSvg = document.getElementById('character-symbol-svg');
-            if (symbolSvg && window.nakshatraSvgPaths && window.nakshatraSvgPaths[nakshatraNum]) {
-                symbolSvg.innerHTML = window.nakshatraSvgPaths[nakshatraNum];
-            }
-            
-            // Update element display
-            const elementDisplay = document.getElementById('element-display');
-            if (elementDisplay && nakshatra.element) {
-                const elementIcons = {
-                    earth: '<i class="fas fa-mountain"></i>',
-                    water: '<i class="fas fa-water"></i>',
-                    fire: '<i class="fas fa-fire"></i>',
-                    air: '<i class="fas fa-wind"></i>',
-                    ether: '<i class="fas fa-star"></i>'
-                };
-                
-                elementDisplay.innerHTML = `
-                    <div class="element-icon">${elementIcons[nakshatra.element] || elementIcons.ether}</div>
-                    <div class="element-name">${nakshatra.element ? nakshatra.element.charAt(0).toUpperCase() + nakshatra.element.slice(1) : 'Ether'}</div>
-                `;
-                elementDisplay.className = `element-display element-${nakshatra.element || 'ether'}`;
-            }
-            
-            // Update guna values
-            if (nakshatra.gunas) {
-                updateGunaDisplay(nakshatra.gunas);
-            }
-        }
-        
-        function updateGunaDisplay(gunas) {
-            const elements = [
-                { id: 'sattva-value', key: 'sattva', fillId: 'sattva-fill' },
-                { id: 'rajas-value', key: 'rajas', fillId: 'rajas-fill' },
-                { id: 'tamas-value', key: 'tamas', fillId: 'tamas-fill' }
-            ];
-            
-            elements.forEach(({ id, key, fillId }) => {
-                const valueEl = document.getElementById(id);
-                const fillEl = document.getElementById(fillId);
-                const value = gunas[key] || 0;
-                
-                if (valueEl) valueEl.textContent = value;
-                if (fillEl) fillEl.style.width = `${Math.min(100, (value / 3) * 100)}%`;
-            });
-        }
-        
-        function initializeStory() {
-            // Set initial game state
-            window.gameStateManager.playerState.currentAct = 1;
-            window.gameStateManager.playerState.currentSceneId = 'JOURNEY_START';
-            
-            // Render the first scene
-            renderCurrentScene();
-        }
-        
-        function renderCurrentScene() {
-            try {
-                const scene = window.storyEngine.getCurrentScene();
-                
-                if (!scene) {
-                    console.error('No scene found, loading default');
-                    loadDefaultScene();
-                    return;
-                }
-                
-                console.log('Rendering scene:', window.gameStateManager.playerState.currentSceneId);
-                
-                // Update story text
-                const storyTextEl = document.getElementById('story-text');
-                if (storyTextEl && scene.text) {
-                    storyTextEl.innerHTML = `<p>${scene.text}</p>`;
-                }
-                
-                // Update puzzle container
-                const puzzleEl = document.getElementById('puzzle-container');
-                if (puzzleEl) {
-                    puzzleEl.innerHTML = '';
-                    if (scene.puzzle) {
-                        renderPuzzle(scene.puzzle, puzzleEl);
-                    }
-                }
-                
-                // Update choices
-                const choicesEl = document.getElementById('choices-container');
-                if (choicesEl) {
-                    renderChoices(choicesEl);
-                }
-                
-                // Update inventory
-                updateInventoryDisplay();
-                
-            } catch (error) {
-                console.error('Error rendering scene:', error);
-                loadDefaultScene();
-            }
-        }
-        
-        function loadDefaultScene() {
-            const storyTextEl = document.getElementById('story-text');
-            const choicesEl = document.getElementById('choices-container');
-            
-            if (storyTextEl) {
-                storyTextEl.innerHTML = `
-                    <h2>Welcome to Samsara Saga</h2>
-                    <p>Your consciousness awakens in the village of Dharmapura. The ancient Banyan tree in the center of the village seems to call to you, its gnarled branches reaching toward the sky like hands in prayer.</p>
-                    <p>A spiritual malaise hangs in the air, and you sense that your journey has begun...</p>
-                `;
-            }
-            
-            if (choicesEl) {
-                choicesEl.innerHTML = `
-                    <button class="choice-button" onclick="goToScene('DHARMAPURA_SQUARE')">
-                        <span class="choice-icon"><i class="fas fa-tree"></i></span>
-                        <span class="choice-content">Approach the village square</span>
-                    </button>
-                    <button class="choice-button" onclick="goToScene('EXAMINE_BANYAN')">
-                        <span class="choice-icon"><i class="fas fa-search"></i></span>
-                        <span class="choice-content">Examine the ancient Banyan tree</span>
-                    </button>
-                `;
-            }
-        }
-        
-        function renderChoices(container) {
-            container.innerHTML = '';
-            
-            try {
-                const choices = window.storyEngine.getAvailableChoices();
-                
-                if (choices.length === 0) {
-                    container.innerHTML = '<p class="no-choices">No choices available. <button onclick="renderCurrentScene()" class="choice-button">Refresh</button></p>';
-                    return;
-                }
-                
-                choices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.className = 'choice-button';
-                    button.innerHTML = `
-                        <span class="choice-icon"><i class="fas fa-angle-right"></i></span>
-                        <span class="choice-content">${choice.text}</span>
-                    `;
-                    
-                    button.addEventListener('click', () => {
-                        button.classList.add('choice-selected');
-                        processChoice(choice);
-                    });
-                    
-                    container.appendChild(button);
-                });
-            } catch (error) {
-                console.error('Error rendering choices:', error);
-                container.innerHTML = `
-                    <button class="choice-button" onclick="goToScene('DHARMAPURA_SQUARE')">
-                        <span class="choice-icon"><i class="fas fa-forward"></i></span>
-                        <span class="choice-content">Continue journey</span>
-                    </button>
-                `;
-            }
-        }
-        
-        function renderPuzzle(puzzle, container) {
-            if (!puzzle || !puzzle.puzzleId) return;
-            
-            const puzzleDiv = document.createElement('div');
-            puzzleDiv.className = 'puzzle-container';
-            
-            const title = document.createElement('h3');
-            title.className = 'puzzle-title';
-            title.textContent = `Puzzle: ${puzzle.puzzleId}`;
-            
-            const description = document.createElement('p');
-            description.className = 'puzzle-description';
-            description.textContent = puzzle.description || 'A challenge awaits...';
-            
-            puzzleDiv.appendChild(title);
-            puzzleDiv.appendChild(description);
-            
-            // Handle specific puzzles
-            if (puzzle.puzzleId === 'BanyanTreeHarmony') {
-                renderBanyanPuzzle(puzzleDiv);
-            } else if (puzzle.puzzleId === 'BarrierOfNegativity') {
-                renderBarrierPuzzle(puzzleDiv);
-            }
-            
-            container.appendChild(puzzleDiv);
-        }
-        
-        function renderBanyanPuzzle(container) {
-            const puzzleContent = document.createElement('div');
-            puzzleContent.className = 'banyan-puzzle';
-            puzzleContent.innerHTML = `
-                <p>The ancient Banyan tree's energy is unbalanced. You must harmonize its three spiritual rings:</p>
-                <div class="puzzle-rings">
-                    <div class="ring" data-ring="vitality">
-                        <label>Vitality Ring</label>
-                        <input type="range" min="0" max="360" value="0" id="vitality-ring">
-                    </div>
-                    <div class="ring" data-ring="wisdom">
-                        <label>Wisdom Ring</label>
-                        <input type="range" min="0" max="360" value="120" id="wisdom-ring">
-                    </div>
-                    <div class="ring" data-ring="harmony">
-                        <label>Harmony Ring</label>
-                        <input type="range" min="0" max="360" value="240" id="harmony-ring">
-                    </div>
-                </div>
-                <button class="puzzle-button" onclick="checkBanyanSolution()">Harmonize the Tree</button>
-                <div id="puzzle-feedback"></div>
-            `;
-            container.appendChild(puzzleContent);
-        }
-        
-        function renderBarrierPuzzle(container) {
-            const puzzleContent = document.createElement('div');
-            puzzleContent.className = 'barrier-puzzle';
-            puzzleContent.innerHTML = `
-                <p>A barrier of negative energy blocks your path. You need an object of purity to dispel it.</p>
-                <div class="barrier-zone" id="barrier-drop-zone">
-                    <i class="fas fa-shield-alt"></i>
-                    <p>Drop a pure item here</p>
-                </div>
-                <div class="inventory-items">
-                    <h4>Your Items:</h4>
-                    <div id="draggable-items"></div>
-                </div>
-            `;
-            
-            container.appendChild(puzzleContent);
-            setupBarrierPuzzleInteraction();
-        }
-        
-        function setupBarrierPuzzleInteraction() {
-            const dropZone = document.getElementById('barrier-drop-zone');
-            const itemsContainer = document.getElementById('draggable-items');
-            
-            // Create draggable items
-            const inventory = window.gameStateManager.playerState.inventory || [];
-            const hasLotusPetal = window.gameStateManager.worldState.has_lotus_petal;
-            
-            if (hasLotusPetal) inventory.push('Lotus Petal');
-            
-            inventory.forEach(item => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'draggable-item';
-                itemEl.draggable = true;
-                itemEl.textContent = item;
-                itemEl.dataset.item = item;
-                
-                itemEl.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', item);
-                });
-                
-                itemsContainer.appendChild(itemEl);
-            });
-            
-            // Set up drop zone
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('drag-over');
-            });
-            
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('drag-over');
-            });
-            
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drag-over');
-                
-                const item = e.dataTransfer.getData('text/plain');
-                if (item === 'Lotus Petal') {
-                    solveBarrierPuzzle();
-                } else {
-                    showNotification('The barrier repels this item. You need something purer.', 'error');
-                }
-            });
-        }
-        
-        function processChoice(choice) {
-            try {
-                if (choice.nextScene) {
-                    goToScene(choice.nextScene);
-                } else if (choice.id) {
-                    const result = window.storyEngine.processChoice(choice.id);
-                    if (result) {
-                        setTimeout(() => renderCurrentScene(), 300);
-                    }
-                }
-            } catch (error) {
-                console.error('Error processing choice:', error);
-                showNotification('Error processing choice. Please try again.', 'error');
-            }
-        }
-        
-        function goToScene(sceneId) {
-            try {
-                window.gameStateManager.playerState.currentSceneId = sceneId;
-                setTimeout(() => renderCurrentScene(), 300);
-            } catch (error) {
-                console.error('Error navigating to scene:', error);
-                showNotification('Error navigating. Please try again.', 'error');
-            }
-        }
-        
-        function checkBanyanSolution() {
-            const vitality = document.getElementById('vitality-ring').value;
-            const wisdom = document.getElementById('wisdom-ring').value;
-            const harmony = document.getElementById('harmony-ring').value;
-            
-            // Check if rings are aligned (within tolerance)
-            const tolerance = 30;
-            const isAligned = Math.abs(vitality - 0) < tolerance && 
-                             Math.abs(wisdom - 120) < tolerance && 
-                             Math.abs(harmony - 240) < tolerance;
-            
-            const feedback = document.getElementById('puzzle-feedback');
-            
-            if (isAligned) {
-                feedback.innerHTML = '<p class="success">✓ The tree glows with renewed harmony!</p>';
-                window.gameStateManager.updateState('banyan_balanced', true);
-                showNotification('Puzzle solved! The Banyan tree is harmonized.', 'success');
-                setTimeout(() => goToScene('BANYAN_HARMONY_SUCCESS'), 1500);
-            } else {
-                feedback.innerHTML = '<p class="error">The energies are still unbalanced. Try adjusting the rings.</p>';
-            }
-        }
-        
-        function solveBarrierPuzzle() {
-            showNotification('The lotus petal dissolves the barrier!', 'success');
-            window.gameStateManager.updateState('river_purified', true);
-            setTimeout(() => goToScene('PURIFY_CRYSTAL_SUCCESS'), 1500);
-        }
-        
-        function updateInventoryDisplay() {
-            const inventoryEl = document.getElementById('inventory-list');
-            if (!inventoryEl) return;
-            
-            const inventory = window.gameStateManager.playerState.inventory || [];
-            const hasLotusPetal = window.gameStateManager.worldState.has_lotus_petal;
-            
-            inventoryEl.innerHTML = '';
-            
-            if (inventory.length === 0 && !hasLotusPetal) {
-                const li = document.createElement('li');
-                li.className = 'inventory-empty';
-                li.textContent = '(Empty)';
-                inventoryEl.appendChild(li);
-            } else {
-                if (hasLotusPetal) {
-                    const li = document.createElement('li');
-                    li.textContent = 'Lotus Petal';
-                    inventoryEl.appendChild(li);
-                }
-                
-                inventory.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = item;
-                    inventoryEl.appendChild(li);
-                });
-            }
-        }
-        
-        function setupEventListeners() {
-            // Menu button
-            const menuButton = document.getElementById('menu-button');
-            if (menuButton) {
-                menuButton.addEventListener('click', () => {
-                    const modal = document.getElementById('game-menu-modal');
-                    if (modal) modal.style.display = 'flex';
-                });
-            }
-            
-            // Close modal
-            const closeModal = document.querySelector('.close-modal');
-            if (closeModal) {
-                closeModal.addEventListener('click', () => {
-                    const modal = document.getElementById('game-menu-modal');
-                    if (modal) modal.style.display = 'none';
-                });
-            }
-            
-            // New game button
-            const newGameBtn = document.getElementById('new-game-btn');
-            if (newGameBtn) {
-                newGameBtn.addEventListener('click', () => {
-                    if (confirm('Start a new journey? Current progress will be lost.')) {
-                        window.location.href = 'CB-fixed.html';
-                    }
-                });
-            }
-            
-            // Save game button
-            const saveGameBtn = document.getElementById('save-game-btn');
-            if (saveGameBtn) {
-                saveGameBtn.addEventListener('click', () => {
-                    try {
-                        window.gameStateManager.saveGame();
-                        showNotification('Game saved successfully!', 'success');
-                        document.getElementById('game-menu-modal').style.display = 'none';
-                    } catch (error) {
-                        showNotification('Failed to save game.', 'error');
-                    }
-                });
-            }
-            
-            // Custom cursor
-            setupCustomCursor();
-        }
-        
-        function setupCustomCursor() {
-            if (window.matchMedia('(pointer: fine)').matches) {
-                document.body.classList.add('custom-cursor-active');
-                const cursorContainer = document.getElementById('cursor-container');
-                
-                document.addEventListener('mousemove', (e) => {
-                    if (cursorContainer) {
-                        cursorContainer.style.left = e.clientX + 'px';
-                        cursorContainer.style.top = e.clientY + 'px';
-                    }
-                });
-                
-                document.addEventListener('mouseover', (e) => {
-                    if (e.target.matches('a, button, .choice-button') || 
-                        e.target.closest('a, button, .choice-button')) {
-                        if (cursorContainer) cursorContainer.classList.add('active');
-                    }
-                });
-                
-                document.addEventListener('mouseout', (e) => {
-                    if (e.target.matches('a, button, .choice-button') || 
-                        e.target.closest('a, button, .choice-button')) {
-                        if (cursorContainer) cursorContainer.classList.remove('active');
-                    }
-                });
-            }
-        }
-        
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notification-container');
-            if (!container) return;
-            
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-icon">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                    </div>
-                    <div class="notification-message">${message}</div>
-                </div>
-            `;
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                notification.classList.add('hide');
-                setTimeout(() => notification.remove(), 500);
-            }, 3000);
-        }
-        
-        function showError(message) {
-            const storyTextEl = document.getElementById('story-text');
-            const choicesEl = document.getElementById('choices-container');
-            
-            if (storyTextEl) {
-                storyTextEl.innerHTML = `
-                    <div class="error-message">
-                        <h2>⚠️ Error</h2>
-                        <p>${message}</p>
-                        <p>Please refresh the page or try again later.</p>
-                    </div>
-                `;
-            }
-            
-            if (choicesEl) {
-                choicesEl.innerHTML = `
-                    <button class="choice-button" onclick="window.location.reload()">
-                        <span class="choice-icon"><i class="fas fa-refresh"></i></span>
-                        <span class="choice-content">Refresh Page</span>
-                    </button>
-                `;
-            }
-        }
-        
-        // Manual initialization function
-        function initializeGame() {
-            if (!window.gameInitialized) {
-                loadAllScripts();
-            } else {
-                renderCurrentScene();
-            }
-        }
-        
-        // Auto-start when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🌟 Samsara Saga - Starting...');
-            loadAllScripts();
-        });
-        
-    </script>
-
-    <!-- Embedded Nakshatra Data for fallback -->
-    <script>
-        // Nakshatra data fallback
-        window.nakshatraData = window.nakshatraData || {
-            1: { name: 'Ashwini', deity: 'Ashvins', symbol: "Horse's Head", shakti: 'To heal quickly', element: 'fire', gana: 'Deva', gunas: { sattva: 2, rajas: 1, tamas: 0 } },
-            2: { name: 'Bharani', deity: 'Yama', symbol: 'Yoni', shakti: 'To renew and purify', element: 'earth', gana: 'Manushya', gunas: { sattva: 0, rajas: 2, tamas: 1 } },
-            3: { name: 'Krittika', deity: 'Agni', symbol: 'Knife or Spear', shakti: 'To burn illusion', element: 'fire', gana: 'Rakshasa', gunas: { sattva: 1, rajas: 2, tamas: 0 } },
-            4: { name: 'Rohini', deity: 'Brahma', symbol: 'Cart or Chariot', shakti: 'To make things grow', element: 'earth', gana: 'Manushya', gunas: { sattva: 1, rajas: 0, tamas: 2 } },
-            5: { name: 'Mrigashira', deity: 'Soma', symbol: "Deer's Head", shakti: 'To find fulfillment', element: 'air', gana: 'Deva', gunas: { sattva: 0, rajas: 1, tamas: 2 } },
-            6: { name: 'Ardra', deity: 'Rudra', symbol: 'Teardrop', shakti: 'To feel and act', element: 'water', gana: 'Manushya', gunas: { sattva: 1, rajas: 1, tamas: 1 } },
-            7: { name: 'Punarvasu', deity: 'Aditi', symbol: 'Bow and Quiver', shakti: 'To regenerate and recover', element: 'air', gana: 'Deva', gunas: { sattva: 1, rajas: 1, tamas: 1 } },
-            8: { name: 'Pushya', deity: 'Brihaspati', symbol: "Cow's Udder", shakti: 'To create spiritual energy', element: 'water', gana: 'Deva', gunas: { sattva: 2, rajas: 0, tamas: 1 } },
-            9: { name: 'Ashlesha', deity: 'Nagas', symbol: 'Serpent', shakti: 'To poison and heal', element: 'water', gana: 'Rakshasa', gunas: { sattva: 1, rajas: 1, tamas: 1 } },
-            10: { name: 'Magha', deity: 'Pitrs', symbol: 'Royal Throne', shakti: 'To leave the body', element: 'fire', gana: 'Rakshasa', gunas: { sattva: 0, rajas: 2, tamas: 1 } },
-            11: { name: 'Purva Phalguni', deity: 'Bhaga', symbol: 'Front Legs of Bed', shakti: 'To find love and enjoyment', element: 'fire', gana: 'Manushya', gunas: { sattva: 0, rajas: 1, tamas: 2 } },
-            12: { name: 'Uttara Phalguni', deity: 'Aryaman', symbol: 'Four Legs of Bed', shakti: 'To accumulate security', element: 'fire', gana: 'Manushya', gunas: { sattva: 1, rajas: 0, tamas: 2 } }
-        };
-        
-        // SVG paths for Nakshatra symbols
-        window.nakshatraSvgPaths = window.nakshatraSvgPaths || {
-            1: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,30 Q50,10 70,30 Q80,50 70,70 Q50,90 30,70 Q20,50 30,30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            2: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><ellipse cx="50" cy="50" rx="20" ry="30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            3: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="30" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
-            4: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>',
-            5: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 Q50,20 70,50 Q50,80 30,50" stroke="#e09658" stroke-width="2" fill="none"/>',
-            6: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M50,30 Q70,50 50,70 Q30,50 50,30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            7: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 L70,50 M50,30 L50,70" stroke="#e09658" stroke-width="2"/>',
-            8: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>',
-            9: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,70 Q50,30 70,70" stroke="#e09658" stroke-width="2" fill="none"/>',
-            10: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="35" y="35" width="30" height="30" stroke="#e09658" stroke-width="2" fill="none"/>',
-            11: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="70" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="30" y2="30" stroke="#e09658" stroke-width="2"/><line x1="70" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
-            12: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>'
-        };
-    </script>
-
-    <!-- Inline styles for better appearance -->
     <style>
-        /* --- Core Game Styles --- */
         :root {
             --font-title: 'Cinzel', serif;
             --font-body: 'Marcellus', serif;
@@ -874,8 +32,14 @@
             --color-tamas: #5c527f;
             --color-karma: #bca06a;
 
-            --border-radius: 8px;
-            --transition-speed: 0.3s;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-info: #3b82f6;
+            --color-cosmic: #8b5cf6;
+
+            --border-radius: 12px;
+            --transition-speed: 0.4s;
         }
 
         * {
@@ -886,564 +50,1756 @@
 
         body {
             font-family: var(--font-body);
-            background-color: var(--color-bg);
+            background: radial-gradient(ellipse at center, #1a1817 0%, var(--color-bg) 70%);
             color: var(--color-text);
-            overflow: hidden;
-            cursor: none;
-        }
-        
-        /* Custom Cursor */
-        .custom-cursor-active {
-            cursor: none;
-        }
-        #cursor-container {
-            position: fixed;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s ease-out;
-        }
-        #cursor-container .chakra-cursor {
-            transition: all 0.2s ease;
-            transform-origin: center center;
-        }
-        #cursor-container.active .chakra-cursor {
-            transform: scale(1.5);
-            filter: drop-shadow(0 0 5px var(--color-primary-glow));
-        }
-        @media (pointer: coarse) {
-            body, .custom-cursor-active {
-                cursor: auto;
-            }
-            #cursor-container {
-                display: none;
-            }
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
         }
 
-        /* Animated Background */
-        #particle-background {
+        /* Cosmic Background Animation */
+        .cosmic-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(circle, rgba(224, 150, 88, 0.05) 1px, transparent 1px);
-            background-size: 2rem 2rem;
-            animation: pan-background 120s linear infinite;
-            z-index: -2;
-        }
-        @keyframes pan-background {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 100% 100%; }
-        }
-        #vignette-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            box-shadow: inset 0 0 15vw 5vw var(--color-bg);
-            pointer-events: none;
             z-index: -1;
-        }
-        
-        /* Page Transitions */
-        .page-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--color-bg);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .page-transition.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .page-transition-mandala {
-            width: 100px;
-            height: 100px;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23e09658' stroke-width='1' fill='none'/%3E%3Ccircle cx='50' cy='50' r='30' stroke='%23e09658' stroke-width='1' fill='none'/%3E%3Ccircle cx='50' cy='50' r='15' stroke='%23e09658' stroke-width='1' fill='none'/%3E%3Ccircle cx='50' cy='50' r='5' fill='%23e09658'/%3E%3C/svg%3E");
-            animation: spin 2s linear infinite, pulse-glow 2s ease-in-out infinite;
+            overflow: hidden;
         }
 
-        /* Game Layout */
-        .game-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to bottom, rgba(10, 9, 8, 0.8) 0%, rgba(10, 9, 8, 0) 100%);
-            z-index: 50;
+        .stars {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(224, 150, 88, 0.3), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(99, 180, 209, 0.3), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(168, 139, 250, 0.3), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(224, 150, 88, 0.2), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(92, 82, 127, 0.3), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: cosmic-drift 300s linear infinite;
         }
+
+        @keyframes cosmic-drift {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-100px); }
+        }
+
+        .energy-field {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg,
+                rgba(224, 150, 88, 0.02) 60deg,
+                transparent 120deg,
+                rgba(99, 180, 209, 0.02) 180deg,
+                transparent 240deg,
+                rgba(168, 139, 250, 0.02) 300deg,
+                transparent 360deg
+            );
+            animation: field-rotation 200s linear infinite;
+        }
+
+        @keyframes field-rotation {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .game-header {
+            background: linear-gradient(135deg, rgba(26, 24, 23, 0.95) 0%, rgba(10, 9, 8, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(224, 150, 88, 0.3);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
         .header-title {
             font-family: var(--font-title);
-            font-size: 2.5rem;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-shadow);
+            font-size: 3rem;
+            background: linear-gradient(45deg, var(--color-primary), var(--color-primary-glow), var(--color-cosmic));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--color-shadow);
+            animation: title-glow 3s ease-in-out infinite alternate;
         }
-        .menu-toggle-button {
-            position: absolute;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .game-wrapper {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            padding: 8rem 2rem 2rem;
-            height: 100vh;
-        }
-        .story-panel, .status-panel {
-            background: rgba(26, 24, 23, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(224, 150, 88, 0.2);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(224, 150, 88, 0.3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
 
-        /* Story Panel */
-        #story-text {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 2rem;
+        @keyframes title-glow {
+            from { filter: drop-shadow(0 0 10px rgba(224, 150, 88, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(224, 150, 88, 0.8)); }
         }
-        #story-text p { margin-bottom: 1.5rem; }
-        .highlight-text {
-            color: var(--color-primary-glow);
+
+        .master-badge {
+            background: linear-gradient(45deg, var(--color-cosmic), var(--color-primary));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: bold;
-            text-shadow: 0 0 5px var(--color-shadow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: badge-pulse 2s ease-in-out infinite;
         }
 
-        /* Choice Buttons */
-        #choices-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .choice-button {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            background: transparent;
-            border: none;
-            border-image: linear-gradient(to right, transparent, rgba(224, 150, 88, 0.3), transparent) 1;
-            border-bottom: 1px solid;
-            color: var(--color-text);
-            padding: 1.25rem 1rem;
-            text-align: left;
-            font-family: var(--font-body);
-            font-size: 1.1rem;
-            transition: all var(--transition-speed) ease;
-            position: relative;
-            overflow: hidden;
-            cursor: none;
-        }
-        .choice-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(224, 150, 88, 0.2), transparent);
-            transition: left var(--transition-speed) ease-in-out;
-        }
-        .choice-button:hover {
-            color: var(--color-primary-glow);
-            transform: scale(1.02);
-            border-image: linear-gradient(to right, transparent, var(--color-primary), transparent) 1;
-        }
-        .choice-button:hover::before {
-            left: 100%;
-        }
-        .choice-icon {
-            font-size: 1.5rem;
-            color: var(--color-primary);
-            transition: transform var(--transition-speed) ease;
-        }
-        .choice-button:hover .choice-icon {
-            transform: scale(1.2) rotate(-5deg);
-        }
-        .choice-button.choice-selected {
-            background-color: rgba(224, 150, 88, 0.2);
-            animation: pulse-glow 0.5s ease-out;
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
-        /* Status Panel */
-        .status-panel {
+        /* Main Layout */
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            min-height: calc(100vh - 120px);
+        }
+
+        .main-panel {
+            background: rgba(26, 24, 23, 0.8);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(224, 150, 88, 0.3);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            max-height: calc(100vh - 180px);
+        }
+
+        .sidebar {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
-        .panel-section {
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(224, 150, 88, 0.1);
+
+        .panel {
+            background: rgba(26, 24, 23, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(224, 150, 88, 0.25);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         }
-        .panel-section:last-child { border-bottom: none; }
+
         .panel-title {
             font-family: var(--font-title);
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
             color: var(--color-primary);
+            font-size: 1.4rem;
             margin-bottom: 1rem;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(224, 150, 88, 0.2);
+            padding-bottom: 0.5rem;
         }
-        .character-summary {
+
+        /* Character Display */
+        .character-display {
             text-align: center;
         }
+
         .character-symbol {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 1rem;
-            filter: drop-shadow(0 0 15px var(--color-shadow));
-            animation: float 4s ease-in-out infinite;
+            border: 3px solid var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, rgba(224, 150, 88, 0.15) 0%, transparent 70%);
+            animation: symbol-rotate 20s linear infinite;
+            position: relative;
         }
+
+        .character-symbol::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(224, 150, 88, 0.3);
+            border-radius: 50%;
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes symbol-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
         .character-name {
             font-family: var(--font-title);
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: var(--color-primary-glow);
+            margin-bottom: 0.5rem;
         }
-        
-        /* Stats Grid */
+
+        .character-gana {
+            color: var(--color-text-muted);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        /* Stats */
         .stats-grid {
             display: grid;
             gap: 1rem;
         }
+
         .stat-item {
-            display: grid;
-            grid-template-columns: 60px 1fr 30px;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-        }
-        .stat-label { color: var(--color-text-muted); }
-        .stat-value { text-align: right; font-weight: bold; }
-        .stat-bar {
-            height: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .stat-bar > div {
-            height: 100%;
-            border-radius: 5px;
-            transition: width 0.5s ease-in-out;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        .karma-bar > div { background: linear-gradient(90deg, var(--color-karma), #d9c69a); }
-        .sattva-bar > div { background: linear-gradient(90deg, var(--color-sattva), #9fd2e4); }
-        .rajas-bar > div { background: linear-gradient(90deg, var(--color-rajas), #f09b7c); }
-        .tamas-bar > div { background: linear-gradient(90deg, var(--color-tamas), #8a80a8); }
-
-        /* Element Display */
-        .element-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            text-transform: capitalize;
-        }
-        .element-icon { font-size: 2.5rem; }
-        .element-earth { color: #8c6a46; }
-        .element-water { color: #5c8b9c; }
-        .element-fire { color: #d96c47; }
-        .element-air { color: #a9b7c0; }
-        .element-ether { color: #8c6da6; }
-
-        /* Inventory */
-        #inventory-list {
-            list-style: none;
-            text-align: center;
-            min-height: 50px;
-        }
-        .inventory-empty { color: var(--color-text-muted); font-style: italic; }
-
-        /* Buttons */
-        button {
-            cursor: none;
-        }
-        .control-button, .menu-toggle-button, .menu-button {
-            background: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.05));
-            border: 1px solid rgba(224, 150, 88, 0.5);
-            color: var(--color-text);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-family: var(--font-title);
-            font-size: 1rem;
-            letter-spacing: 1px;
-            transition: all var(--transition-speed) ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-        .control-button:hover, .menu-toggle-button:hover, .menu-button:hover {
-            background-color: rgba(224, 150, 88, 0.1);
-            color: var(--color-primary-glow);
-            border-color: var(--color-primary);
-            box-shadow: 0 0 15px 0 var(--color-shadow);
-            transform: translateY(-2px);
-        }
-        .control-button { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(10, 9, 8, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: var(--color-surface);
-            border: 1px solid var(--color-primary);
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.7);
-            animation: fadeInUp 0.5s ease-out;
-        }
-        .modal-header {
-            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(224, 150, 88, 0.3);
-        }
-        .modal-header h2 {
-            font-family: var(--font-title);
-            font-size: 2rem;
-            color: var(--color-primary);
-        }
-        .close-modal {
-            color: var(--color-text-muted);
-            font-size: 2rem;
-            transition: color 0.3s ease;
-            cursor: none;
-        }
-        .close-modal:hover { color: var(--color-primary-glow); }
-        .modal-body { padding: 1.5rem; }
-        .menu-buttons { display: flex; flex-direction: column; gap: 1rem; }
-        .menu-button { display: flex; align-items: center; gap: 1rem; width: 100%; }
-        .menu-button i { color: var(--color-primary); min-width: 20px; }
-
-        /* Notifications */
-        #notification-container {
-            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .notification {
-            background: linear-gradient(135deg, var(--color-surface), #2a2725);
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
             border-left: 4px solid var(--color-primary);
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            transform: translateX(120%);
-            opacity: 0;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            min-width: 300px;
         }
-        .notification.show { transform: translateX(0); opacity: 1; }
-        .notification.hide { transform: translateX(120%); opacity: 0; }
-        .notification.success { border-left-color: var(--color-sattva); }
-        .notification.error { border-left-color: var(--color-rajas); }
-        .notification-content { display: flex; align-items: center; gap: 1rem; }
-        .notification-icon { font-size: 1.5rem; }
-        .notification.success .notification-icon { color: var(--color-sattva); }
-        .notification.error .notification-icon { color: var(--color-rajas); }
 
-        /* Puzzle Styles */
-        .puzzle-container {
-            background: rgba(224, 150, 88, 0.1);
-            border: 1px solid rgba(224, 150, 88, 0.3);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
+        .stat-label {
+            font-weight: bold;
+            color: var(--color-text);
         }
+
+        .stat-value {
+            color: var(--color-primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Master Puzzle Container */
+        .master-puzzle-container {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(224, 150, 88, 0.1) 100%);
+            border: 3px solid rgba(139, 92, 246, 0.4);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .master-puzzle-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(139, 92, 246, 0.1),
+                transparent 120deg,
+                rgba(224, 150, 88, 0.1) 180deg,
+                transparent 240deg,
+                rgba(99, 180, 209, 0.1) 300deg,
+                transparent
+            );
+            animation: puzzle-aura 30s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes puzzle-aura {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .puzzle-title {
-            color: var(--color-primary);
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            text-align: center;
             margin-bottom: 1rem;
-            text-align: center;
+            background: linear-gradient(45deg, var(--color-cosmic), var(--color-primary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
+
         .puzzle-description {
-            margin-bottom: 1.5rem;
             text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            color: var(--color-text);
         }
-        .puzzle-rings {
+
+        /* Multi-Stage Progress */
+        .stage-progress {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             gap: 1rem;
-            margin: 1.5rem 0;
+            margin: 2rem 0;
         }
-        .ring {
+
+        .stage-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid rgba(224, 150, 88, 0.3);
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .ring label {
-            font-weight: bold;
-            color: var(--color-primary);
-        }
-        .ring input[type="range"] {
-            width: 100%;
-            height: 6px;
-            background: rgba(224, 150, 88, 0.2);
-            outline: none;
-            border-radius: 3px;
-        }
-        .puzzle-button {
-            background: var(--color-primary);
-            color: var(--color-bg);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-weight: bold;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-        .puzzle-button:hover {
-            background: var(--color-primary-glow);
-            transform: translateY(-2px);
-        }
-        .barrier-puzzle {
-            text-align: center;
-        }
-        .barrier-zone {
-            background: rgba(92, 82, 127, 0.2);
-            border: 2px dashed rgba(92, 82, 127, 0.5);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            margin: 1rem 0;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .stage-indicator.completed {
+            background: var(--color-success);
+            border-color: var(--color-success);
+            color: white;
+        }
+
+        .stage-indicator.active {
+            background: var(--color-cosmic);
+            border-color: var(--color-cosmic);
+            color: white;
+            animation: active-pulse 2s ease-in-out infinite;
+        }
+
+        .stage-indicator.locked {
+            background: rgba(122, 118, 112, 0.3);
+            border-color: var(--color-text-muted);
+            color: var(--color-text-muted);
+        }
+
+        @keyframes active-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.8); }
+        }
+
+        /* Stage Content */
+        .puzzle-stage {
+            display: none;
+            animation: stage-fade-in 0.8s ease-out;
+        }
+
+        .puzzle-stage.active {
+            display: block;
+        }
+
+        @keyframes stage-fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stage-title {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .stage-description {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        /* Banyan Tree Harmonic Resonance Puzzle */
+        .harmonic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .resonance-chamber {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(224, 150, 88, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .chamber-title {
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .frequency-wheel {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--color-primary);
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, rgba(224, 150, 88, 0.1) 0%, transparent 70%);
+            cursor: pointer;
+        }
+
+        .frequency-marker {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--color-cosmic);
+            border-radius: 50%;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: transform 0.3s ease;
+        }
+
+        .frequency-control {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .frequency-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            background: rgba(224, 150, 88, 0.2);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .frequency-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-cosmic);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .harmonic-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--color-text);
+        }
+
+        /* Sacred Geometry Pattern Puzzle */
+        .geometry-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .geometry-node {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(224, 150, 88, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(26, 24, 23, 0.6);
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .geometry-node:hover {
+            border-color: var(--color-cosmic);
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(1.1);
+        }
+
+        .geometry-node.activated {
+            background: var(--color-cosmic);
+            color: white;
+            border-color: var(--color-cosmic);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .geometry-node.correct {
+            background: var(--color-success);
+            border-color: var(--color-success);
+            animation: correct-flash 1s ease-out;
+        }
+
+        .geometry-node.incorrect {
+            background: var(--color-danger);
+            border-color: var(--color-danger);
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes correct-flash {
+            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(16, 185, 129, 1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Chakra Meditation Master Puzzle */
+        .chakra-mandala {
+            width: 400px;
+            height: 400px;
+            margin: 2rem auto;
+            position: relative;
+            border: 3px solid var(--color-cosmic);
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(139, 92, 246, 0.1) 0%,
+                rgba(224, 150, 88, 0.1) 50%,
+                transparent 100%
+            );
+        }
+
+        .chakra-point {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .chakra-point:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 25px currentColor;
+        }
+
+        .chakra-point.activated {
+            animation: chakra-awakening 2s ease-in-out infinite;
+            transform: scale(1.1);
+        }
+
+        @keyframes chakra-awakening {
+            0%, 100% { box-shadow: 0 0 20px currentColor; }
+            50% { box-shadow: 0 0 40px currentColor; }
+        }
+
+        /* Sequence Display */
+        .sequence-display {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .sequence-step {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(224, 150, 88, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
         }
-        .barrier-zone.drag-over {
-            background: rgba(224, 150, 88, 0.2);
-            border-color: var(--color-primary);
-        }
-        .draggable-item {
-            background: rgba(224, 150, 88, 0.3);
-            border: 1px solid var(--color-primary);
-            border-radius: var(--border-radius);
-            padding: 0.5rem 1rem;
-            margin: 0.25rem;
-            display: inline-block;
-            cursor: grab;
-        }
-        .draggable-item:active {
-            cursor: grabbing;
-        }
-        #puzzle-feedback .success {
-            color: var(--color-sattva);
-            font-weight: bold;
-        }
-        #puzzle-feedback .error {
-            color: var(--color-rajas);
+
+        .sequence-step.completed {
+            background: var(--color-success);
+            border-color: var(--color-success);
+            color: white;
         }
 
-        /* Animations */
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse-glow { 0%, 100% { filter: drop-shadow(0 0 10px var(--color-shadow)); } 50% { filter: drop-shadow(0 0 20px var(--color-primary-glow)); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
-        .text-fade-in { animation: fadeInUp 0.8s ease-out; }
-        .text-fade-in-delay-1 { animation: fadeInUp 0.8s ease-out 0.4s; animation-fill-mode: backwards; }
+        .sequence-step.active {
+            background: var(--color-cosmic);
+            border-color: var(--color-cosmic);
+            color: white;
+            animation: sequence-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes sequence-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Controls */
+        .puzzle-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-family: var(--font-title);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            min-width: 120px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-cosmic), #a855f7);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-glow));
+            color: var(--color-bg);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--color-danger), #fca5a5);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--color-info), #60a5fa);
+            color: white;
+        }
+
+        /* Feedback System */
+        .feedback-container {
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .feedback-message {
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .feedback-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--color-success);
+            color: var(--color-success);
+        }
+
+        .feedback-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .feedback-hint {
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid var(--color-cosmic);
+            color: var(--color-cosmic);
+        }
+
+        .feedback-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 2px solid var(--color-warning);
+            color: var(--color-warning);
+        }
 
         /* Responsive Design */
-        @media (max-width: 1024px) {
-            .game-wrapper {
+        @media (max-width: 1200px) {
+            .game-container {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
-                padding: 6rem 1rem 1rem;
+                gap: 1.5rem;
             }
-            .status-panel {
-                grid-row: 1;
+
+            .harmonic-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
-            .story-panel {
-                grid-row: 2;
+
+            .geometry-grid {
+                grid-template-columns: repeat(5, 1fr);
+                max-width: 400px;
+            }
+
+            .chakra-mandala {
+                width: 300px;
+                height: 300px;
             }
         }
+
         @media (max-width: 768px) {
-            .header-title { font-size: 1.8rem; }
-            .menu-toggle-button { right: 1rem; }
-            .game-wrapper { gap: 1rem; }
-            .story-panel, .status-panel { padding: 1.5rem; }
-            #story-text { font-size: 1.1rem; }
-            .choice-button { font-size: 1rem; padding: 1rem; gap: 1rem; }
-        }
-
-        /* Error styles */
-        .error-message {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(217, 108, 71, 0.1);
-            border: 1px solid rgba(217, 108, 71, 0.3);
-            border-radius: var(--border-radius);
-        }
-        .error-message h2 {
-            color: var(--color-rajas);
-            margin-bottom: 1rem;
-        }
-
-        /* Loading states */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        /* Skip link for accessibility */
-        .skip-link { 
-            position: fixed; 
-            left: -9999px; 
-            top: 0; 
-            background: var(--color-primary); 
-            color: #0a0908; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            z-index: 10001; 
-        }
-        .skip-link:focus { 
-            left: 10px; 
-            top: 10px; 
-            box-shadow: 0 0 10px var(--color-primary-glow); 
-        }
-
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            * { 
-                animation-duration: 0.001s !important; 
-                animation-iteration-count: 1 !important; 
-                transition: none !important; 
+            .header-title {
+                font-size: 2rem;
             }
-            .page-transition-mandala { animation: none !important; }
-            #particle-background { animation: none !important; }
+
+            .game-container {
+                padding: 1rem;
+            }
+
+            .main-panel {
+                padding: 1.5rem;
+            }
+
+            .geometry-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 300px;
+            }
+
+            .geometry-node {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .chakra-mandala {
+                width: 250px;
+                height: 250px;
+            }
+
+            .chakra-point {
+                width: 45px;
+                height: 45px;
+                font-size: 1.4rem;
+            }
+
+            .puzzle-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            background: rgba(26, 24, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--color-primary);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.5s ease;
+            min-width: 320px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        .notification.success {
+            border-color: var(--color-success);
+        }
+
+        .notification.success .notification-icon {
+            color: var(--color-success);
+        }
+
+        .notification.error {
+            border-color: var(--color-danger);
+        }
+
+        .notification.error .notification-icon {
+            color: var(--color-danger);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(224, 150, 88, 0.1);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--color-primary), var(--color-cosmic));
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--color-primary-glow), #a855f7);
         }
     </style>
+</head>
+<body>
+    <!-- Cosmic Background -->
+    <div class="cosmic-bg">
+        <div class="stars"></div>
+        <div class="energy-field"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="game-header">
+        <h1 class="header-title">Samsara Saga</h1>
+        <div class="master-badge">🌟 Master's Trial</div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="game-container">
+        <!-- Main Panel -->
+        <main class="main-panel">
+            <!-- Story Content -->
+            <div style="margin-bottom: 2rem;">
+                <h2 style="font-family: var(--font-title); font-size: 2.5rem; color: var(--color-primary-glow); text-align: center; margin-bottom: 1rem;">
+                    The Great Banyan's Ultimate Trial
+                </h2>
+                <p style="font-size: 1.3rem; line-height: 1.6; text-align: center; margin-bottom: 1.5rem;">
+                    The ancient Banyan tree stands before you, its massive form pulsing with cosmic energy. This is no ordinary challenge—you must master three profound stages of spiritual alignment to unlock the tree's deepest wisdom.
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.6; text-align: center; color: var(--color-text-muted);">
+                    Only those who understand the deepest mysteries of harmonic resonance, sacred geometry, and chakra awakening can hope to succeed.
+                </p>
+            </div>
+
+            <!-- Master Puzzle Container -->
+            <div class="master-puzzle-container">
+                <h3 class="puzzle-title">🌳 The Banyan's Trinity Challenge</h3>
+                <p class="puzzle-description">
+                    Three sacred trials await. Each stage builds upon the last, testing your mastery of ancient wisdom.
+                    Failure at any stage requires starting from the beginning.
+                </p>
+
+                <!-- Stage Progress -->
+                <div class="stage-progress">
+                    <div class="stage-indicator active" data-stage="1">
+                        <span>1</span>
+                    </div>
+                    <div class="stage-indicator locked" data-stage="2">
+                        <span>2</span>
+                    </div>
+                    <div class="stage-indicator locked" data-stage="3">
+                        <span>3</span>
+                    </div>
+                </div>
+
+                <!-- Stage 1: Harmonic Resonance -->
+                <div class="puzzle-stage active" id="stage-1">
+                    <h4 class="stage-title">Stage 1: Harmonic Resonance Mastery</h4>
+                    <p class="stage-description">
+                        The Banyan's three root systems vibrate at different frequencies. You must tune each harmonic chamber to achieve perfect resonance. The frequencies must form a sacred mathematical relationship.
+                    </p>
+
+                    <div class="harmonic-grid">
+                        <div class="resonance-chamber">
+                            <div class="chamber-title">Sattva Resonance</div>
+                            <div class="frequency-wheel" onclick="adjustFrequency(1)">
+                                <div class="frequency-marker" id="marker-1"></div>
+                            </div>
+                            <div class="frequency-control">
+                                <input type="range" min="0" max="360" value="0" class="frequency-slider" id="freq-1" onchange="updateFrequency(1)">
+                            </div>
+                            <div class="harmonic-display" id="display-1">432 Hz</div>
+                        </div>
+
+                        <div class="resonance-chamber">
+                            <div class="chamber-title">Rajas Resonance</div>
+                            <div class="frequency-wheel" onclick="adjustFrequency(2)">
+                                <div class="frequency-marker" id="marker-2"></div>
+                            </div>
+                            <div class="frequency-control">
+                                <input type="range" min="0" max="360" value="120" class="frequency-slider" id="freq-2" onchange="updateFrequency(2)">
+                            </div>
+                            <div class="harmonic-display" id="display-2">528 Hz</div>
+                        </div>
+
+                        <div class="resonance-chamber">
+                            <div class="chamber-title">Tamas Resonance</div>
+                            <div class="frequency-wheel" onclick="adjustFrequency(3)">
+                                <div class="frequency-marker" id="marker-3"></div>
+                            </div>
+                            <div class="frequency-control">
+                                <input type="range" min="0" max="360" value="240" class="frequency-slider" id="freq-3" onchange="updateFrequency(3)">
+                            </div>
+                            <div class="harmonic-display" id="display-3">639 Hz</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin: 1.5rem 0;">
+                        <div style="font-weight: bold; color: var(--color-cosmic); margin-bottom: 0.5rem;">
+                            Target Harmonic Ratio: 3:4:5 (Perfect Sacred Triad)
+                        </div>
+                        <div style="color: var(--color-text-muted); font-size: 0.9rem;">
+                            Hint: The frequencies must align at precise mathematical intervals
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage 2: Sacred Geometry -->
+                <div class="puzzle-stage" id="stage-2">
+                    <h4 class="stage-title">Stage 2: Sacred Geometry Activation</h4>
+                    <p class="stage-description">
+                        Activate the nodes in the correct sequence to form the Flower of Life pattern. Each activation affects neighboring nodes. The pattern must be completed in a specific order to unlock the tree's geometric consciousness.
+                    </p>
+
+                    <div class="geometry-grid" id="geometry-grid">
+                        <!-- Nodes will be generated by JavaScript -->
+                    </div>
+
+                    <div style="text-align: center; margin: 1.5rem 0;">
+                        <div style="font-weight: bold; color: var(--color-cosmic); margin-bottom: 0.5rem;">
+                            Sequence Required: Flower of Life Manifestation
+                        </div>
+                        <div style="color: var(--color-text-muted); font-size: 0.9rem;">
+                            Follow the sacred sequence: Center → Petals → Overlapping Circles
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage 3: Chakra Awakening -->
+                <div class="puzzle-stage" id="stage-3">
+                    <h4 class="stage-title">Stage 3: Master Chakra Awakening</h4>
+                    <p class="stage-description">
+                        Awaken all seven chakras in the correct order while maintaining perfect timing. Each chakra must be activated at the precise moment in the cosmic cycle. A single mistimed activation will reset the entire sequence.
+                    </p>
+
+                    <div class="chakra-mandala" id="chakra-mandala">
+                        <!-- Chakras will be positioned by JavaScript -->
+                    </div>
+
+                    <div class="sequence-display" id="chakra-sequence">
+                        <!-- Sequence steps will be generated by JavaScript -->
+                    </div>
+
+                    <div style="text-align: center; margin: 1.5rem 0;">
+                        <div style="font-weight: bold; color: var(--color-cosmic); margin-bottom: 0.5rem;">
+                            Cosmic Timing Window: 3 seconds per activation
+                        </div>
+                        <div style="color: var(--color-text-muted); font-size: 0.9rem;">
+                            Wait for the cosmic pulse before each activation
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Container -->
+                <div class="feedback-container">
+                    <div class="feedback-message" id="feedback-message"></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="puzzle-controls">
+                    <button class="control-btn btn-primary" onclick="checkCurrentStage()">
+                        Validate Stage
+                    </button>
+                    <button class="control-btn btn-info" onclick="getStageHint()">
+                        Cosmic Guidance
+                    </button>
+                    <button class="control-btn btn-danger" onclick="resetCurrentStage()">
+                        Reset Stage
+                    </button>
+                    <button class="control-btn btn-secondary" onclick="skipToNextQuest()">
+                        Continue Journey
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Character Panel -->
+            <div class="panel">
+                <h3 class="panel-title">Character</h3>
+                <div class="character-display">
+                    <div class="character-symbol">
+                        <svg viewBox="0 0 100 100" width="90" height="90">
+                            <rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="3" fill="none"/>
+                            <circle cx="50" cy="50" r="35" stroke="#e09658" stroke-width="2" fill="none" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <div class="character-name" id="character-name">Uttara Phalguni</div>
+                    <div class="character-gana" id="character-gana">Manushya Gana</div>
+                </div>
+            </div>
+
+            <!-- Progress Panel -->
+            <div class="panel">
+                <h3 class="panel-title">Master's Progress</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Karma</span>
+                        <span class="stat-value" id="karma-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Mastery Level</span>
+                        <span class="stat-value" id="mastery-level">Novice</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Trials Completed</span>
+                        <span class="stat-value" id="trials-completed">0/3</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Wisdom Gained</span>
+                        <span class="stat-value" id="wisdom-gained">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Cosmic Attunement</span>
+                        <span class="stat-value" id="attunement">12%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sacred Items -->
+            <div class="panel">
+                <h3 class="panel-title">Sacred Artifacts</h3>
+                <div id="artifacts-list" style="text-align: center; color: var(--color-text-muted); font-style: italic;">
+                    Complete trials to unlock sacred artifacts...
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="panel">
+                <h3 class="panel-title">Master's Tools</h3>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button class="control-btn btn-secondary" onclick="saveProgress()" style="width: 100%;">
+                        💾 Save Progress
+                    </button>
+                    <button class="control-btn btn-info" onclick="viewGrandDesign()" style="width: 100%;">
+                        🔮 View Grand Design
+                    </button>
+                    <button class="control-btn btn-primary" onclick="enterMeditation()" style="width: 100%;">
+                        🧘 Deep Meditation
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <script>
+        // ===== COMPREHENSIVE GAME STATE MANAGEMENT =====
+        class MasterGameState {
+            constructor() {
+                this.currentStage = 1;
+                this.completedStages = [];
+                this.playerStats = {
+                    karma: 0,
+                    masteryLevel: 'Novice',
+                    trialsCompleted: 0,
+                    wisdomGained: 0,
+                    attunement: 12
+                };
+                
+                // Stage 1: Harmonic Resonance
+                this.harmonics = {
+                    freq1: 0,    // Target: 108 (sacred number)
+                    freq2: 120,  // Target: 144 (108 * 4/3)
+                    freq3: 240   // Target: 180 (108 * 5/3)
+                };
+                
+                // Stage 2: Sacred Geometry
+                this.geometryPattern = [];
+                this.targetPattern = [24, 25, 26, 17, 18, 19, 10, 11, 12, 31, 32, 33, 38, 39, 40, 45, 46, 47]; // Flower of Life
+                
+                // Stage 3: Chakra System
+                this.chakraSequence = [];
+                this.chakraTargets = ['root', 'sacral', 'solar', 'heart', 'throat', 'third-eye', 'crown'];
+                this.cosmicTimer = null;
+                this.lastActivation = 0;
+                
+                this.hintsUsed = 0;
+                this.startTime = Date.now();
+                this.artifacts = [];
+                
+                this.initializeCharacter();
+                this.setupEventListeners();
+            }
+            
+            initializeCharacter() {
+                // Extract character data from URL parameters (maintain compatibility)
+                const urlParams = new URLSearchParams(window.location.search);
+                const nakshatraNum = urlParams.get('nakshatra');
+                
+                // Nakshatra data
+                const nakshatraData = {
+                    12: { name: 'Uttara Phalguni', gana: 'Manushya', element: 'fire' },
+                    1: { name: 'Ashwini', gana: 'Deva', element: 'fire' },
+                    2: { name: 'Bharani', gana: 'Manushya', element: 'earth' },
+                    3: { name: 'Krittika', gana: 'Rakshasa', element: 'fire' }
+                };
+                
+                if (nakshatraNum && nakshatraData[nakshatraNum]) {
+                    const nakshatra = nakshatraData[nakshatraNum];
+                    document.getElementById('character-name').textContent = nakshatra.name;
+                    document.getElementById('character-gana').textContent = nakshatra.gana + ' Gana';
+                }
+                
+                this.updateDisplay();
+                this.initializeStage1();
+            }
+            
+            setupEventListeners() {
+                // Prevent any auto-refresh mechanisms
+                window.onbeforeunload = () => this.saveProgress();
+                
+                // Disable problematic shortcuts that might cause refresh
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey && e.key === 'r') || e.key === 'F5') {
+                        e.preventDefault();
+                        this.showNotification('Auto-refresh disabled. Use Save Progress to preserve your journey.', 'info');
+                    }
+                });
+            }
+            
+            updateDisplay() {
+                document.getElementById('karma-value').textContent = this.playerStats.karma;
+                document.getElementById('mastery-level').textContent = this.playerStats.masteryLevel;
+                document.getElementById('trials-completed').textContent = `${this.playerStats.trialsCompleted}/3`;
+                document.getElementById('wisdom-gained').textContent = this.playerStats.wisdomGained;
+                document.getElementById('attunement').textContent = `${this.playerStats.attunement}%`;
+            }
+            
+            // ===== STAGE 1: HARMONIC RESONANCE =====
+            initializeStage1() {
+                // Set up frequency controls
+                for (let i = 1; i <= 3; i++) {
+                    const slider = document.getElementById(`freq-${i}`);
+                    const marker = document.getElementById(`marker-${i}`);
+                    const display = document.getElementById(`display-${i}`);
+                    
+                    slider.addEventListener('input', () => this.updateFrequency(i));
+                    this.updateFrequency(i);
+                }
+            }
+            
+            updateFrequency(chamber) {
+                const slider = document.getElementById(`freq-${chamber}`);
+                const marker = document.getElementById(`marker-${chamber}`);
+                const display = document.getElementById(`display-${chamber}`);
+                
+                const angle = slider.value;
+                this.harmonics[`freq${chamber}`] = parseInt(angle);
+                
+                // Update visual marker
+                marker.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-55px)`;
+                
+                // Calculate frequency based on angle (sacred mathematics)
+                const baseFreq = [432, 528, 639][chamber - 1];
+                const frequency = Math.round(baseFreq + (angle / 360) * 200);
+                display.textContent = `${frequency} Hz`;
+                
+                // Check for harmonic resonance in real-time
+                this.checkHarmonicResonance();
+            }
+            
+            checkHarmonicResonance() {
+                const target1 = 108; // 108 degrees - sacred number
+                const target2 = 144; // 144 degrees - 108 * 4/3
+                const target3 = 180; // 180 degrees - 108 * 5/3
+                const tolerance = 8;
+                
+                const freq1 = this.harmonics.freq1;
+                const freq2 = this.harmonics.freq2;
+                const freq3 = this.harmonics.freq3;
+                
+                const aligned = Math.abs(freq1 - target1) <= tolerance &&
+                               Math.abs(freq2 - target2) <= tolerance &&
+                               Math.abs(freq3 - target3) <= tolerance;
+                
+                if (aligned && this.currentStage === 1) {
+                    this.completeStage(1);
+                }
+            }
+            
+            // ===== STAGE 2: SACRED GEOMETRY =====
+            initializeStage2() {
+                const grid = document.getElementById('geometry-grid');
+                grid.innerHTML = '';
+                
+                // Create 7x7 grid (49 nodes total)
+                for (let i = 0; i < 49; i++) {
+                    const node = document.createElement('div');
+                    node.className = 'geometry-node';
+                    node.dataset.index = i;
+                    node.addEventListener('click', () => this.activateGeometryNode(i));
+                    
+                    // Add sacred symbols to specific nodes
+                    const symbols = ['⬢', '◈', '◉', '⬟', '◎', '◈', '⬢'];
+                    if (this.targetPattern.includes(i)) {
+                        node.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    }
+                    
+                    grid.appendChild(node);
+                }
+            }
+            
+            activateGeometryNode(index) {
+                if (this.currentStage !== 2) return;
+                
+                const node = document.querySelector(`[data-index="${index}"]`);
+                
+                if (this.geometryPattern.includes(index)) {
+                    // Already activated - deactivate
+                    this.geometryPattern = this.geometryPattern.filter(i => i !== index);
+                    node.classList.remove('activated');
+                } else {
+                    // Activate node
+                    this.geometryPattern.push(index);
+                    node.classList.add('activated');
+                    
+                    // Check if pattern is correct so far
+                    const isCorrect = this.geometryPattern.every((nodeIndex, i) => 
+                        nodeIndex === this.targetPattern[i]
+                    );
+                    
+                    if (!isCorrect) {
+                        // Wrong pattern - shake and reset
+                        node.classList.add('incorrect');
+                        setTimeout(() => {
+                            this.resetGeometryPattern();
+                        }, 1000);
+                        this.showFeedback('The sacred geometry rebels against disorder. Start anew.', 'error');
+                        return;
+                    }
+                    
+                    node.classList.add('correct');
+                    
+                    // Check if complete
+                    if (this.geometryPattern.length === this.targetPattern.length) {
+                        this.completeStage(2);
+                    }
+                }
+            }
+            
+            resetGeometryPattern() {
+                this.geometryPattern = [];
+                document.querySelectorAll('.geometry-node').forEach(node => {
+                    node.classList.remove('activated', 'correct', 'incorrect');
+                });
+            }
+            
+            // ===== STAGE 3: CHAKRA AWAKENING =====
+            initializeStage3() {
+                const mandala = document.getElementById('chakra-mandala');
+                mandala.innerHTML = '';
+                
+                const chakras = [
+                    { name: 'root', color: '#e74c3c', symbol: '🔴', angle: 270, label: 'Root' },
+                    { name: 'sacral', color: '#e67e22', symbol: '🟠', angle: 315, label: 'Sacral' },
+                    { name: 'solar', color: '#f1c40f', symbol: '🟡', angle: 0, label: 'Solar' },
+                    { name: 'heart', color: '#27ae60', symbol: '💚', angle: 45, label: 'Heart' },
+                    { name: 'throat', color: '#3498db', symbol: '🔵', angle: 90, label: 'Throat' },
+                    { name: 'third-eye', color: '#8e44ad', symbol: '🟣', angle: 135, label: 'Third Eye' },
+                    { name: 'crown', color: '#9b59b6', symbol: '👑', angle: 180, label: 'Crown' }
+                ];
+                
+                chakras.forEach((chakra, index) => {
+                    const chakraElement = document.createElement('div');
+                    chakraElement.className = 'chakra-point';
+                    chakraElement.dataset.chakra = chakra.name;
+                    chakraElement.dataset.index = index;
+                    chakraElement.style.borderColor = chakra.color;
+                    chakraElement.textContent = chakra.symbol;
+                    chakraElement.title = chakra.label;
+                    
+                    // Position on mandala
+                    const radian = (chakra.angle * Math.PI) / 180;
+                    const radius = 150;
+                    const x = 200 + radius * Math.cos(radian) - 30;
+                    const y = 200 + radius * Math.sin(radian) - 30;
+                    
+                    chakraElement.style.left = x + 'px';
+                    chakraElement.style.top = y + 'px';
+                    
+                    chakraElement.addEventListener('click', () => this.activateChakra(chakra.name, index));
+                    mandala.appendChild(chakraElement);
+                });
+                
+                this.setupChakraSequence();
+                this.startCosmicTimer();
+            }
+            
+            setupChakraSequence() {
+                const sequenceContainer = document.getElementById('chakra-sequence');
+                sequenceContainer.innerHTML = '';
+                
+                this.chakraTargets.forEach((chakra, index) => {
+                    const step = document.createElement('div');
+                    step.className = 'sequence-step';
+                    step.dataset.chakra = chakra;
+                    step.textContent = index + 1;
+                    sequenceContainer.appendChild(step);
+                });
+                
+                // Highlight first step
+                sequenceContainer.children[0].classList.add('active');
+            }
+            
+            startCosmicTimer() {
+                this.cosmicTimer = setInterval(() => {
+                    // Cosmic pulse every 3 seconds
+                    document.querySelectorAll('.chakra-point').forEach(chakra => {
+                        chakra.style.boxShadow = '0 0 30px currentColor';
+                        setTimeout(() => {
+                            chakra.style.boxShadow = '';
+                        }, 500);
+                    });
+                }, 3000);
+            }
+            
+            activateChakra(chakraName, index) {
+                if (this.currentStage !== 3) return;
+                
+                const now = Date.now();
+                const timeSinceLastActivation = now - this.lastActivation;
+                
+                // Check timing (must be within cosmic window)
+                if (this.chakraSequence.length > 0 && timeSinceLastActivation < 2800) {
+                    this.showFeedback('Wait for the cosmic pulse... timing is essential.', 'warning');
+                    return;
+                }
+                
+                const expectedChakra = this.chakraTargets[this.chakraSequence.length];
+                
+                if (chakraName === expectedChakra) {
+                    // Correct chakra and timing
+                    this.chakraSequence.push(chakraName);
+                    this.lastActivation = now;
+                    
+                    const chakraElement = document.querySelector(`[data-chakra="${chakraName}"]`);
+                    chakraElement.classList.add('activated');
+                    
+                    // Update sequence display
+                    const sequenceSteps = document.querySelectorAll('.sequence-step');
+                    sequenceSteps[this.chakraSequence.length - 1].classList.remove('active');
+                    sequenceSteps[this.chakraSequence.length - 1].classList.add('completed');
+                    
+                    if (this.chakraSequence.length < this.chakraTargets.length) {
+                        sequenceSteps[this.chakraSequence.length].classList.add('active');
+                    }
+                    
+                    this.showFeedback(`${chakraName.charAt(0).toUpperCase() + chakraName.slice(1)} chakra awakened! Energy flows upward...`, 'success');
+                    
+                    if (this.chakraSequence.length === this.chakraTargets.length) {
+                        this.completeStage(3);
+                    }
+                } else {
+                    // Wrong chakra - reset entire sequence
+                    this.showFeedback('The chakras must be awakened in sacred order. Beginning anew...', 'error');
+                    this.resetChakraSequence();
+                }
+            }
+            
+            resetChakraSequence() {
+                this.chakraSequence = [];
+                document.querySelectorAll('.chakra-point').forEach(chakra => {
+                    chakra.classList.remove('activated');
+                });
+                
+                // Reset sequence display
+                const sequenceSteps = document.querySelectorAll('.sequence-step');
+                sequenceSteps.forEach((step, index) => {
+                    step.classList.remove('active', 'completed');
+                    if (index === 0) step.classList.add('active');
+                });
+            }
+            
+            // ===== STAGE MANAGEMENT =====
+            completeStage(stageNum) {
+                if (this.completedStages.includes(stageNum)) return;
+                
+                this.completedStages.push(stageNum);
+                
+                // Update stage indicator
+                const indicator = document.querySelector(`[data-stage="${stageNum}"]`);
+                indicator.classList.remove('active', 'locked');
+                indicator.classList.add('completed');
+                indicator.innerHTML = '✓';
+                
+                // Calculate rewards based on performance
+                const timeBonus = Math.max(0, 300 - Math.floor((Date.now() - this.startTime) / 1000));
+                const hintPenalty = this.hintsUsed * 10;
+                const stageReward = 100 + timeBonus - hintPenalty;
+                
+                this.playerStats.karma += stageReward;
+                this.playerStats.wisdomGained += 25;
+                this.playerStats.trialsCompleted = this.completedStages.length;
+                this.playerStats.attunement = Math.min(100, this.playerStats.attunement + 20);
+                
+                // Update mastery level
+                if (this.completedStages.length === 1) {
+                    this.playerStats.masteryLevel = 'Apprentice';
+                } else if (this.completedStages.length === 2) {
+                    this.playerStats.masteryLevel = 'Adept';
+                } else if (this.completedStages.length === 3) {
+                    this.playerStats.masteryLevel = 'Master';
+                }
+                
+                this.updateDisplay();
+                
+                const stageNames = ['Harmonic Resonance', 'Sacred Geometry', 'Chakra Awakening'];
+                this.showFeedback(`🌟 Stage ${stageNum} Complete: ${stageNames[stageNum - 1]} Mastered! (+${stageReward} Karma)`, 'success');
+                
+                // Add artifacts
+                const artifacts = [
+                    '🎵 Resonance Crystal',
+                    '⬢ Sacred Geometry Codex', 
+                    '👑 Chakra Awakening Crown'
+                ];
+                this.artifacts.push(artifacts[stageNum - 1]);
+                this.updateArtifacts();
+                
+                if (stageNum < 3) {
+                    setTimeout(() => this.advanceToStage(stageNum + 1), 2000);
+                } else {
+                    setTimeout(() => this.completePuzzle(), 2000);
+                }
+            }
+            
+            advanceToStage(stageNum) {
+                // Hide current stage
+                document.querySelector('.puzzle-stage.active').classList.remove('active');
+                
+                // Show next stage
+                const nextStage = document.getElementById(`stage-${stageNum}`);
+                nextStage.classList.add('active');
+                this.currentStage = stageNum;
+                
+                // Update stage indicator
+                const indicator = document.querySelector(`[data-stage="${stageNum}"]`);
+                indicator.classList.remove('locked');
+                indicator.classList.add('active');
+                
+                // Initialize stage-specific mechanics
+                if (stageNum === 2) {
+                    this.initializeStage2();
+                } else if (stageNum === 3) {
+                    this.initializeStage3();
+                }
+                
+                this.showFeedback(`Advancing to Stage ${stageNum}. The challenge deepens...`, 'info');
+            }
+            
+            completePuzzle() {
+                this.showFeedback('🌳 THE BANYAN TREE AWAKENS! You have achieved perfect mastery of all three sacred trials. The ancient wisdom flows through you...', 'success');
+                
+                // Massive final rewards
+                this.playerStats.karma += 500;
+                this.playerStats.wisdomGained += 100;
+                this.playerStats.attunement = 100;
+                this.artifacts.push('🌳 Banyan\'s Eternal Blessing');
+                
+                this.updateDisplay();
+                this.updateArtifacts();
+                
+                // Clear cosmic timer
+                if (this.cosmicTimer) {
+                    clearInterval(this.cosmicTimer);
+                }
+                
+                setTimeout(() => {
+                    this.showCompletionScreen();
+                }, 3000);
+            }
+            
+            showCompletionScreen() {
+                const mainPanel = document.querySelector('.main-panel');
+                mainPanel.innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <h2 style="font-family: var(--font-title); font-size: 3rem; color: var(--color-primary-glow); margin-bottom: 2rem;">
+                            🌳 THE BANYAN'S GRATITUDE 🌳
+                        </h2>
+                        
+                        <div style="font-size: 1.4rem; line-height: 1.8; margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                            <p>As the final chakra blazes with awakened light, the Great Banyan tree straightens to its full cosmic height. Its roots dig deeper into the earth while its crown touches the heavens.</p>
+                            
+                            <p style="margin: 2rem 0; color: var(--color-primary-glow); font-weight: bold;">
+                                "You have achieved what few mortals ever attempt and fewer still complete. Accept my eternal blessing, Master of the Three Realms."
+                            </p>
+                            
+                            <p>The tree's wisdom flows into you—knowledge of harmonic frequencies that heal, sacred geometries that unlock reality's blueprints, and chakra mastery that bridges earth and sky.</p>
+                            
+                            <p>You are no longer the same being who began this trial. You are transformed.</p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;">
+                            <button class="control-btn btn-primary" onclick="continueEpicJourney()" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                                🚀 Continue Epic Journey
+                            </button>
+                            <button class="control-btn btn-secondary" onclick="enterDeepMeditation()" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                                🧘 Enter Deep Meditation
+                            </button>
+                            <button class="control-btn btn-info" onclick="shareWisdom()" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                                📜 Share Wisdom
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top: 3rem; padding: 2rem; background: rgba(139, 92, 246, 0.1); border-radius: 15px; border: 2px solid var(--color-cosmic);">
+                            <h3 style="color: var(--color-cosmic); margin-bottom: 1rem;">🏆 Master's Achievements</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; text-align: left;">
+                                <div>✨ Harmonic Resonance Master</div>
+                                <div>⬢ Sacred Geometry Sage</div>
+                                <div>👑 Chakra Awakening Adept</div>
+                                <div>🌳 Banyan Tree Blessed</div>
+                                <div>🎯 Perfect Cosmic Attunement</div>
+                                <div>🧘 Transcendent Consciousness</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            updateArtifacts() {
+                const artifactsList = document.getElementById('artifacts-list');
+                if (this.artifacts.length === 0) {
+                    artifactsList.innerHTML = '<div style="color: var(--color-text-muted); font-style: italic;">Complete trials to unlock sacred artifacts...</div>';
+                } else {
+                    artifactsList.innerHTML = this.artifacts.map(artifact => 
+                        `<div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(139, 92, 246, 0.1); border-radius: 5px; color: var(--color-cosmic);">${artifact}</div>`
+                    ).join('');
+                }
+            }
+            
+            showFeedback(message, type = 'info') {
+                const feedback = document.getElementById('feedback-message');
+                feedback.textContent = message;
+                feedback.className = `feedback-message feedback-${type} show`;
+                
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 4000);
+            }
+            
+            showNotification(message, type = 'info') {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const icons = {
+                    success: 'fas fa-check-circle',
+                    error: 'fas fa-exclamation-circle',
+                    info: 'fas fa-info-circle',
+                    warning: 'fas fa-exclamation-triangle'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="notification-icon ${icons[type] || icons.info}"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => notification.classList.add('show'), 100);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 500);
+                }, 5000);
+            }
+            
+            saveProgress() {
+                const saveData = {
+                    gameState: {
+                        currentStage: this.currentStage,
+                        completedStages: this.completedStages,
+                        playerStats: this.playerStats,
+                        harmonics: this.harmonics,
+                        geometryPattern: this.geometryPattern,
+                        chakraSequence: this.chakraSequence,
+                        artifacts: this.artifacts,
+                        hintsUsed: this.hintsUsed
+                    },
+                    timestamp: new Date().toISOString()
+                };
+                
+                try {
+                    localStorage.setItem('samsaraSagaMasterSave', JSON.stringify(saveData));
+                    this.showNotification('Master\'s progress preserved in the cosmic record!', 'success');
+                } catch (error) {
+                    this.showNotification('Failed to preserve progress. The cosmic forces resist...', 'error');
+                }
+            }
+        }
+        
+        // ===== GLOBAL FUNCTIONS =====
+        let gameState;
+        
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', () => {
+            gameState = new MasterGameState();
+            console.log('🌟 Samsara Saga Master\'s Trial initialized successfully!');
+        });
+        
+        // Control functions
+        function updateFrequency(chamber) {
+            gameState.updateFrequency(chamber);
+        }
+        
+        function checkCurrentStage() {
+            switch (gameState.currentStage) {
+                case 1:
+                    gameState.checkHarmonicResonance();
+                    if (!gameState.completedStages.includes(1)) {
+                        gameState.showFeedback('The harmonics are not yet aligned. Seek the sacred ratio of 3:4:5.', 'warning');
+                    }
+                    break;
+                case 2:
+                    if (gameState.geometryPattern.length === 0) {
+                        gameState.showFeedback('Begin by activating the center node, then follow the sacred flower pattern.', 'hint');
+                    } else if (gameState.geometryPattern.length < gameState.targetPattern.length) {
+                        gameState.showFeedback(`Pattern progress: ${gameState.geometryPattern.length}/${gameState.targetPattern.length} nodes activated.`, 'info');
+                    }
+                    break;
+                case 3:
+                    if (gameState.chakraSequence.length === 0) {
+                        gameState.showFeedback('Begin with the Root chakra and ascend mindfully. Wait for the cosmic pulse.', 'hint');
+                    } else {
+                        gameState.showFeedback(`Chakra awakening progress: ${gameState.chakraSequence.length}/7 chakras activated.`, 'info');
+                    }
+                    break;
+            }
+        }
+        
+        function getStageHint() {
+            gameState.hintsUsed++;
+            
+            const hints = {
+                1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180°. Listen for the harmonic convergence.",
+                2: "The Flower of Life begins at the center and radiates outward. Activate the central node first, then the six surrounding petals in clockwise order.",
+                3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral → Solar → Heart → Throat → Third Eye → Crown."
+            };
+            
+            gameState.showFeedback(`Cosmic Guidance: ${hints[gameState.currentStage]}`, 'hint');
+            
+            // Small karma penalty for hints
+            gameState.playerStats.karma = Math.max(0, gameState.playerStats.karma - 5);
+            gameState.updateDisplay();
+        }
+        
+        function resetCurrentStage() {
+            switch (gameState.currentStage) {
+                case 1:
+                    // Reset to random positions
+                    for (let i = 1; i <= 3; i++) {
+                        const slider = document.getElementById(`freq-${i}`);
+                        const randomAngle = Math.floor(Math.random() * 360);
+                        slider.value = randomAngle;
+                        gameState.updateFrequency(i);
+                    }
+                    break;
+                case 2:
+                    gameState.resetGeometryPattern();
+                    break;
+                case 3:
+                    gameState.resetChakraSequence();
+                    break;
+            }
+            gameState.showFeedback('Stage reset. Begin anew with deeper understanding.', 'info');
+        }
+        
+        function skipToNextQuest() {
+            if (confirm('🚨 Skip this profound trial? You will miss the deepest spiritual rewards and cosmic attunement. Continue?')) {
+                continueEpicJourney();
+            }
+        }
+        
+        function saveProgress() {
+            gameState.saveProgress();
+        }
+        
+        function viewGrandDesign() {
+            gameState.showNotification('The Grand Design reveals itself only to those who complete all trials...', 'info');
+        }
+        
+        function enterMeditation() {
+            gameState.playerStats.karma += 10;
+            gameState.playerStats.attunement = Math.min(100, gameState.playerStats.attunement + 2);
+            gameState.updateDisplay();
+            gameState.showNotification('Through meditation, cosmic clarity increases...', 'success');
+        }
+        
+        // Completion screen functions
+        function continueEpicJourney() {
+            gameState.showNotification('Your epic journey continues beyond the Banyan\'s realm...', 'success');
+            // Here you would transition to the next major quest/area
+        }
+        
+        function enterDeepMeditation() {
+            gameState.showNotification('You enter the deepest meditation, integrating the Banyan\'s wisdom into your very essence...', 'success');
+        }
+        
+        function shareWisdom() {
+            gameState.showNotification('Your wisdom will inspire countless others on their spiritual journey...', 'success');
+        }
+        
+        // Prevent any auto-refresh or reload mechanisms
+        window.addEventListener('beforeunload', (e) => {
+            gameState.saveProgress();
+        });
+        
+        // No automatic refresh mechanisms in this version
+        console.log('🚫 Auto-refresh permanently disabled. Manual save/load system active.');
+    </script>
 </body>
 </html>
