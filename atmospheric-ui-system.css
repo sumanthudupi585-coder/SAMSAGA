@@ -40,8 +40,8 @@
 /* === Enhanced Main Game Container === */
 .enhanced-adventure-game {
     position: relative;
-    min-height: 100vh;
-    background: 
+    height: 100vh;
+    background:
         radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(74, 144, 226, 0.02) 0%, transparent 50%),
         linear-gradient(135deg, var(--color-mystery-deep) 0%, var(--color-mystery-medium) 100%);
