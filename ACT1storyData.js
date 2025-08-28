@@ -56,6 +56,9 @@ window.ACT1_STORY_DATA = {
         "text": "The Banyan is immense, its bark gnarled and almost stone-like. It feels ancient and powerful, yet there's a subtle wrongness to it, a feeling of stagnant energy.",
         "choices": [
             { "text": "Attempt to harmonize the tree's energies.", "nextScene": "BANYAN_PUZZLE" },
+            { "text": "Study the carved runes on the trunk (hint)", "nextScene": "BANYAN_HINT_CARVINGS" },
+            { "text": "Listen to the wind through the leaves (hint)", "nextScene": "BANYAN_HINT_WIND" },
+            { "text": "Place your palm on the trunk and feel its pulse (hint)", "nextScene": "BANYAN_HINT_PULSE" },
             // Deva Gana
             { "text": "[Ashwini] Use your healing senses to diagnose the tree.", "nextScene": "BANYAN_SOLUTION_ASHWINI", "condition": (profile) => profile.nakshatra === 'Ashwini' },
             { "text": "[Anuradha] Attempt to commune with the tree's indwelling spirit.", "nextScene": "BANYAN_SOLUTION_ANURADHA", "condition": (profile) => profile.nakshatra === 'Anuradha' },
@@ -1039,6 +1042,32 @@ window.ACT1_STORY_DATA = {
         "text": "You focus on the subtle flows within the Banyan. Three energetic rings—Vitality, Wisdom, Harmony—must be aligned to restore balance.",
         "puzzle": { "puzzleId": "BanyanTreeHarmony" },
         "choices": [ { "text": "Step back.", "nextScene": "DHARMAPURA_SQUARE" } ]
+    },
+
+    "BANYAN_HINT_CARVINGS": {
+        "title": "Runes of Balance",
+        "text": "Etched along the trunk are circular runes repeating in tight increments. The smallest ticks appear between the larger marks—the design suggests that fine adjustments are as important as bold turns.",
+        "choices": [
+            { "text": "Return to the tree.", "nextScene": "EXAMINE_BANYAN", "worldStateTriggers": { "banyan_hint_carvings": true } }
+        ]
+    },
+
+    "+BANYAN_HINT_WIND_PLACEHOLDER+": "",
+
+    "BANYAN_HINT_WIND": {
+        "title": "Breath of the Canopy",
+        "text": "Listening closely, you notice gusts move all branches together—what affects one ring affects the whole tree. Perhaps there is a way to link movements so all layers turn in harmony.",
+        "choices": [
+            { "text": "Return to the tree.", "nextScene": "EXAMINE_BANYAN", "worldStateTriggers": { "banyan_hint_wind": true } }
+        ]
+    },
+
+    "BANYAN_HINT_PULSE": {
+        "title": "Living Rhythm",
+        "text": "With your palm on the bark, a subtle pulse emerges. It grows steadier as the energies align, faltering when they drift apart. Trust the rhythm; it will tell you when you're close.",
+        "choices": [
+            { "text": "Return to the tree.", "nextScene": "EXAMINE_BANYAN", "worldStateTriggers": { "banyan_hint_pulse": true } }
+        ]
     },
 
     "BANYAN_HARMONY_SUCCESS": {
