@@ -1894,16 +1894,28 @@
         
         // Completion screen functions
         function continueEpicJourney() {
-            gameState.showNotification('Your epic journey continues beyond the Banyan\'s realm...', 'success');
+            if (gameState) {
+                gameState.showNotification('Your epic journey continues beyond the Banyan\'s realm...', 'success');
+            } else {
+                showNotification('Your epic journey continues beyond the Banyan\'s realm...', 'success');
+            }
             // Here you would transition to the next major quest/area
         }
-        
+
         function enterDeepMeditation() {
-            gameState.showNotification('You enter the deepest meditation, integrating the Banyan\'s wisdom into your very essence...', 'success');
+            if (gameState) {
+                gameState.showNotification('You enter the deepest meditation, integrating the Banyan\'s wisdom into your very essence...', 'success');
+            } else {
+                showNotification('You enter the deepest meditation, integrating the Banyan\'s wisdom into your very essence...', 'success');
+            }
         }
-        
+
         function shareWisdom() {
-            gameState.showNotification('Your wisdom will inspire countless others on their spiritual journey...', 'success');
+            if (gameState) {
+                gameState.showNotification('Your wisdom will inspire countless others on their spiritual journey...', 'success');
+            } else {
+                showNotification('Your wisdom will inspire countless others on their spiritual journey...', 'success');
+            }
         }
         
         // Prevent any auto-refresh or reload mechanisms
