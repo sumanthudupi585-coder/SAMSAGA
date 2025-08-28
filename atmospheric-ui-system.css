@@ -649,6 +649,39 @@
     }
 }
 
+/* === HEIGHT CONSTRAINTS FOR VIEWPORT === */
+.cinematic-ui-container {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-interface {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.game-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+}
+
+.story-display {
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.scene-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
 .mechanic-name {
     font-weight: bold;
     color: var(--color-karmic-purple);
