@@ -361,23 +361,31 @@
                 
                 return new Promise((resolve, reject) => {
                     const checkSystems = () => {
-                        const allLoaded = this.requiredSystems.every(system => {
-                            return window[system] !== undefined;
-                        });
-                        
-                        if (allLoaded) {
-                            console.log('✅ All required systems loaded');
-                            resolve();
-                        } else if (waitTime >= maxWaitTime) {
-                            const missingSystems = this.requiredSystems.filter(system => 
-                                window[system] === undefined
-                            );
-                            reject(new Error(`Required systems failed to load: ${missingSystems.join(', ')}`));
-                        } else {
-                            waitTime += checkInterval;
-                            setTimeout(checkSystems, checkInterval);
-                        }
-                    };
+                    const systemStatus = this.requiredSystems.map(system => {
+                        const isLoaded = window[system] !== undefined;
+                        console.log(`System ${system}: ${isLoaded ? '✅ Loaded' : '❌ Missing'}`);
+                        return { system, isLoaded };
+                    });
+
+                    const allLoaded = systemStatus.every(status => status.isLoaded);
+
+                    if (allLoaded) {
+                        console.log('✅ All required systems loaded successfully');
+                        resolve();
+                    } else if (waitTime >= maxWaitTime) {
+                        const missingSystems = systemStatus
+                            .filter(status => !status.isLoaded)
+                            .map(status => status.system);
+
+                        console.error('❌ System loading timeout. Missing systems:', missingSystems);
+                        console.log('Debug info - Available window properties:', Object.keys(window).filter(key => key.includes('ACT') || key.includes('Game') || key.includes('UI')));
+
+                        reject(new Error(`Required systems failed to load: ${missingSystems.join(', ')}`));
+                    } else {
+                        waitTime += checkInterval;
+                        setTimeout(checkSystems, checkInterval);
+                    }
+                };
                     
                     checkSystems();
                 });
