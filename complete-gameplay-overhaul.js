@@ -2111,12 +2111,15 @@ class GameplayOverhaulEngine {
         const urlParams = new URLSearchParams(window.location.search);
         const nakshatraNum = urlParams.get('nakshatra');
 
-        if (nakshatraNum && window.nakshatraData && window.nakshatraData[nakshatraNum]) {
-            const nakshatra = window.nakshatraData[nakshatraNum];
+        const nakshatraData = window.nakshatraData || this.getNakshatraData();
+        const elementIcons = window.elementIcons || this.getElementIcons();
+
+        if (nakshatraNum && nakshatraData && nakshatraData[nakshatraNum]) {
+            const nakshatra = nakshatraData[nakshatraNum];
             const elementDisplay = document.getElementById('element-display');
 
-            if (elementDisplay && window.elementIcons) {
-                const elementIcon = window.elementIcons[nakshatra.element] || '✨';
+            if (elementDisplay) {
+                const elementIcon = elementIcons[nakshatra.element] || '✨';
                 const elementName = nakshatra.element.charAt(0).toUpperCase() + nakshatra.element.slice(1);
 
                 elementDisplay.innerHTML = `
@@ -2126,6 +2129,66 @@ class GameplayOverhaulEngine {
                 elementDisplay.className = `element-display element-${nakshatra.element}`;
             }
         }
+    }
+
+    getNakshatraData() {
+        // Fallback nakshatra data in case global data is not available
+        return {
+            1: { name: 'Ashwini', deity: 'Ashvins', symbol: "Horse's Head", element: 'fire', gana: 'Deva' },
+            2: { name: 'Bharani', deity: 'Yama', symbol: 'Yoni', element: 'earth', gana: 'Manushya' },
+            3: { name: 'Krittika', deity: 'Agni', symbol: 'Knife or Spear', element: 'fire', gana: 'Rakshasa' },
+            4: { name: 'Rohini', deity: 'Brahma', symbol: 'Cart or Chariot', element: 'earth', gana: 'Manushya' },
+            5: { name: 'Mrigashira', deity: 'Soma', symbol: "Deer's Head", element: 'air', gana: 'Deva' },
+            6: { name: 'Ardra', deity: 'Rudra', symbol: 'Teardrop', element: 'water', gana: 'Manushya' },
+            7: { name: 'Punarvasu', deity: 'Aditi', symbol: 'Bow and Quiver', element: 'air', gana: 'Deva' },
+            8: { name: 'Pushya', deity: 'Brihaspati', symbol: "Cow's Udder", element: 'water', gana: 'Deva' },
+            9: { name: 'Ashlesha', deity: 'Nagas', symbol: 'Serpent', element: 'water', gana: 'Rakshasa' },
+            10: { name: 'Magha', deity: 'Pitrs', symbol: 'Royal Throne', element: 'fire', gana: 'Rakshasa' },
+            11: { name: 'Purva Phalguni', deity: 'Bhaga', symbol: 'Front Legs of Bed', element: 'fire', gana: 'Manushya' },
+            12: { name: 'Uttara Phalguni', deity: 'Aryaman', symbol: 'Four Legs of Bed', element: 'fire', gana: 'Manushya' },
+            13: { name: 'Hasta', deity: 'Savitri', symbol: 'Hand or Fist', element: 'earth', gana: 'Deva' },
+            14: { name: 'Chitra', deity: 'Tvastar', symbol: 'Bright Jewel', element: 'air', gana: 'Rakshasa' },
+            15: { name: 'Swati', deity: 'Vayu', symbol: 'Shoot of a Plant', element: 'air', gana: 'Deva' },
+            16: { name: 'Vishakha', deity: 'Indra-Agni', symbol: 'Triumphal Archway', element: 'fire', gana: 'Rakshasa' },
+            17: { name: 'Anuradha', deity: 'Mitra', symbol: 'Lotus Flower', element: 'earth', gana: 'Deva' },
+            18: { name: 'Jyeshtha', deity: 'Indra', symbol: 'Umbrella', element: 'earth', gana: 'Rakshasa' },
+            19: { name: 'Mula', deity: 'Nirriti', symbol: 'Tied Bundle of Roots', element: 'water', gana: 'Rakshasa' },
+            20: { name: 'Purva Ashadha', deity: 'Apas (Water)', symbol: 'Fan', element: 'water', gana: 'Manushya' },
+            21: { name: 'Uttara Ashadha', deity: 'Visvedevas', symbol: 'Elephant Tusk', element: 'earth', gana: 'Manushya' },
+            22: { name: 'Shravana', deity: 'Vishnu', symbol: 'Ear', element: 'air', gana: 'Deva' },
+            23: { name: 'Dhanishtha', deity: 'Vasus', symbol: 'Drum or Flute', element: 'fire', gana: 'Rakshasa' },
+            24: { name: 'Shatabhisha', deity: 'Varuna', symbol: 'Empty Circle', element: 'water', gana: 'Rakshasa' },
+            25: { name: 'Purva Bhadrapada', deity: 'Aja Ekapada', symbol: 'Two Front Legs of Cot', element: 'fire', gana: 'Manushya' },
+            26: { name: 'Uttara Bhadrapada', deity: 'Ahir Budhyana', symbol: 'Back Legs of Cot', element: 'water', gana: 'Manushya' },
+            27: { name: 'Revati', deity: 'Pushan', symbol: 'Pair of Fish', element: 'water', gana: 'Deva' }
+        };
+    }
+
+    getNakshatraSvgPaths() {
+        // Fallback SVG paths for nakshatra symbols
+        return {
+            1: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,30 Q50,10 70,30 Q80,50 70,70 Q50,90 30,70 Q20,50 30,30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            2: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><ellipse cx="50" cy="50" rx="20" ry="30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            3: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><line x1="30" y1="30" x2="70" y2="70" stroke="#e09658" stroke-width="2"/><line x1="30" y1="70" x2="70" y2="30" stroke="#e09658" stroke-width="2"/>',
+            4: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="30" y="30" width="40" height="40" stroke="#e09658" stroke-width="2" fill="none"/>',
+            5: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 Q50,20 70,50 Q50,80 30,50" stroke="#e09658" stroke-width="2" fill="none"/>',
+            6: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M50,30 Q70,50 50,70 Q30,50 50,30" stroke="#e09658" stroke-width="2" fill="none"/>',
+            7: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,50 L70,50 M50,30 L50,70" stroke="#e09658" stroke-width="2"/>',
+            8: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="20" stroke="#e09658" stroke-width="2" fill="none"/>',
+            9: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><path d="M30,70 Q50,30 70,70" stroke="#e09658" stroke-width="2" fill="none"/>',
+            10: '<circle cx="50" cy="50" r="40" stroke="#e09658" stroke-width="2" fill="none"/><rect x="35" y="35" width="30" height="30" stroke="#e09658" stroke-width="2" fill="none"/>'
+        };
+    }
+
+    getElementIcons() {
+        // Fallback element icons
+        return {
+            earth: '<i class="fas fa-mountain element-earth"></i>',
+            water: '<i class="fas fa-water element-water"></i>',
+            fire: '<i class="fas fa-fire element-fire"></i>',
+            air: '<i class="fas fa-wind element-air"></i>',
+            ether: '<i class="fas fa-star element-ether"></i>'
+        };
     }
 
     initializeInventoryDisplay() {
