@@ -732,15 +732,31 @@
             if (nakshatraNum && nakshatraData[nakshatraNum]) {
                 const nakshatra = nakshatraData[nakshatraNum];
                 
-                // Update character information
+                // Initialize complete player profile in game state manager
+                if (window.gameStateManager) {
+                    window.gameStateManager.playerProfile = {
+                        nakshatra: nakshatra.name,
+                        gana: nakshatra.gana,
+                        shakti: nakshatra.shakti,
+                        gunas: {
+                            sattva: nakshatra.gunas?.sattva || 0,
+                            rajas: nakshatra.gunas?.rajas || 0,
+                            tamas: nakshatra.gunas?.tamas || 0
+                        },
+                        avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                    };
+
+                    // Set additional URL parameters
+                    if (pada) window.gameStateManager.updateState('pada', pada);
+                    if (guna1) window.gameStateManager.updateState('guna1', guna1);
+                    if (guna3) window.gameStateManager.updateState('guna3', guna3);
+                }
+
+                // Update character information display
                 const characterNameEl = document.getElementById('character-name');
                 if (characterNameEl) characterNameEl.textContent = nakshatra.name;
                 const nakshatraNameEl = document.getElementById('nakshatra-name');
                 if (nakshatraNameEl) nakshatraNameEl.textContent = nakshatra.name;
-                if (window.gameStateManager) {
-                    window.gameStateManager.playerProfile.nakshatra = nakshatra.name;
-                    window.gameStateManager.playerProfile.gana = nakshatra.gana;
-                }
                 
                 // Set character symbol
                 const symbolSvg = document.getElementById('character-symbol-svg');
