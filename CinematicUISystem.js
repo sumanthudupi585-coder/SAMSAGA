@@ -933,18 +933,45 @@ class CinematicUISystem {
     /**
      * Load and display choices with beautiful styling
      */
-    loadChoices(choices) {
+    loadChoices(choices, sceneData = null) {
         const choicesContainer = this.uiElements.choicesList;
-        
+
         // Clear existing choices
         choicesContainer.innerHTML = '';
-        
+
+        // Combine regular choices with special choices
+        const allChoices = [...choices];
+
+        // Add nakshatra-specific choices if available
+        if (sceneData && sceneData.nakshatraChoices && this.gameFlow) {
+            const playerNakshatra = this.gameFlow.playerProfile?.nakshatra;
+            if (playerNakshatra && sceneData.nakshatraChoices[playerNakshatra]) {
+                const nakshatraChoices = sceneData.nakshatraChoices[playerNakshatra].map(choice => ({
+                    ...choice,
+                    isNakshatraChoice: true
+                }));
+                allChoices.push(...nakshatraChoices);
+            }
+        }
+
+        // Add gana-specific choices if available
+        if (sceneData && sceneData.ganaChoices && this.gameFlow) {
+            const playerGana = this.gameFlow.playerProfile?.gana;
+            if (playerGana && sceneData.ganaChoices[playerGana]) {
+                const ganaChoices = sceneData.ganaChoices[playerGana].map(choice => ({
+                    ...choice,
+                    isGanaChoice: true
+                }));
+                allChoices.push(...ganaChoices);
+            }
+        }
+
         // Add each choice with appropriate styling
-        choices.forEach((choice, index) => {
+        allChoices.forEach((choice, index) => {
             const choiceElement = this.createChoiceElement(choice, index);
             choicesContainer.appendChild(choiceElement);
         });
-        
+
         // Animate choices in
         this.animateChoicesIn();
     }
