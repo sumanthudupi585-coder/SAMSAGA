@@ -39,6 +39,8 @@
 </head>
 <body>
 
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
     <!-- Animated Background -->
     <div id="vignette-overlay"></div>
     <div id="particle-background"></div>
@@ -82,7 +84,7 @@
     <!-- Main wrapper for the entire game interface -->
     <div class="game-wrapper">
         <!-- Main content area for narrative and choices (Left Column) -->
-        <main class="story-panel">
+        <main class="story-panel" id="main-content">
             <div id="story-container" class="section">
                 <div id="story-text" class="text-fade-in">
                     <p>The cycle turns...</p>
@@ -188,6 +190,13 @@
     <div id="notification-container"></div>
 
     <style>
+        .skip-link { position: fixed; left: -9999px; top: 0; background: var(--color-primary); color: #0a0908; padding: 8px 12px; border-radius: 6px; z-index: 10001; }
+        .skip-link:focus { left: 10px; top: 10px; box-shadow: 0 0 10px var(--color-primary-glow); }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition: none !important; }
+            .page-transition-mandala { animation: none !important; }
+            #particle-background { animation: none !important; }
+        }
         /* --- Gamic UI/UX Revamp Styles --- */
         :root {
             --font-title: 'Cinzel', serif;
