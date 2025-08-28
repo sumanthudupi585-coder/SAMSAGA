@@ -669,6 +669,207 @@ class SpiritualAdventureEngine {
         this.initializeAudioLandscape(audioConfig[soundscape], atmosphericSounds);
     }
     
+    // Helper methods for initialization
+    setupNarrativeAdaptation() {
+        // Define how narratives adapt based on player progress
+        this.narrativeAdaptationRules = {
+            'ability_unlocked': (abilityName) => {
+                this.narrativeProgression.currentLayer = Math.min(3, this.narrativeProgression.currentLayer + 1);
+                this.unlockNarrativeThemes(abilityName);
+            },
+            'discovery_made': (discoveryId) => {
+                this.narrativeProgression.narrativeHistory.push({
+                    type: 'discovery',
+                    id: discoveryId,
+                    timestamp: Date.now()
+                });
+                this.adaptNarrativeComplexity();
+            },
+            'puzzle_completed': (puzzleId) => {
+                this.narrativeProgression.unlockedNarratives.add(`post_${puzzleId.toLowerCase()}`);
+                this.createBranchingNarrative(puzzleId);
+            }
+        };
+    }
+
+    setupEnvironmentalInteractions() {
+        // Define environmental interaction patterns
+        this.environmentalPatterns = {
+            'spiritual_resonance': {
+                trigger: 'character_ability_increase',
+                effect: 'enhance_environmental_responsiveness',
+                visual: 'spiritual_energy_glow'
+            },
+            'karmic_echo': {
+                trigger: 'choice_made',
+                effect: 'environmental_karma_reflection',
+                visual: 'karmic_ripples'
+            },
+            'wisdom_manifestation': {
+                trigger: 'philosophical_insight',
+                effect: 'reveal_hidden_elements',
+                visual: 'wisdom_light_rays'
+            }
+        };
+    }
+
+    setupAtmosphericTriggers() {
+        // Define atmospheric triggers based on player state
+        this.atmosphericTriggers = new Map([
+            ['high_spiritual_energy', {
+                condition: () => Object.values(this.characterAbilities).reduce((a, b) => a + b, 0) > 5,
+                effect: 'enhanced_spiritual_atmosphere',
+                visual: 'golden_aura_enhancement'
+            }],
+            ['deep_philosophical_understanding', {
+                condition: () => this.philosophicalInsights.length > 3,
+                effect: 'profound_wisdom_atmosphere',
+                visual: 'wisdom_mandala_overlay'
+            }],
+            ['karmic_balance_achieved', {
+                condition: () => this.checkKarmicBalance(),
+                effect: 'harmonious_atmosphere',
+                visual: 'balanced_energy_flow'
+            }]
+        ]);
+    }
+
+    createResponsiveEnvironment(locationId) {
+        const location = this.locations[locationId];
+        if (!location) return;
+
+        // Create responsive elements based on current abilities
+        location.interactableElements.forEach(element => {
+            if (element.requiresAbility) {
+                const hasAbility = this.characterAbilities[element.requiresAbility] >= (element.level || 1);
+                if (hasAbility && !element.discovered) {
+                    this.highlightElement(element);
+                }
+            }
+        });
+
+        // Apply atmospheric effects
+        this.applyLocationAtmosphere(location);
+    }
+
+    applyProgressToEnvironment() {
+        // Apply current character progress to environment
+        this.discoveries.forEach(discoveryId => {
+            this.markElementAsDiscovered(discoveryId);
+        });
+
+        // Update environmental responsiveness based on abilities
+        Object.entries(this.characterAbilities).forEach(([ability, level]) => {
+            if (level > 0) {
+                this.enhanceEnvironmentalElements(ability, level);
+            }
+        });
+
+        // Apply narrative progression effects
+        this.applyNarrativeProgressionEffects();
+    }
+
+    unlockNarrativeThemes(abilityName) {
+        const themeMap = {
+            'spiritualSight': ['hidden_wisdom', 'spiritual_perception'],
+            'karmicResonance': ['cause_effect', 'karmic_patterns'],
+            'ancientWisdom': ['universal_truths', 'timeless_teachings'],
+            'elementalHarmony': ['natural_balance', 'elemental_mastery'],
+            'mysticalIntuition': ['inner_knowing', 'transcendent_awareness']
+        };
+
+        const themes = themeMap[abilityName] || [];
+        themes.forEach(theme => {
+            this.narrativeProgression.unlockedNarratives.add(theme);
+        });
+    }
+
+    adaptNarrativeComplexity() {
+        const discoveryCount = this.discoveries.size;
+        const insightCount = this.philosophicalInsights.length;
+
+        // Increase narrative complexity based on progress
+        if (discoveryCount >= 3 && this.narrativeProgression.currentLayer < 2) {
+            this.narrativeProgression.currentLayer = 2;
+        }
+
+        if (insightCount >= 5 && this.narrativeProgression.currentLayer < 3) {
+            this.narrativeProgression.currentLayer = 3;
+        }
+    }
+
+    createBranchingNarrative(puzzleId) {
+        // Create branching narrative paths based on puzzle completion
+        const branchingMap = {
+            'BanyanTreeHarmony': ['ecological_consciousness', 'tree_wisdom', 'interconnectedness'],
+            'BarrierOfNegativity': ['shadow_integration', 'purification_mastery', 'compassion_cultivation']
+        };
+
+        const branches = branchingMap[puzzleId] || [];
+        this.narrativeProgression.branchingPaths.set(puzzleId, branches);
+    }
+
+    checkKarmicBalance() {
+        // Check if player has achieved karmic balance
+        return this.gameStateManager &&
+               this.gameStateManager.playerState &&
+               Math.abs(this.gameStateManager.playerState.karma || 0) < 10;
+    }
+
+    highlightElement(element) {
+        // Implementation would highlight discoverable elements
+        // This is a placeholder for UI highlighting logic
+        console.log(`Element available for discovery: ${element.name}`);
+    }
+
+    applyLocationAtmosphere(location) {
+        // Apply atmospheric effects for the location
+        const atmosphere = this.atmosphericEffects.get(location.atmosphere);
+        if (atmosphere) {
+            this.createAtmosphericEffects(location.id);
+        }
+    }
+
+    markElementAsDiscovered(discoveryId) {
+        // Mark element as discovered in the environment
+        Object.values(this.locations).forEach(location => {
+            const element = location.interactableElements.find(el => el.id === discoveryId);
+            if (element) {
+                element.discovered = true;
+            }
+        });
+    }
+
+    enhanceEnvironmentalElements(ability, level) {
+        // Enhance environmental elements based on ability level
+        Object.values(this.locations).forEach(location => {
+            location.interactableElements.forEach(element => {
+                if (element.requiresAbility === ability && level >= (element.level || 1)) {
+                    element.enhanced = true;
+                }
+            });
+        });
+    }
+
+    applyNarrativeProgressionEffects() {
+        // Apply effects based on narrative progression
+        const currentLayer = this.narrativeLayers[this.narrativeProgression.currentLayer];
+        if (currentLayer) {
+            this.updateEnvironmentalComplexity(currentLayer.complexity);
+            this.adjustPhilosophicalDepth(currentLayer.philosophicalDepth);
+        }
+    }
+
+    updateEnvironmentalComplexity(complexity) {
+        // Update environmental complexity based on narrative layer
+        this.environmentalComplexity = complexity;
+    }
+
+    adjustPhilosophicalDepth(depth) {
+        // Adjust philosophical depth of interactions
+        this.philosophicalDepth = depth;
+    }
+
     // Save and load system for enhanced progression
     saveEnhancedGameState() {
         const enhancedState = {
