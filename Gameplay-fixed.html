@@ -876,8 +876,7 @@
                         box.appendChild(info);
 
                         const actions = document.createElement('div');
-                        actions.style.display = 'flex';
-                        actions.style.gap = '10px';
+                        actions.className = 'puzzle-action-row';
 
                         const touchBtn = document.createElement('button');
                         touchBtn.className = 'menu-button';
@@ -912,9 +911,7 @@
                     if (puzzle.puzzleId === 'BanyanTreeHarmony') {
                         const state = { vitality: 30, wisdom: 70, harmony: 20 };
                         const controls = document.createElement('div');
-                        controls.style.display = 'grid';
-                        controls.style.gridTemplateColumns = '1fr 1fr 1fr';
-                        controls.style.gap = '10px';
+                        controls.className = 'puzzle-ring-grid';
                         ['vitality','wisdom','harmony'].forEach(key => {
                             const panel = document.createElement('div');
                             panel.className = 'detail-item';
@@ -922,7 +919,7 @@
                             t.className = 'profile-title';
                             t.textContent = key.charAt(0).toUpperCase()+key.slice(1);
                             const val = document.createElement('div');
-                            val.style.textAlign = 'center';
+                            val.className = 'text-center puzzle-ring-readout';
                             val.dataset.key = key;
                             val.textContent = `${state[key]}°`;
                             const btn = document.createElement('button');
