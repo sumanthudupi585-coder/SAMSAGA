@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samsara Saga - Journey Through Existence</title>
@@ -41,6 +42,7 @@
     <!-- Animated Background -->
     <div id="vignette-overlay"></div>
     <div id="particle-background"></div>
+
 
     <!-- Custom Cursor -->
     <div id="cursor-container">
@@ -718,6 +720,9 @@
             const nakshatraNum = urlParams.get('nakshatra');
             const pada = urlParams.get('pada');
             const guna3 = urlParams.get('guna3');
+            // Set up auto-save
+            if (window.gameStateManager) {
+                window.gameStateManager.setupAutoSave(60000); // Auto-save every minute
 
             if (nakshatraNum && nakshatraData[nakshatraNum]) {
                 const nakshatra = nakshatraData[nakshatraNum];
