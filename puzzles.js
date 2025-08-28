@@ -1,26 +1,42 @@
 /**
  * @file Puzzles.js
- * @description Defines all puzzles for Samsara Saga, including mechanics, solutions, and progression states.
- * @version 2.0.0
+ * @description Defines all puzzles for Samsara Saga, redesigned for visual and interactive gameplay.
+ * @version 5.0.0 (Visual/Motion UI/UX Enhancement)
  * @license MIT
  */
 
 window.PUZZLES = {
+
     /**
-     * Act I Puzzles
+     * =================================================================
+     * ACT I PUZZLES
+     * =================================================================
      */
-    
+
     /**
      * Banyan Tree Harmony Puzzle
-     * A puzzle for balancing the energies of the sacred Banyan tree
+     * Visual-First Redesign: This is no longer a text-based choice. It's an interactive mandala
+     * where the player rotates three concentric rings (representing Vitality, Wisdom, Harmony)
+     * to align symbols and visually balance the tree's energy.
      */
     "BanyanTreeHarmony": {
         "title": "The Sacred Balance",
-        "description": "Balance the spiritual energies of the Banyan tree to resolve the village's dilemma.",
+        "description": "Align the celestial rings to balance the spiritual energies of the Banyan tree.",
         "difficulty": "Medium",
+        "visualType": "MandalaWheel", // UIController will render an interactive mandala
+        "uiConfig": {
+            "backgroundImage": "images/puzzles/banyan_mandala_base.png",
+            "rings": [
+                { "id": "vitality", "image": "images/puzzles/vitality_ring.png", "initialRotation": 30 },
+                { "id": "wisdom", "image": "images/puzzles/wisdom_ring.png", "initialRotation": 70 },
+                { "id": "harmony", "image": "images/puzzles/harmony_ring.png", "initialRotation": 20 }
+            ],
+            "solutionAngle": 0, // All rings must be aligned at 0 degrees
+            "solutionTolerance": 5 // Degrees of tolerance
+        },
         "mechanics": {
-            "type": "EnergyBalancing",
-            "energyTypes": [
+            "type": "RotationalAlignment",
+             "energyTypes": [
                 {"name": "Vitality", "currentLevel": 30, "idealLevel": 50, "minLevel": 0, "maxLevel": 100},
                 {"name": "Wisdom", "currentLevel": 70, "idealLevel": 50, "minLevel": 0, "maxLevel": 100},
                 {"name": "Harmony", "currentLevel": 20, "idealLevel": 50, "minLevel": 0, "maxLevel": 100}
@@ -35,9 +51,8 @@ window.PUZZLES = {
             "maxAttempts": 5
         },
         "hints": [
-            "The tree requires equal parts of all three energies.",
-            "Each adjustment method affects multiple energy types.",
-            "Plan your sequence of adjustments to reach balance efficiently."
+            "The symbols on the rings must align perfectly at the top.",
+            "Each ring moves independently. Find the balance point where all patterns converge."
         ],
         "rewards": {
             "item": "Banyan Leaf Talisman",
@@ -49,31 +64,35 @@ window.PUZZLES = {
 
     /**
      * Barrier of Negativity Puzzle
-     * A puzzle from Act I requiring a pure object to break through a negative energy barrier
+     * Visual-First Redesign: A drag-and-drop interface. The player sees the shimmering barrier
+     * and must drag the correct item from their visual inventory onto it. The barrier will
+     * visually react, either repelling incorrect items or dissolving for the correct one.
      */
     "BarrierOfNegativity": {
         "title": "The Barrier of Spiritual Despair",
-        "description": "Break through the barrier of negative energy protecting the corrupted crystal in the Cave of the Rishi.",
+        "description": "Drag an object of pure spiritual intent from your inventory to dissolve the barrier.",
         "difficulty": "Medium",
+        "visualType": "SymbolDnd", // UIController renders a drag-and-drop target and inventory
+        "uiConfig": {
+            "targetImage": "images/puzzles/barrier_animation.gif",
+            "dropZone": { "x": "50%", "y": "50%", "radius": "100px" },
+            "feedback": {
+                "successAnimation": "dissolve",
+                "failureAnimation": "repel"
+            }
+        },
         "mechanics": {
-            "type": "PurityAlignment",
-            "barrier": {
-                "description": "A wall of dense, dark energy that repels all physical objects",
-                "weakness": "Objects of pure spiritual intent and composition",
-                "resistance": "Objects with mixed or negative energies"
-            },
+            "type": "ItemApplication",
             "solution": {
                 "requiresItem": true,
-                "validItems": ["Pure Crystal", "Blessed Water", "Sacred Flame"],
-                "applicationMethod": "Present the pure object to the barrier with focused intent"
+                "validItems": ["Pure Crystal", "Blessed Water", "Sacred Flame", "Lotus Petal"]
             },
-            "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+             "attempts": 0,
+            "maxAttempts": null
         },
         "hints": [
             "The barrier responds to purity of both object and intention.",
-            "Something that has never been tainted by negative emotions might work.",
-            "Water from a sacred spring or an object blessed by a true spiritual master could penetrate the barrier."
+            "Something that has never been tainted by negative emotions might work."
         ],
         "rewards": {
             "access": "Purified Crystal",
@@ -84,40 +103,78 @@ window.PUZZLES = {
     },
 
     /**
+     * =================================================================
+     * ACT II PUZZLES
+     * =================================================================
+     */
+
+    /**
      * Shilpa Shastra Crafting System
-     * A multi-stage crafting puzzle based on the sacred art of divine crafting
+     * Visual-First Redesign: A multi-stage mini-game.
+     * 1. Atma Shuddhi: A "connect-the-dots" style game on a mandala pattern.
+     * 2. Vastu Vidya: A visual selection screen with images of materials.
+     * 3. Yantra Sthapana: A drag-and-drop puzzle to assemble a geometric yantra.
+     * 4. Prana Pratishtha: A rhythmic tapping game to a sacred mantra's cadence.
      */
     "ShilpaShastraCrafting": {
         "title": "The Sacred Art of Divine Crafting",
-        "description": "Master the four stages of Shilpa Shastra to create divine artifacts.",
-        "difficulty": "Variable",
+        "description": "Follow the sacred stages to craft a divine artifact.",
+         "difficulty": "Variable",
+        "visualType": "MultiStageCrafting", // UIController renders a sequence of mini-games
         "stages": [
             {
                 "name": "Atma Shuddhi (Self-Purification)",
-                "description": "Purify your spiritual energy through meditation",
+                 "description": "Purify your spiritual energy through meditation",
                 "challenge": "Complete a mandala pattern by selecting the correct sequence of energy points",
-                "difficulty": "Easy"
+                "difficulty": "Easy",
+                "visualType": "PatternTrace",
+                "uiConfig": {
+                    "patternImage": "images/puzzles/mandala_trace.svg",
+                    "traceColor": "#ffc58f"
+                }
             },
             {
                 "name": "Vastu Vidya (Material Knowledge)",
-                "description": "Select the proper materials with divine resonance",
+                 "description": "Select the proper materials with divine resonance",
                 "challenge": "Identify materials with the correct spiritual properties for your intended creation",
-                "difficulty": "Medium"
+                "difficulty": "Medium",
+                "visualType": "VisualSelection",
+                "uiConfig": {
+                    "items": [
+                        { "id": "celestial_bronze", "image": "images/items/celestial_bronze.png" },
+                        { "id": "river_pearl", "image": "images/items/river_pearl.png" },
+                        // ... more items
+                    ],
+                    "correctSelection": ["celestial_bronze", "river_pearl", "sandalwood"]
+                }
             },
             {
                 "name": "Yantra Sthapana (Sacred Geometry)",
-                "description": "Arrange the components in a sacred geometric pattern",
+                 "description": "Arrange the components in a sacred geometric pattern",
                 "challenge": "Place components according to cosmic mathematical principles",
-                "difficulty": "Hard"
+                "difficulty": "Hard",
+                "visualType": "GeometricAssembly",
+                "uiConfig": {
+                    "yantraPieces": [
+                        { "id": "piece1", "image": "images/puzzles/yantra_piece1.svg" },
+                        // ... more pieces
+                    ],
+                    "solutionLayout": "images/puzzles/yantra_solution.svg"
+                }
             },
             {
                 "name": "Prana Pratishtha (Life Installation)",
                 "description": "Infuse the creation with divine life force",
                 "challenge": "Channel your spiritual energy into the creation through proper mantras and visualization",
-                "difficulty": "Very Hard"
+                "difficulty": "Very Hard",
+                "visualType": "RhythmicTap",
+                "uiConfig": {
+                    "mantra": "Om Ghanta Nada Brahma",
+                    "beatmap": [1.0, 1.5, 2.0, 2.5, 3.5] // Timing for taps
+                }
             }
         ],
-        "mechanics": {
+         "mechanics": {
             "type": "MultiStageCrafting",
             "craftableItems": [
                 {
@@ -136,39 +193,51 @@ window.PUZZLES = {
                     "difficulty": "Hard",
                     "effects": ["Points toward your spiritual path", "Reveals moral choices"]
                 }
-                // Additional craftable items can be added here
             ],
-            "skillProgression": true, // Player improves with each crafting attempt
+            "skillProgression": true,
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "Each stage builds upon the previous one; errors compound if not corrected.",
-            "Your intention while crafting is as important as the physical actions.",
-            "Different items require different approaches to the four stages."
+            "Your intention while crafting is as important as the physical actions."
         ],
         "rewards": {
             "item": "Resonance Bell",
-            "abilities": ["Detect divine vibrations", "Amplify celestial sounds", "Dispel minor dissonance"],
-            "craftingExperience": 100
+            "abilities": ["Detect divine vibrations", "Amplify celestial sounds"],
+             "craftingExperience": 100
         },
         "completed": false,
         "currentStage": 1
     },
 
-    /**
+     /**
      * Harmonic Resonance Puzzle
-     * A musical puzzle requiring understanding of divine harmonics
+     * Visual-First Redesign: An interactive set of 5 crystal chimes. Players must click the
+     * chimes in the correct sequence. Each click plays a note and a visual effect. The puzzle
+     * also requires holding the click for the correct duration (timing) and clicking a specific
+     * area of the chime for intensity.
      */
     "HarmonicResonance": {
         "title": "The Celestial Harmony",
-        "description": "Unlock the temple entrance by playing the five sacred notes with perfect harmonic resonance.",
+        "description": "Play the five sacred notes with perfect timing and intensity to unlock the temple.",
         "difficulty": "Medium",
+        "visualType": "InteractiveInstrument", // UIController renders clickable chimes
+        "uiConfig": {
+            "instrument": "CrystalChimes",
+            "chimes": [
+                { "id": "Sa", "note": "C4", "visualEffect": "earth_glow" },
+                { "id": "Ga", "note": "E4", "visualEffect": "water_ripple" },
+                { "id": "Pa", "note": "G4", "visualEffect": "fire_ember" },
+                { "id": "Dha", "note": "A4", "visualEffect": "wind_swirl" },
+                { "id": "Ni", "note": "B4", "visualEffect": "ether_sparkle" }
+            ]
+        },
         "mechanics": {
             "type": "MusicalSequence",
             "notes": ["Sa", "Ga", "Pa", "Dha", "Ni"],
             "correctSequence": ["Sa", "Ga", "Pa", "Dha", "Ni"],
-            "harmonicRequirements": {
+             "harmonicRequirements": {
                 "timing": {
                     "description": "Each note must be played with precise timing, following the cosmic rhythm",
                     "pattern": [1, 0.5, 0.5, 1, 2], // Duration multipliers for each note
@@ -190,21 +259,16 @@ window.PUZZLES = {
             "maxAttempts": 3
         },
         "hints": [
-            "Listen to the natural sounds around the temple for guidance.",
             "The elements follow a pattern from densest to most subtle.",
             "The timing reflects the cosmic breath - expansion and contraction."
         ],
         "rewards": {
             "access": "Inner Temple Sanctum",
             "ability": "Elemental Attunement",
-            "knowledge": "Understanding of sound as the bridge between matter and spirit"
+             "knowledge": "Understanding of sound as the bridge between matter and spirit"
         },
         "completed": false
     },
-
-    /**
-     * Act II Puzzles
-     */
 
     /**
      * Celestial Court Puzzle
@@ -300,13 +364,11 @@ window.PUZZLES = {
                 "avoidedEnemies": ["Yama"]
             },
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts, but consequences for failures
+            "maxAttempts": null
         },
         "hints": [
             "Each deity responds differently to different approaches.",
-            "Your Nakshatra may give you natural affinity with certain deities.",
-            "Listen carefully to the ongoing conversations in court for clues about current tensions.",
-            "Sometimes it's better to make a powerful ally than to avoid making an enemy."
+            "Your Nakshatra may give you natural affinity with certain deities."
         ],
         "rewards": {
             "access": "Indra's Audience Chamber",
@@ -392,13 +454,11 @@ window.PUZZLES = {
                 "resolution": "The silence cannot be broken, but can be understood and navigated"
             },
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "Not all mysteries have villains; some are simply natural transitions.",
-            "Pay attention to historical patterns rather than current suspicions.",
-            "The most obvious suspects may be convenient scapegoats rather than true culprits.",
-            "Consider what the silence enables rather than what it prevents."
+            "Pay attention to historical patterns rather than current suspicions."
         ],
         "rewards": {
             "knowledge": "Understanding of cosmic cycles and transitions",
@@ -503,13 +563,11 @@ window.PUZZLES = {
                 "participation": "Different celestial beings must be invited on different nights"
             },
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts, but time-constrained
+            "maxAttempts": null
         },
         "hints": [
             "Each component must be gathered with the specific intention aligned with its associated deity.",
-            "The order of the nine nights follows a spiritual progression from grounding to transcendence.",
-            "Your participation in each night's ritual builds upon the previous, creating a cumulative effect.",
-            "Your Nakshatra's natural affinity may make certain nights' rituals more powerful for you."
+            "The order of the nine nights follows a spiritual progression from grounding to transcendence."
         ],
         "rewards": {
             "abilities": "Nine distinct divine blessings, one from each night of the festival",
@@ -519,92 +577,184 @@ window.PUZZLES = {
         "completed": false
     },
 
+
     /**
-     * Act III Puzzles
+     * =================================================================
+     * ACT III PUZZLES
+     * =================================================================
      */
 
     /**
+     * Labyrinth of Maya Puzzle
+     * Visual-First Redesign: A dynamic, shifting maze. Walls are semi-transparent and made of
+     * light and shadow. Paths change based on the player's gaze. The "Mirrors" are interactive
+     * visual puzzles within the maze itself, not just text prompts.
+     */
+    "LabyrinthOfMaya": {
+        "title": "The Shifting Paths of Illusion",
+        "description": "Navigate the Labyrinth of Maya, where your own attachments manifest as paths and obstacles.",
+        "difficulty": "Hard",
+        "visualType": "DynamicMaze", // UIController renders a navigable, shifting maze
+        "uiConfig": {
+            "wallTexture": "images/textures/maya_walls.png",
+            "floorTexture": "images/textures/maya_floor.png"
+        },
+        "mechanics": {
+            "type": "SelfReflectiveNavigation",
+             "labyrinthProperties": {
+                "description": "A maze that shifts based on the player's attachments and beliefs",
+                "nature": "The labyrinth is not a physical space but a mental construct that reflects the player's own mind",
+                "challenges": [
+                    "Paths shift when not directly observed",
+                    "Obstacles represent the player's own fears and attachments",
+                    "Solutions require recognizing and releasing specific attachments"
+                ]
+            },
+            "mirrors": [
+                {
+                    "name": "Mirror of Action",
+                    "puzzleId": "KarmaReflection", // Triggers the KarmaReflection puzzle
+                    "location": { "x": 10, "y": 5 }
+                },
+                {
+                    "name": "Mirror of Devotion",
+                    "puzzleId": "DevotionTranscendence",
+                    "location": { "x": 3, "y": 12 }
+                },
+                {
+                    "name": "Mirror of Self",
+                    "puzzleId": "SelfInquiry",
+                    "location": { "x": 15, "y": 18 }
+                }
+            ],
+            "convergencePoint": {
+                "name": "The Heart of Maya",
+                "description": "A chamber where the figure of Maya poses a riddle",
+                "riddle": "I create the appearance of many from the reality of one. I am neither true nor false, neither existent nor non-existent. Those who call me 'mere illusion' do not understand my power. Those who take me as ultimate reality remain bound. What am I, truly?",
+                "correctAnswer": "The creative power of Brahman itself, neither separate from reality nor identical with ultimate truth. Real as an experience but not as an independent existence.",
+                "insight": "Maya is not other than Brahman, yet creates the appearance of otherness. When understood, it is no longer an obstacle but a revelation.",
+                "puzzleId": "MayaRiddle"
+            },
+             "attempts": 0,
+            "maxAttempts": null
+        },
+         "hints": [
+            "The labyrinth is not trying to trap you but to reveal your own assumptions and attachments.",
+            "When a path seems to vanish, question what belief or expectation made you think it should remain."
+        ],
+        "rewards": {
+            "ability": "Maya-Darshana - the ability to see through illusions.",
+            "insight": "The mind that created the labyrinth is the same mind that navigates it"
+        },
+        "completed": false
+    },
+
+    /**
      * Karma Reflection Puzzle
-     * A puzzle from the Labyrinth of Maya focused on understanding the nature of action
+     * Visual-First Redesign: An interactive timeline of the player's key actions. The player must
+     * drag a "Lens of Self" over the actions. The correct insight is to drag the lens over the
+     * "Actor" (a silhouette of the player) itself, signifying that the illusion is the doer, not the deeds.
      */
     "KarmaReflection": {
         "title": "Karma's Echo",
-        "description": "Recognize the true nature of action and the illusion of the separate doer.",
-        "difficulty": "Hard",
-        "mechanics": {
-            "type": "SelfReflection",
-            "challenge": "Before you stands a mirror that reflects not your physical form but the consequences of your actions in Dharmapura. To proceed, you must recognize which of your past actions was based on the deepest illusion of separateness.",
-            "correctInsight": "All actions arise from the illusion of being a separate doer.",
-            "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+        "description": "Use the Lens of Self to identify the true source of karmic bondage.",
+         "difficulty": "Hard",
+        "visualType": "InteractiveTimeline",
+        "uiConfig": {
+            "timelineEvents": [ /* Populated from GameStateManager */ ],
+            "lensImage": "images/puzzles/lens_of_self.png",
+            "solutionTarget": "player_actor_silhouette"
         },
-        "hints": [
+        "mechanics": {
+            "type": "ConceptualDragAndDrop",
+            "correctInsight": "The doer is itself a thought arising in awareness",
+             "challenge": "Before you stands a mirror that reflects not your physical form but the consequences of your actions in Dharmapura. To proceed, you must recognize which of your past actions was based on the deepest illusion of separateness.",
+            "attempts": 0,
+            "maxAttempts": null
+        },
+         "hints": [
             "Look beyond the specific actions to the underlying assumption behind all of them.",
-            "The question is not which action was most separate, but what makes any action seem separate.",
-            "Consider the perspective from which you evaluate your actions - who is the judge?"
+            "The question is not which action was most separate, but what makes any action seem separate."
         ],
         "rewards": {
-            "insight": "The doer is itself a thought arising in awareness",
-            "ability": "Witness Consciousness - ability to observe actions without identification"
-        },
+            "ability": "Witness Consciousness",
+            "insight": "The doer is itself a thought arising in awareness"
+             },
         "completed": false
     },
 
     /**
      * Devotion Transcendence Puzzle
-     * A puzzle from the Labyrinth of Maya focused on the nature of devotion
+     * Visual-First Redesign: A visual puzzle where the player sees two separate entities: a silhouette
+     * of themselves (Worshipper) and a divine form (Worshipped). The player must physically drag the
+     * two images together until they merge into a single, radiant form.
      */
     "DevotionTranscendence": {
         "title": "Bhakti's Reflection",
-        "description": "Recognize the ultimate truth about the relationship between worshipper and worshipped.",
+        "description": "Merge the devotee and the divine to realize their ultimate unity.",
         "difficulty": "Hard",
+        "visualType": "ImageMerge",
+        "uiConfig": {
+            "devoteeImage": "images/puzzles/devotee_silhouette.png",
+            "divineImage": "images/puzzles/divine_form.png",
+            "mergedImage": "images/puzzles/unified_radiance.png"
+        },
         "mechanics": {
-            "type": "SelfReflection",
-            "challenge": "Before you floats a divine form that shifts between different deities you encountered in Svarga. To proceed, you must recognize the ultimate truth about the relationship between worshipper and worshipped.",
+            "type": "VisualUnification",
             "correctInsight": "The worshipper and the worshipped are ultimately one.",
+            "challenge": "Before you floats a divine form that shifts between different deities you encountered in Svarga. To proceed, you must recognize the ultimate truth about the relationship between worshipper and worshipped.",
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "Devotion creates a relationship that maintains duality.",
-            "The highest form of devotion dissolves the devotee.",
-            "What is the state when the lover and the beloved become indistinguishable?"
+            "The highest form of devotion dissolves the devotee."
         ],
         "rewards": {
-            "insight": "Love is the recognition of unity, not the bridge between separate entities",
-            "ability": "Heart-Mind Unity - integration of emotional and intellectual understanding"
-        },
+            "ability": "Heart-Mind Unity",
+            "insight": "Love is the recognition of unity, not the bridge between separate entities"
+             },
         "completed": false
     },
 
     /**
      * Self Inquiry Puzzle
-     * A puzzle from the Labyrinth of Maya focused on the nature of the Self
+     * Visual-First Redesign: The player is surrounded by floating, reflective shards (mirrors).
+     * Each shard shows a different aspect (thoughts, body, emotions). The player must click on the
+     * empty space *between* the shards, representing the awareness that perceives them all.
      */
     "SelfInquiry": {
         "title": "The Mirror of Self",
-        "description": "Recognize the true nature of the Self beyond all identifications.",
-        "difficulty": "Hard",
+        "description": "Identify the true Self by looking beyond the reflections.",
+         "difficulty": "Hard",
+        "visualType": "InteractiveReflectionSpace",
+        "uiConfig": {
+            "reflections": [
+                { "id": "body", "video": "videos/reflection_body.mp4" },
+                { "id": "mind", "video": "videos/reflection_mind.mp4" },
+                { "id": "emotion", "video": "videos/reflection_emotion.mp4" }
+            ],
+            "solutionTarget": "empty_space" // Clicking the background
+        },
         "mechanics": {
-            "type": "SelfReflection",
-            "challenge": "Before you stands a series of mirrors, each reflecting a different aspect of what you've considered to be 'yourself.' To proceed, you must identify which reflection represents the true Self (Atman).",
-            "correctInsight": "The true Self is not in any reflection but is the awareness observing all reflections.",
+            "type": "ConceptualSelection",
+            "correctInsight": "The true Self is the awareness observing all reflections.",
+             "challenge": "Before you stands a series of mirrors, each reflecting a different aspect of what you've considered to be 'yourself.' To proceed, you must identify which reflection represents the true Self (Atman).",
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "What you call 'yourself' is a process, not an entity.",
-            "The observer cannot be the observed.",
-            "That which is aware of all changing states cannot itself be a changing state."
+            "The observer cannot be the observed."
         ],
         "rewards": {
-            "insight": "The Self is not an object of experience but the subject of all experience",
-            "ability": "Self-Abidance - ability to rest as awareness rather than identifying with thoughts"
-        },
+            "ability": "Self-Abidance",
+            "insight": "The Self is not an object of experience but the subject of all experience"
+             },
         "completed": false
     },
 
-    /**
+     /**
      * Maya Riddle Puzzle
      * The final puzzle in the Labyrinth of Maya
      */
@@ -617,169 +767,15 @@ window.PUZZLES = {
             "riddle": "I create the appearance of many from the reality of one. I am neither true nor false, neither existent nor non-existent. Those who call me 'mere illusion' do not understand my power. Those who take me as ultimate reality remain bound. What am I, truly?",
             "correctAnswer": "You are the creative power of Brahman itself, neither separate from reality nor identical with ultimate truth. You are real as an experience but not as an independent existence.",
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "Maya is not simply falsehood; it has its own kind of reality.",
-            "Consider the relationship between the wave and the ocean.",
-            "Maya is not opposed to Brahman but is its expression."
+            "Consider the relationship between the wave and the ocean."
         ],
         "rewards": {
             "insight": "Maya is not other than Brahman, yet creates the appearance of otherness. When understood, it is no longer an obstacle but a revelation.",
             "ability": "Clear Seeing - ability to perceive both the relative and absolute nature of reality simultaneously"
-        },
-        "completed": false
-    },
-
-    /**
-     * The Labyrinth of Maya Puzzle
-     * A complex puzzle representing the player's own attachments and illusions
-     */
-    "LabyrinthOfMaya": {
-        "title": "The Shifting Paths of Illusion",
-        "description": "Navigate the Labyrinth of Maya, where your own attachments and illusions manifest as paths and obstacles.",
-        "difficulty": "Hard",
-        "mechanics": {
-            "type": "SelfReflectiveNavigation",
-            "labyrinthProperties": {
-                "description": "A maze that shifts based on the player's attachments and beliefs",
-                "nature": "The labyrinth is not a physical space but a mental construct that reflects the player's own mind",
-                "challenges": [
-                    "Paths shift when not directly observed",
-                    "Obstacles represent the player's own fears and attachments",
-                    "Solutions require recognizing and releasing specific attachments"
-                ]
-            },
-            "mirrors": [
-                {
-                    "name": "Mirror of Action",
-                    "description": "Reflects scenes from the player's journey through Dharmapura",
-                    "challenge": "Recognize which past action was based on the deepest illusion of separateness",
-                    "insight": "All actions arise from the illusion of being a separate doer",
-                    "resolution": "Recognizing that the doer is itself a thought arising in awareness",
-                    "puzzleId": "KarmaReflection"
-                },
-                {
-                    "name": "Mirror of Devotion",
-                    "description": "Reflects scenes from the player's journey through Svarga",
-                    "challenge": "Recognize the ultimate truth about the relationship between worshipper and worshipped",
-                    "insight": "Devotion creates a relationship that maintains duality",
-                    "resolution": "Recognizing that the worshipper and the worshipped are ultimately one",
-                    "puzzleId": "DevotionTranscendence"
-                },
-                {
-                    "name": "Mirror of Self",
-                    "description": "Reflects aspects of the player's own consciousness",
-                    "challenge": "Identify which reflection represents the true Self (Atman)",
-                    "insight": "What you call 'yourself' is a process, not an entity",
-                    "resolution": "Recognizing that the true Self is not in any reflection but is the awareness observing all reflections",
-                    "puzzleId": "SelfInquiry"
-                }
-            ],
-            "convergencePoint": {
-                "name": "The Heart of Maya",
-                "description": "A chamber where the figure of Maya poses a riddle",
-                "riddle": "I create the appearance of many from the reality of one. I am neither true nor false, neither existent nor non-existent. Those who call me 'mere illusion' do not understand my power. Those who take me as ultimate reality remain bound. What am I, truly?",
-                "correctAnswer": "The creative power of Brahman itself, neither separate from reality nor identical with ultimate truth. Real as an experience but not as an independent existence.",
-                "insight": "Maya is not other than Brahman, yet creates the appearance of otherness. When understood, it is no longer an obstacle but a revelation.",
-                "puzzleId": "MayaRiddle"
-            },
-            "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
-        },
-        "hints": [
-            "The labyrinth is not trying to trap you but to reveal your own assumptions and attachments.",
-            "When a path seems to vanish, question what belief or expectation made you think it should remain.",
-            "Your strongest convictions may be your greatest obstacles; your deepest doubts may be doorways.",
-            "The way out is not forward or backward, but through—through the recognition of what is already true."
-        ],
-        "rewards": {
-            "insight": "The mind that created the labyrinth is the same mind that navigates it",
-            "ability": "Maya-Darshana - the ability to see through illusions while still appreciating their beauty"
-        },
-        "completed": false
-    },
-
-    /**
-     * Non-Duality Realization Puzzle
-     * A philosophical puzzle from the School of Radical Non-Duality
-     */
-    "NonDualityRealization": {
-        "title": "The Illusion of Separation",
-        "description": "Recognize the illusory nature of the distinction between subject and object.",
-        "difficulty": "Very Hard",
-        "mechanics": {
-            "type": "PhilosophicalInquiry",
-            "question": "If there is truly no separation between observer and observed, between self and world, then what is it that seeks enlightenment, and what is there to be found?",
-            "correctAnswer": "The seeker is the sought; the very search creates the illusion of separation from what is already the case.",
-            "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
-        },
-        "hints": [
-            "The question contains a hidden assumption.",
-            "Consider what happens when the seeker turns attention back upon itself.",
-            "The search for enlightenment presupposes that it is elsewhere."
-        ],
-        "rewards": {
-            "insight": "Enlightenment is not an achievement but a recognition",
-            "ability": "Non-Dual Awareness - direct perception of unity underlying apparent diversity",
-            "items": ["Non-Duality Crystal"]
-        },
-        "completed": false
-    },
-
-    /**
-     * Logical Paradox Puzzle
-     * A philosophical puzzle from the School of Logical Deconstruction
-     */
-    "LogicalParadox": {
-        "title": "The Limits of Thought",
-        "description": "Apply logical analysis to reveal the inherent contradictions in the concept of spiritual seeking.",
-        "difficulty": "Very Hard",
-        "mechanics": {
-            "type": "LogicalAnalysis",
-            "question": "Apply logical analysis to the concept of the 'self' that seeks enlightenment. What contradiction do you discover?",
-            "correctAnswer": "If the self is unenlightened, it cannot cause its own enlightenment, as it lacks what it seeks. If the self already contains enlightenment, then it is already enlightened and there is nothing to seek. Either way, the concept of an unenlightened self seeking enlightenment is logically incoherent.",
-            "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
-        },
-        "hints": [
-            "Apply the principle of causality to the seeker and the sought.",
-            "Consider the qualifications necessary for a cause to produce its effect.",
-            "Examine the logical relationship between the starting point and the goal."
-        ],
-        "rewards": {
-            "insight": "True understanding cannot be reached through conceptual thinking alone—it requires a direct recognition that transcends the limitations of logic",
-            "ability": "Paradox Navigation - comfort with logical contradictions as pointers to transcendent truth",
-            "items": ["Logic Puzzle Box"]
-        },
-        "completed": false
-    },
-
-    /**
-     * Paradox Resolution Puzzle
-     * A philosophical puzzle from the School of Experiential Paradox
-     */
-    "ParadoxResolution": {
-        "title": "The Experience Beyond Thought",
-        "description": "Transcend conceptual understanding through direct experience of paradox.",
-        "difficulty": "Very Hard",
-        "mechanics": {
-            "type": "ExperientialParadox",
-            "question": "What lies beyond the opposites of existence and non-existence, self and other, knowing and not-knowing?",
-            "correctResponse": "Instead of answering verbally, simply rest in the awareness that contains all paradoxes without needing to resolve them.",
-            "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
-        },
-        "hints": [
-            "The answer is not conceptual but experiential.",
-            "Notice the awareness in which all opposites appear.",
-            "The resolution of paradox is found in the space between thoughts."
-        ],
-        "rewards": {
-            "insight": "The resolution of paradox is found in recognizing the awareness that contains all opposites without being limited by them",
-            "ability": "Paradoxical Wisdom - ability to hold contradictory truths simultaneously",
-            "items": ["Paradox Mirror"]
         },
         "completed": false
     },
@@ -832,13 +828,11 @@ window.PUZZLES = {
                 "finalInsight": "The three approaches—non-dual recognition, logical deconstruction, and paradoxical experience—are complementary facets of the same truth."
             },
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "Each school offers a different approach to the same ultimate truth.",
-            "The limitations of one school are addressed by the strengths of another.",
-            "The final understanding integrates all three perspectives.",
-            "Your own Nakshatra may give you a natural affinity with one particular approach."
+            "The limitations of one school are addressed by the strengths of another."
         ],
         "rewards": {
             "insight": "Ultimate truth can be approached through multiple paths, each revealing different aspects of the same reality",
@@ -856,6 +850,7 @@ window.PUZZLES = {
         "title": "The Riddle of the Self",
         "description": "Answer the ultimate question about the nature of suffering and the Self to achieve moksha.",
         "difficulty": "Transcendent",
+        "visualType": "SymbolicSentenceConstruction",
         "mechanics": {
             "type": "UltimateInquiry",
             "setting": {
@@ -920,13 +915,11 @@ window.PUZZLES = {
                 "nature": "This choice is not made from desire or fear, but from the spontaneous expression of your true nature"
             },
             "attempts": 0,
-            "maxAttempts": null // Unlimited attempts
+            "maxAttempts": null
         },
         "hints": [
             "Your Nakshatra's inherent nature will guide you to your unique answer.",
-            "There is no single correct answer, but your answer must be a perfect expression of your Nakshatra's wisdom.",
-            "The answer is not intellectual but experiential—it must come from your deepest understanding.",
-            "Consider how your journey through all three acts has prepared you for this moment."
+            "There is no single correct answer, but your answer must be a perfect expression of your Nakshatra's wisdom."
         ],
         "rewards": {
             "insight": "The ultimate nature of reality is beyond all concepts yet immediately present in every experience",
@@ -934,7 +927,89 @@ window.PUZZLES = {
             "achievement": "Moksha"
         },
         "completed": false
+    },
+
+    /**
+     * Non-Duality Realization Puzzle
+     * A philosophical puzzle from the School of Radical Non-Duality
+     */
+    "NonDualityRealization": {
+        "title": "The Illusion of Separation",
+        "description": "Recognize the illusory nature of the distinction between subject and object.",
+        "difficulty": "Very Hard",
+        "mechanics": {
+            "type": "PhilosophicalInquiry",
+            "question": "If there is truly no separation between observer and observed, between self and world, then what is it that seeks enlightenment, and what is there to be found?",
+            "correctAnswer": "The seeker is the sought; the very search creates the illusion of separation from what is already the case.",
+            "attempts": 0,
+            "maxAttempts": null
+        },
+        "hints": [
+            "The question contains a hidden assumption.",
+            "Consider what happens when the seeker turns attention back upon itself."
+        ],
+        "rewards": {
+            "insight": "Enlightenment is not an achievement but a recognition",
+            "ability": "Non-Dual Awareness - direct perception of unity underlying apparent diversity",
+            "items": ["Non-Duality Crystal"]
+        },
+        "completed": false
+    },
+
+    /**
+     * Logical Paradox Puzzle
+     * A philosophical puzzle from the School of Logical Deconstruction
+     */
+    "LogicalParadox": {
+        "title": "The Limits of Thought",
+        "description": "Apply logical analysis to reveal the inherent contradictions in the concept of spiritual seeking.",
+        "difficulty": "Very Hard",
+        "mechanics": {
+            "type": "LogicalAnalysis",
+            "question": "Apply logical analysis to the concept of the 'self' that seeks enlightenment. What contradiction do you discover?",
+            "correctAnswer": "If the self is unenlightened, it cannot cause its own enlightenment, as it lacks what it seeks. If the self already contains enlightenment, then it is already enlightened and there is nothing to seek. Either way, the concept of an unenlightened self seeking enlightenment is logically incoherent.",
+            "attempts": 0,
+            "maxAttempts": null
+        },
+        "hints": [
+            "Apply the principle of causality to the seeker and the sought.",
+            "Consider the qualifications necessary for a cause to produce its effect."
+        ],
+        "rewards": {
+            "insight": "True understanding cannot be reached through conceptual thinking alone—it requires a direct recognition that transcends the limitations of logic",
+            "ability": "Paradox Navigation - comfort with logical contradictions as pointers to transcendent truth",
+            "items": ["Logic Puzzle Box"]
+        },
+        "completed": false
+    },
+
+    /**
+     * Paradox Resolution Puzzle
+     * A philosophical puzzle from the School of Experiential Paradox
+     */
+    "ParadoxResolution": {
+        "title": "The Experience Beyond Thought",
+        "description": "Transcend conceptual understanding through direct experience of paradox.",
+        "difficulty": "Very Hard",
+        "mechanics": {
+            "type": "ExperientialParadox",
+            "question": "What lies beyond the opposites of existence and non-existence, self and other, knowing and not-knowing?",
+            "correctResponse": "Instead of answering verbally, simply rest in the awareness that contains all paradoxes without needing to resolve them.",
+            "attempts": 0,
+            "maxAttempts": null
+        },
+        "hints": [
+            "The answer is not conceptual but experiential.",
+            "Notice the awareness in which all opposites appear."
+        ],
+        "rewards": {
+            "insight": "The resolution of paradox is found in recognizing the awareness that contains all opposites without being limited by them",
+            "ability": "Paradoxical Wisdom - ability to hold contradictory truths simultaneously",
+            "items": ["Paradox Mirror"]
+        },
+        "completed": false
     }
+
 };
 
 /**
@@ -951,7 +1026,7 @@ window.puzzleUtils = {
         if (!playerState.puzzles) {
             playerState.puzzles = {};
         }
-        
+
         if (!playerState.puzzles[puzzleId]) {
             playerState.puzzles[puzzleId] = {
                 active: true,
@@ -962,10 +1037,10 @@ window.puzzleUtils = {
                 progress: {}
             };
         }
-        
+
         return playerState;
     },
-    
+
     /**
      * Record an attempt at solving a puzzle
      * @param {string} puzzleId - The ID of the puzzle being attempted
@@ -976,19 +1051,19 @@ window.puzzleUtils = {
     recordAttempt: function(puzzleId, playerState, successful) {
         // Initialize if needed
         playerState = this.initializePuzzle(puzzleId, playerState);
-        
+
         // Increment attempts
         playerState.puzzles[puzzleId].attempts++;
-        
+
         // Record success if applicable
         if (successful) {
             playerState.puzzles[puzzleId].completed = true;
             playerState = this.grantRewards(puzzleId, playerState);
         }
-        
+
         return playerState;
     },
-    
+
     /**
      * Advance a puzzle to the next stage
      * @param {string} puzzleId - The ID of the puzzle to advance
@@ -998,13 +1073,13 @@ window.puzzleUtils = {
     advancePuzzleStage: function(puzzleId, playerState) {
         // Initialize if needed
         playerState = this.initializePuzzle(puzzleId, playerState);
-        
+
         // Advance stage
         playerState.puzzles[puzzleId].currentStage++;
-        
+
         return playerState;
     },
-    
+
     /**
      * Check if a player has completed a puzzle
      * @param {string} puzzleId - The ID of the puzzle to check
@@ -1015,10 +1090,10 @@ window.puzzleUtils = {
         if (!playerState.puzzles || !playerState.puzzles[puzzleId]) {
             return false;
         }
-        
+
         return playerState.puzzles[puzzleId].completed;
     },
-    
+
     /**
      * Grant rewards for completing a puzzle
      * @param {string} puzzleId - The ID of the completed puzzle
@@ -1030,9 +1105,9 @@ window.puzzleUtils = {
         if (!puzzle || !puzzle.rewards) {
             return playerState;
         }
-        
+
         const rewards = puzzle.rewards;
-        
+
         // Initialize rewards structure if needed
         if (!playerState.rewards) {
             playerState.rewards = {
@@ -1043,11 +1118,11 @@ window.puzzleUtils = {
                 achievements: []
             };
         }
-        
+
         // Apply item rewards
         if (rewards.item) {
             playerState.rewards.items.push(rewards.item);
-            
+
             // Set specific item flags
             if (rewards.item === "Banyan Leaf Talisman") {
                 playerState.has_banyan_talisman = true;
@@ -1059,14 +1134,14 @@ window.puzzleUtils = {
                 playerState.has_wisdom_trident = true;
             }
         }
-        
+
         // Apply multiple items
         if (rewards.items) {
             playerState.rewards.items = [
                 ...playerState.rewards.items,
                 ...rewards.items
             ];
-            
+
             // Set specific item flags
             if (rewards.items.includes("Non-Duality Crystal")) {
                 playerState.has_nonduality_crystal = true;
@@ -1078,7 +1153,7 @@ window.puzzleUtils = {
                 playerState.has_paradox_mirror = true;
             }
         }
-        
+
         // Apply ability rewards
         if (rewards.abilities) {
             playerState.rewards.abilities = [
@@ -1086,37 +1161,37 @@ window.puzzleUtils = {
                 ...rewards.abilities
             ];
         }
-        
+
         // Apply single ability reward
         if (rewards.ability) {
             playerState.rewards.abilities.push(rewards.ability);
         }
-        
+
         // Apply knowledge rewards
         if (rewards.knowledge) {
             playerState.rewards.knowledge.push(rewards.knowledge);
         }
-        
+
         // Apply insight reward
         if (rewards.insight) {
             playerState.rewards.insights.push(rewards.insight);
         }
-        
+
         // Apply achievement rewards
         if (rewards.achievement) {
             playerState.rewards.achievements.push(rewards.achievement);
-            
+
             // Set specific achievement flags
             if (rewards.achievement === "Moksha") {
                 playerState.achieved_moksha = true;
             }
         }
-        
+
         // Apply specific access rewards
         if (rewards.access) {
             playerState[`access_${rewards.access.toLowerCase().replace(/\s+/g, '_')}`] = true;
         }
-        
+
         return playerState;
     }
 
