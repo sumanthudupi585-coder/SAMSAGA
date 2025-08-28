@@ -18,7 +18,17 @@
 window.ACT3_STORY_DATA = {
 
     // --- ACT III: THE PATH OF KNOWLEDGE (JNANA MARGA) ---
-
+"ACT3_START": {
+    "title": "The Final Threshold",
+    "text": "The air grows thin as you ascend the sacred mountain. Behind you lies the world you've known—the village of Dharmapura, the ancient forest, the trials that have shaped you. Ahead lies the ultimate challenge: the Temple of Transcendence, where the final mysteries of existence await. Your nakshatra essence pulses within you, ready for the culmination of your journey.",
+    "choices": [
+        {
+            "id": "approach_temple",
+            "text": "Approach the temple...",
+            "nextScene": "TEMPLE_ENTRANCE"
+        }
+    ]
+},
     "JOURNEY_TO_PATALA": {
         "title": "Descent",
         "text": "Having mastered the path of devotion in Svarga, your soul now descends toward Patala, the profound netherworld of wisdom. As you descend, the celestial light fades, replaced by a subtle luminescence emanating from precious gems embedded in ancient stone. Your consciousness deepens, preparing for the final stage of your spiritual journey—the path of knowledge.",
@@ -864,7 +874,20 @@ window.ACT3_STORY_DATA = {
         "text": "Your journey through the three great paths—Karma Marga, Bhakti Marga, and Jnana Marga—is complete. You have mastered action in the earthly realm, devotion in the celestial realm, and knowledge in the depths of Patala. Whether you have chosen complete merger with Brahman or remain as a Jivanmukta, you have achieved the ultimate goal of existence—moksha, liberation from the cycle of samsara. Yet the wheel continues to turn for countless other souls, and the cosmic drama of creation, preservation, and dissolution plays on eternally. Your story becomes part of the great tapestry of consciousness, inspiring others on their own journey through the realms of being.",
         "choices": [
             { "text": "The End", "nextScene": "JOURNEY_TO_PATALA" }
+    "ACT3_ENDING": {
+    "title": "Journey's End",
+    "text": "You have walked the path of dharma, faced your inner demons, and transcended the cycle of samsara. The journey that began in the humble village of Dharmapura has led you to profound spiritual awakening. As you look back on your choices and the lives you've touched, you understand that every step was necessary for your growth.",
+    "choices": [
+        {
+            "id": "complete_journey",
+            "text": "Reflect on your journey...",
+            "nextScene": "FINAL_REFLECTION",
+            "effects": {
+                "karma": 20,
+                "dharmicProfile": {
+                    "moksha": 20
         ]
     }
 
 };
+
