@@ -814,13 +814,37 @@
             gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
 
             function renderScene() {
-                const scene = storyEngine.getCurrentScene();
+                let scene = storyEngine.getCurrentScene();
                 const storyTextEl = document.getElementById('story-text');
                 const choicesEl = document.getElementById('choices-container');
                 const puzzleEl = document.getElementById('puzzle-container');
 
+                // Fallback if data not ready
+                if (!scene) {
+                    // Try resetting to Act 1 start
+                    gsm.playerState.currentAct = 1;
+                    gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
+                    scene = storyEngine.getCurrentScene();
+                }
+
+                if (!scene) {
+                    storyTextEl.innerHTML = '<p>Preparing Act I...</p>';
+                    choicesEl.innerHTML = '';
+                    const startBtn = document.createElement('button');
+                    startBtn.className = 'choice-button';
+                    startBtn.innerHTML = '<span class="choice-icon"><i class="fas fa-play"></i></span><span class="choice-content">Start Act I</span>';
+                    startBtn.addEventListener('click', () => {
+                        gsm.playerState.currentAct = 1;
+                        gsm.playerState.currentSceneId = 'JOURNEY_START';
+                        renderScene();
+                    });
+                    choicesEl.appendChild(startBtn);
+                    puzzleEl.innerHTML = '';
+                    return;
+                }
+
                 // Render scene text
-                storyTextEl.innerHTML = scene && scene.text ? `<p>${scene.text}</p>` : '';
+                storyTextEl.innerHTML = scene.text ? `<p>${scene.text}</p>` : '';
 
                 // Render puzzle placeholder if any
                 puzzleEl.innerHTML = '';
