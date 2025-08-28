@@ -565,8 +565,8 @@ window.ENHANCED_ACT1_STORY_DATA = {
     },
     
     // ===== UTILITY FUNCTIONS =====
-    
-    getPlayerKnowledge() {
+
+    getPlayerKnowledge: function() {
         // This would dynamically generate based on actual player choices
         const knowledge = [];
         if (window.unifiedGameFlow?.worldState?.observation_depth === 'profound') {
@@ -578,19 +578,19 @@ window.ENHANCED_ACT1_STORY_DATA = {
         if (window.unifiedGameFlow?.playerProfile?.acquiredKnowledge?.includes('Aikya')) {
             knowledge.push("• The practice of Aikya (Unity Consciousness)");
         }
-        
+
         return knowledge.length > 0 ? knowledge.join('\n        ') : "• The wisdom gained through your unique journey";
     },
-    
-    getPhilosophicalSummary() {
+
+    getPhilosophicalSummary: function() {
         // Generate based on actual philosophical progress
         return `• Understanding of integration between sacred and mundane
         • Experience with compassionate action and deep listening
         • Knowledge of how spiritual disconnection manifests in communities
         • Practice with unity consciousness and healing meditation`;
     },
-    
-    getAttributeSummary() {
+
+    getAttributeSummary: function() {
         // Generate based on actual attribute growth
         return `• Wisdom: Enhanced through careful observation and learning
         • Compassion: Deepened through service to others
