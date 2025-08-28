@@ -289,6 +289,15 @@ hr {
   to { opacity: 0; transform: translateX(-20px); }
 }
 
+/* Utility shake animation for error feedback */
+@keyframes ui-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+.drop-zone.shake { animation: ui-shake 0.5s; }
+
 /* --- SECTION 9: RESPONSIVE DESIGN --- */
 @media (max-width: 1200px) {
   .marginalia {
