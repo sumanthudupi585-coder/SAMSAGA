@@ -16,7 +16,41 @@ class StoryEngine {
             3: window.ACT3_STORY_DATA
         };
     }
+/**
+ * Get the first scene ID for a given act
+ */
+getFirstSceneIdForAct(act) {
+    // Define the first scene for each act
+    const firstScenes = {
+        1: "JOURNEY_START",
+        2: "ACT2_START",
+        3: "ACT3_START"
+    };
+    
+    return firstScenes[act] || "JOURNEY_START";
+}
 
+/**
+ * Transition to the next act
+ */
+transitionToNextAct() {
+    const currentAct = this.gameStateManager.playerState.currentAct;
+    const nextAct = currentAct + 1;
+    
+    // Check if next act exists
+    if (this.allActs[nextAct]) {
+        // Update game state
+        this.gameStateManager.playerState.currentAct = nextAct;
+        this.gameStateManager.playerState.currentSceneId = this.getFirstSceneIdForAct(nextAct);
+        
+        // Save game
+        this.gameStateManager.saveGame();
+        
+        return true;
+    }
+    
+    return false;
+}
     /**
      * Gets the story data for the current act
      */
