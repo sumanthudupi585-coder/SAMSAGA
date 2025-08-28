@@ -237,13 +237,21 @@
     <div id="game-container"></div>
     
     <!-- Core Game Systems -->
-    <script src="UnifiedGameFlow.js"></script>
-    <script src="EnhancedACT1StoryData.js"></script>
-    <script src="CinematicUISystem.js"></script>
-    
+    <script src="UnifiedGameFlow.js" onerror="console.error('Failed to load UnifiedGameFlow.js')"></script>
+    <script src="EnhancedACT1StoryData.js" onerror="console.error('Failed to load EnhancedACT1StoryData.js')"></script>
+    <script src="CinematicUISystem.js" onerror="console.error('Failed to load CinematicUISystem.js')"></script>
+
     <!-- Legacy System Integration -->
-    <script src="GameStateManager.js"></script>
-    <script src="StoryEngine.js"></script>
+    <script src="GameStateManager.js" onerror="console.error('Failed to load GameStateManager.js')"></script>
+    <script src="StoryEngine.js" onerror="console.error('Failed to load StoryEngine.js')"></script>
+
+    <!-- Script Loading Verification -->
+    <script>
+        console.log('🔍 Verifying script loading...');
+        console.log('UnifiedGameFlow available:', typeof window.UnifiedGameFlow);
+        console.log('ENHANCED_ACT1_STORY_DATA available:', typeof window.ENHANCED_ACT1_STORY_DATA);
+        console.log('CinematicUISystem available:', typeof window.CinematicUISystem);
+    </script>
     
     <!-- Main Application Script -->
     <script>
