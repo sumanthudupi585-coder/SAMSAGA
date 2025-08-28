@@ -1223,12 +1223,27 @@
                 // Set up frequency controls
                 for (let i = 1; i <= 3; i++) {
                     const slider = document.getElementById(`freq-${i}`);
+                    const wheel = document.getElementById(`wheel-${i}`);
                     const marker = document.getElementById(`marker-${i}`);
                     const display = document.getElementById(`display-${i}`);
-                    
+
+                    // Add event listeners
                     slider.addEventListener('input', () => this.updateFrequency(i));
+                    if (wheel) {
+                        wheel.addEventListener('click', () => this.adjustFrequency(i));
+                    }
+
                     this.updateFrequency(i);
                 }
+            }
+
+            adjustFrequency(chamber) {
+                // Rotate frequency wheel by 30 degrees when clicked
+                const slider = document.getElementById(`freq-${chamber}`);
+                const currentValue = parseInt(slider.value);
+                const newValue = (currentValue + 30) % 360;
+                slider.value = newValue;
+                this.updateFrequency(chamber);
             }
             
             updateFrequency(chamber) {
