@@ -1338,6 +1338,79 @@ class CinematicUISystem {
     }
 
     /**
+     * Show philosophical insight to the player
+     */
+    showPhilosophicalInsight(theme, concept) {
+        console.log(`💡 Showing philosophical insight: ${theme}`, concept);
+
+        // Queue the insight transition
+        this.queueTransition('philosophical_insight', {
+            theme,
+            concept,
+            callback: () => {
+                // Add insight to player's journal if gameFlow available
+                if (this.gameFlow && this.gameFlow.playerProfile) {
+                    if (!this.gameFlow.playerProfile.philosophicalInsights) {
+                        this.gameFlow.playerProfile.philosophicalInsights = [];
+                    }
+
+                    this.gameFlow.playerProfile.philosophicalInsights.push({
+                        theme,
+                        concept: concept.concept || concept,
+                        insight: concept.insight || '',
+                        timestamp: Date.now()
+                    });
+                }
+
+                // Show success notification
+                this.showNotification(
+                    `🌟 Philosophical insight gained: ${concept.concept || theme}`,
+                    'insight',
+                    4000
+                );
+
+                // Update insights panel if it exists
+                this.updateInsightsPanel();
+            }
+        });
+    }
+
+    /**
+     * Update the insights panel with latest philosophical insights
+     */
+    updateInsightsPanel() {
+        const insightsPanel = this.uiElements.insightsPanel;
+        if (!insightsPanel || !this.gameFlow) return;
+
+        const insightsList = insightsPanel.querySelector('.insights-list');
+        if (!insightsList) return;
+
+        // Clear existing insights
+        insightsList.innerHTML = '';
+
+        // Get recent insights
+        const insights = this.gameFlow.playerProfile?.philosophicalInsights || [];
+        const recentInsights = insights.slice(-5); // Show last 5 insights
+
+        if (recentInsights.length === 0) {
+            insightsList.innerHTML = '<p style="color: var(--color-text-muted); font-style: italic;">Begin making philosophical choices to gain insights...</p>';
+            return;
+        }
+
+        // Display insights
+        recentInsights.forEach(insight => {
+            const insightElement = document.createElement('div');
+            insightElement.className = 'insight-item';
+            insightElement.innerHTML = `
+                <div class="insight-theme">${insight.theme}</div>
+                <div class="insight-concept">${insight.concept}</div>
+                <div class="insight-description">${insight.insight}</div>
+            `;
+            insightsList.appendChild(insightElement);
+        });
+    }
+
+    /**
      * Update character display
      */
     updateCharacterDisplay() {
