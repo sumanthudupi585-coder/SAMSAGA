@@ -484,10 +484,10 @@
             transition: width 0.5s ease-in-out;
             box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
         }
-        .karma-bar > div { background: linear-gradient(90deg, var(--color-karma), lighten(var(--color-karma), 20%)); }
-        .sattva-bar > div { background: linear-gradient(90deg, var(--color-sattva), lighten(var(--color-sattva), 20%)); }
-        .rajas-bar > div { background: linear-gradient(90deg, var(--color-rajas), lighten(var(--color-rajas), 20%)); }
-        .tamas-bar > div { background: linear-gradient(90deg, var(--color-tamas), lighten(var(--color-tamas), 20%)); }
+        .karma-bar > div { background: linear-gradient(90deg, var(--color-karma), #d9c69a); }
+        .sattva-bar > div { background: linear-gradient(90deg, var(--color-sattva), #9fd2e4); }
+        .rajas-bar > div { background: linear-gradient(90deg, var(--color-rajas), #f09b7c); }
+        .tamas-bar > div { background: linear-gradient(90deg, var(--color-tamas), #8a80a8); }
 
         /* Element Display */
         .element-display {
@@ -723,6 +723,7 @@
             // Set up auto-save
             if (window.gameStateManager) {
                 window.gameStateManager.setupAutoSave(60000); // Auto-save every minute
+            }
 
             if (nakshatraNum && nakshatraData[nakshatraNum]) {
                 const nakshatra = nakshatraData[nakshatraNum];
