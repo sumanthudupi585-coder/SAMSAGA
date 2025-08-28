@@ -909,6 +909,48 @@
                         box.appendChild(actions);
                     }
 
+                    if (puzzle.puzzleId === 'BanyanTreeHarmony') {
+                        const state = { vitality: 30, wisdom: 70, harmony: 20 };
+                        const controls = document.createElement('div');
+                        controls.style.display = 'grid';
+                        controls.style.gridTemplateColumns = '1fr 1fr 1fr';
+                        controls.style.gap = '10px';
+                        ['vitality','wisdom','harmony'].forEach(key => {
+                            const panel = document.createElement('div');
+                            panel.className = 'detail-item';
+                            const t = document.createElement('div');
+                            t.className = 'profile-title';
+                            t.textContent = key.charAt(0).toUpperCase()+key.slice(1);
+                            const val = document.createElement('div');
+                            val.style.textAlign = 'center';
+                            val.dataset.key = key;
+                            val.textContent = `${state[key]}°`;
+                            const btn = document.createElement('button');
+                            btn.className = 'menu-button';
+                            btn.textContent = 'Rotate +15°';
+                            btn.addEventListener('click', () => {
+                                state[key] = (state[key] + 15) % 360;
+                                val.textContent = `${state[key]}°`;
+                            });
+                            panel.appendChild(t); panel.appendChild(val); panel.appendChild(btn);
+                            controls.appendChild(panel);
+                        });
+                        const check = document.createElement('button');
+                        check.className = 'menu-button';
+                        check.innerHTML = '<i class="fas fa-check"></i> Check Alignment';
+                        check.addEventListener('click', () => {
+                            const ok = Object.values(state).every(a => Math.min(Math.abs(a-0), 360-Math.abs(a-0)) <= 5);
+                            if (ok) {
+                                gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
+                                renderScene();
+                            } else {
+                                showNotification('Not yet aligned. Keep rotating the rings.', 'error');
+                            }
+                        });
+                        box.appendChild(controls);
+                        box.appendChild(check);
+                    }
+
                     puzzleEl.appendChild(box);
                 }
 
