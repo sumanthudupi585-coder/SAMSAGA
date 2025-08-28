@@ -1251,6 +1251,11 @@
                     document.getElementById('character-gana').textContent = nakshatra.gana + ' Gana';
 
                     console.log('Character initialized:', window.gameStateManager.playerProfile);
+
+                    // Show immediate story access notification
+                    setTimeout(() => {
+                        this.showNotification(`Welcome ${nakshatra.name}! Click "Skip to Story Mode" to begin your journey immediately.`, 'info');
+                    }, 2000);
                 } else {
                     console.warn('Invalid or missing character data in URL');
                     // Set default character data
@@ -1915,7 +1920,7 @@
             gameState.hintsUsed++;
 
             const hints = {
-                1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180°. Listen for the harmonic convergence.",
+                1: "The sacred frequencies form a mathematical relationship. Sattva at 108°, Rajas at 144°, Tamas at 180��. Listen for the harmonic convergence.",
                 2: "The Flower of Life begins at the center and radiates outward. Activate the central node first, then the six surrounding petals in clockwise order.",
                 3: "Each chakra must be activated within 3 seconds of the cosmic pulse. Start from the base and rise: Root → Sacral → Solar → Heart → Throat → Third Eye → Crown."
             };
