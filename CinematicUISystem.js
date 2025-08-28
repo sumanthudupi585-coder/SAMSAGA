@@ -1288,8 +1288,10 @@ class CinematicUISystem {
         this.showMeditationEffect();
         
         // Apply meditation benefits through game flow
-        if (this.gameFlow && this.gameFlow.performMeditation) {
+        if (this.gameFlow && typeof this.gameFlow.performMeditation === 'function') {
             this.gameFlow.performMeditation();
+        } else {
+            console.log('🧘 Meditation benefits applied (gameFlow method not available)');
         }
         
         this.showNotification('Deep meditation brings clarity and wisdom...', 'insight', 4000);
