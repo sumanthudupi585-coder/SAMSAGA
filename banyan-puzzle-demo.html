@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed BanyanTreeHarmony Puzzle Demo</title>
+    <style>
+        :root {
+            --color-bg: #0a0908;
+            --color-surface: #1a1817;
+            --color-text: #c5c1b9;
+            --color-text-muted: #7a7670;
+            --color-primary: #e09658;
+            --color-primary-glow: #ffc58f;
+            --font-body: 'Arial', sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--color-bg) 0%, #1a1512 100%);
+            color: var(--color-text);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-title {
+            font-size: 2.5rem;
+            color: var(--color-primary-glow);
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-subtitle {
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .demo-description {
+            background: rgba(26, 24, 23, 0.6);
+            border: 1px solid rgba(224, 150, 88, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-description h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .demo-description ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        
+        .demo-description li {
+            margin-bottom: 0.5rem;
+        }
+        
+        #puzzle-container {
+            background: rgba(26, 24, 23, 0.4);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+    </style>
+    <link rel="stylesheet" href="fixed-banyan-puzzle.css">
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1 class="demo-title">🌳 Fixed BanyanTreeHarmony Puzzle</h1>
+            <p class="demo-subtitle">Intuitive Physics & Clear Visual Communication</p>
+        </div>
+        
+        <div class="demo-description">
+            <h3>🎯 Test the 5-Second Rule</h3>
+            <p>Can you understand how to solve this puzzle within 5 seconds? The design should make it immediately obvious:</p>
+            <ul>
+                <li><strong>Visual Goal:</strong> See the "TARGET" line at the top? All colored handles need to align there</li>
+                <li><strong>Interaction Method:</strong> Click and drag the colored handles around each ring</li>
+                <li><strong>Progress Feedback:</strong> Watch the progress panel show your alignment status</li>
+                <li><strong>Audio Feedback:</strong> Listen for satisfying sounds with each interaction</li>
+            </ul>
+            
+            <h3>🎮 Enhanced Features</h3>
+            <ul>
+                <li><strong>Snap-to-Grid:</strong> Handles snap to 15-degree increments for precision</li>
+                <li><strong>Keyboard Support:</strong> Press 1/2/3 to select rings, then use arrow keys</li>
+                <li><strong>Clear Affordances:</strong> Obvious visual cues show what can be interacted with</li>
+                <li><strong>Generous Hit Areas:</strong> Large, easy-to-click interaction zones</li>
+                <li><strong>Immediate Feedback:</strong> Visual and audio response to every action</li>
+            </ul>
+        </div>
+        
+        <div id="puzzle-container">
+            <!-- Puzzle will be loaded here -->
+        </div>
+    </div>
+
+    <script src="fixed-banyan-puzzle.js"></script>
+    <script>
+        // Mock game state manager for demo
+        const mockGameState = {
+            worldState: {},
+            updateState: function(key, value) {
+                this.worldState[key] = value;
+                console.log('Game state updated:', key, '=', value);
+            }
+        };
+        
+        // Initialize the puzzle
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('puzzle-container');
+            
+            const puzzle = new FixedBanyanTreeHarmony(
+                container,
+                mockGameState,
+                () => {
+                    alert('🎉 Puzzle Solved! Perfect harmony achieved!');
+                }
+            );
+            
+            console.log('Fixed BanyanTreeHarmony puzzle loaded successfully!');
+        });
+    </script>
+</body>
+</html>
