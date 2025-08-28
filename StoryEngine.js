@@ -1,332 +1,158 @@
 /**
  * StoryEngine.js
  * 
- * This module is the game's narrator and rule-keeper. It connects the player's state
- * to the story data to figure out what should happen next.
+ * Connects player state to story data and drives scene/act transitions.
  */
 
-class StoryEngine {
+(function () {
+  class StoryEngine {
     constructor(gameStateManager) {
-        this.gameStateManager = gameStateManager;
-        
-        // An object that holds the imported story data, mapped by act number
-        this.allActs = {
-            1: window.ACT1_STORY_DATA,
-            2: window.ACT2_STORY_DATA,
-            3: window.ACT3_STORY_DATA
-        };
+      this.gameStateManager = gameStateManager;
+      this.allActs = {
+        1: window.ACT1_STORY_DATA,
+        2: window.ACT2_STORY_DATA,
+        3: window.ACT3_STORY_DATA,
+      };
     }
-/**
- * Get the first scene ID for a given act
- */
-getFirstSceneIdForAct(act) {
-    // Define the first scene for each act
-    const firstScenes = {
-        1: "JOURNEY_START",
-        2: "ACT2_START",
-        3: "ACT3_START"
-    };
-    
-    return firstScenes[act] || "JOURNEY_START";
-}
-    /**
- * Process a choice selection
- */
-processChoice(choiceId) {
-    const scene = this.getCurrentScene();
-    const choice = scene.choices.find(c => c.id === choiceId);
-    
-    if (!choice) {
+
+    // -------- Act & Scene helpers --------
+    getFirstSceneIdForAct(act) {
+      const firstScenes = { 1: 'JOURNEY_START', 2: 'ACT2_START', 3: 'ACT3_START' };
+      return firstScenes[act] || 'JOURNEY_START';
+    }
+
+    getActiveStoryData() {
+      const currentAct = this.gameStateManager.playerState.currentAct;
+      return this.allActs[currentAct];
+    }
+
+    getCurrentScene() {
+      const storyData = this.getActiveStoryData();
+      if (!storyData || !Array.isArray(storyData.scenes)) return null;
+      const currentSceneId = this.gameStateManager.playerState.currentSceneId;
+      const scene = storyData.scenes.find((s) => s.id === currentSceneId) || null;
+      if (!scene) console.error(`Scene with ID "${currentSceneId}" not found in Act ${this.gameStateManager.playerState.currentAct}`);
+      return scene;
+    }
+
+    // -------- Choice gathering --------
+    getAvailableChoices() {
+      const scene = this.getCurrentScene();
+      if (!scene) return [];
+
+      const gameState = this.gameStateManager.getState();
+      const baseChoices = Array.isArray(scene.choices) ? scene.choices : [];
+
+      const standardChoices = baseChoices.filter((choice) => {
+        if (!choice.condition) return true;
+        const conditionFunc = typeof choice.condition === 'string' ? new Function('gameState', `return ${choice.condition}`) : choice.condition;
+        try {
+          return !!conditionFunc(gameState);
+        } catch (e) {
+          console.error(`Error evaluating condition for choice "${choice.id}":`, e);
+          return false;
+        }
+      });
+
+      const special = [
+        ...this.getNakshatraSpecialChoices(scene),
+        ...this.getGanaSpecialChoices(scene),
+      ];
+
+      return [...standardChoices, ...special];
+    }
+
+    getNakshatraSpecialChoices(scene) {
+      const nakshatra = this.gameStateManager.playerProfile.nakshatra;
+      if (!nakshatra || !scene || !scene.nakshatraChoices) return [];
+      const choices = scene.nakshatraChoices[nakshatra] || [];
+      return choices.map((c) => ({ ...c, isNakshatraChoice: true }));
+    }
+
+    getGanaSpecialChoices(scene) {
+      const gana = this.gameStateManager.playerProfile.gana;
+      if (!gana || !scene || !scene.ganaChoices) return [];
+      const choices = scene.ganaChoices[gana] || [];
+      return choices.map((c) => ({ ...c, isGanaChoice: true }));
+    }
+
+    // -------- Choice processing --------
+    processChoice(choiceId) {
+      const scene = this.getCurrentScene();
+      if (!scene) return false;
+
+      // locate choice in choices or interactions
+      let choice = null;
+      if (Array.isArray(scene.choices)) choice = scene.choices.find((c) => c.id === choiceId) || null;
+      if (!choice && Array.isArray(scene.interactions)) choice = scene.interactions.find((i) => i.id === choiceId) || null;
+      if (!choice) {
         console.error(`Choice with ID "${choiceId}" not found in current scene`);
         return false;
-    }
-    
-    // Process effects
-    if (choice.effects) {
+      }
+
+      // Effects
+      if (choice.effects) {
         this.processEffects(choice.effects);
-    }
-    
-    // Process world state triggers
-    if (choice.worldStateTriggers) {
+      }
+
+      // World state triggers
+      if (choice.worldStateTriggers) {
         Object.entries(choice.worldStateTriggers).forEach(([key, value]) => {
-            this.gameStateManager.updateState(key, value);
+          this.gameStateManager.updateState(key, value);
         });
-    }
-    
-    // Check for act transition
-    if (choice.nextAct) {
-        return this.transitionToNextAct();
-    }
-    
-    // Move to next scene
-    if (choice.nextScene) {
+      }
+
+      // Act change
+      if (choice.nextAct) return this.transitionToAct(choice.nextAct);
+      if (choice.transitionToAct !== undefined) return this.transitionToAct(choice.transitionToAct);
+
+      // Scene change
+      if (choice.nextScene) {
         this.gameStateManager.playerState.currentSceneId = choice.nextScene;
         return true;
-    }
-    
-    return false;
-}
-/**
- * Transition to the next act
- */
-transitionToNextAct() {
-    const currentAct = this.gameStateManager.playerState.currentAct;
-    const nextAct = currentAct + 1;
-    
-    // Check if next act exists
-    if (this.allActs[nextAct]) {
-        // Update game state
-        this.gameStateManager.playerState.currentAct = nextAct;
-        this.gameStateManager.playerState.currentSceneId = this.getFirstSceneIdForAct(nextAct);
-        
-        // Save game
-        this.gameStateManager.saveGame();
-        
-        return true;
-    }
-    
-    return false;
-}
-    /**
-     * Gets the story data for the current act
-     */
-    getActiveStoryData() {
-        const currentAct = this.gameStateManager.playerState.currentAct;
-        return this.allActs[currentAct];
+      }
+
+      return true;
     }
 
-    /**
-     * Gets the current scene based on the currentSceneId in gameStateManager
-     */
-    getCurrentScene() {
-        const storyData = this.getActiveStoryData();
-        const currentSceneId = this.gameStateManager.playerState.currentSceneId;
-        
-        // Find the scene in the current act's data
-        const scene = storyData.scenes.find(scene => scene.id === currentSceneId);
-        
-        if (!scene) {
-            console.error(`Scene with ID "${currentSceneId}" not found in Act ${this.gameStateManager.playerState.currentAct}`);
-            return null;
+    processEffects(effects) {
+      if (!effects) return;
+      // Karma
+      if (typeof effects.karma === 'number') {
+        this.gameStateManager.updateKarma(effects.karma);
+      }
+      // Inventory
+      if (effects.inventory) {
+        if (Array.isArray(effects.inventory.add)) {
+          effects.inventory.add.forEach((item) => this.gameStateManager.addToInventory(item));
         }
-        
-        return scene;
+        if (Array.isArray(effects.inventory.remove)) {
+          effects.inventory.remove.forEach((item) => this.gameStateManager.removeFromInventory(item));
+        }
+      }
+      // Dharmic profile
+      if (effects.dharmicProfile) {
+        Object.entries(effects.dharmicProfile).forEach(([aspect, val]) => {
+          this.gameStateManager.updateDharmicProfile(aspect, val);
+        });
+      }
     }
 
-    /**
- * Get all available choices for the current scene based on conditions
- */
-getAvailableChoices() {
-    const scene = this.getCurrentScene();
-    if (!scene || !scene.choices) {
-        return [];
-    }
-    
-    const gameState = this.gameStateManager.getState();
-    let availableChoices = [];
-    
-    // Get standard choices based on conditions
-    const standardChoices = scene.choices.filter(choice => {
-        // If no condition, always available
-        if (!choice.condition) {
-            return true;
-        }
-        
-        // Convert string condition to function if needed
-        const conditionFunc = typeof choice.condition === 'string' 
-            ? new Function('gameState', `return ${choice.condition}`)
-            : choice.condition;
-        
-        // Evaluate condition
-        try {
-            return conditionFunc(gameState);
-        } catch (error) {
-            console.error(`Error evaluating condition for choice "${choice.id}":`, error);
-            return false;
-        }
-    });
-    
-    availableChoices = [...standardChoices];
-    
-    // Add nakshatra-specific choices if available
-    const nakshatraChoices = this.getNakshatraSpecialChoices(scene);
-    if (nakshatraChoices.length > 0) {
-        availableChoices = [...availableChoices, ...nakshatraChoices];
-    }
-    
-    // Add gana-specific choices if available
-    const ganaChoices = this.getGanaSpecialChoices(scene);
-    if (ganaChoices.length > 0) {
-        availableChoices = [...availableChoices, ...ganaChoices];
-    }
-    
-    return availableChoices;
-}
-
-/**
- * Get special choices based on player's nakshatra
- */
-getNakshatraSpecialChoices(scene) {
-    const nakshatra = this.gameStateManager.playerProfile.nakshatra;
-    if (!nakshatra || !scene.nakshatraChoices) {
-        return [];
-    }
-    
-    // Get special choices for this nakshatra
-    const choices = scene.nakshatraChoices[nakshatra] || [];
-    
-    // Mark these as nakshatra choices for UI
-    return choices.map(choice => ({
-        ...choice,
-        isNakshatraChoice: true
-    }));
-}
-
-/**
- * Get special choices based on player's gana
- */
-getGanaSpecialChoices(scene) {
-    const gana = this.gameStateManager.playerProfile.gana;
-    if (!gana || !scene.ganaChoices) {
-        return [];
-    }
-    
-    // Get special choices for this gana
-    const choices = scene.ganaChoices[gana] || [];
-    
-    // Mark these as gana choices for UI
-    return choices.map(choice => ({
-        ...choice,
-        isGanaChoice: true
-    }));
-}
-        
-        // Process regular choices
-        if (scene.choices && Array.isArray(scene.choices)) {
-            scene.choices.forEach(choice => {
-                let isValid = true;
-                
-                // Check if the choice has a condition function
-                if (choice.condition) {
-                    // Convert string condition to function if needed
-                    const conditionFunc = typeof choice.condition === 'string' 
-                        ? new Function('gameState', `return ${choice.condition}`)
-                        : choice.condition;
-                    
-                    isValid = conditionFunc(gameState);
-                }
-                
-                // Check if the choice requires an item
-                if (isValid && choice.requiresItem) {
-                    isValid = this.gameStateManager.hasItem(choice.requiresItem);
-                }
-                
-                if (isValid) {
-                    validChoices.push(choice);
-                }
-            });
-        }
-        
-        // Process interactions (which are also choices but might have different structure)
-        if (scene.interactions && Array.isArray(scene.interactions)) {
-            scene.interactions.forEach(interaction => {
-                let isValid = true;
-                
-                if (interaction.condition) {
-                    // Convert string condition to function if needed
-                    const conditionFunc = typeof interaction.condition === 'string' 
-                        ? new Function('gameState', `return ${interaction.condition}`)
-                        : interaction.condition;
-                    
-                    isValid = conditionFunc(gameState);
-                }
-                
-                if (isValid) {
-                    validChoices.push(interaction);
-                }
-            });
-        }
-        
-        return validChoices;
+    transitionToAct(actNumber) {
+      const hasAct = !!this.allActs[actNumber];
+      if (!hasAct) return false;
+      this.gameStateManager.playerState.currentAct = actNumber;
+      this.gameStateManager.playerState.currentSceneId = this.getFirstSceneIdForAct(actNumber);
+      try { this.gameStateManager.saveGame(); } catch (e) {}
+      return true;
     }
 
-    /**
-     * Process a player's choice and update the game state accordingly
-     */
-    processChoice(choiceId) {
-        const scene = this.getCurrentScene();
-        if (!scene) return false;
-        
-        // Find the choice in either choices or interactions array
-        let choice = null;
-        
-        if (scene.choices) {
-            choice = scene.choices.find(c => c.id === choiceId);
-        }
-        
-        if (!choice && scene.interactions) {
-            choice = scene.interactions.find(i => i.id === choiceId);
-        }
-        
-        if (!choice) {
-            console.error(`Choice with ID "${choiceId}" not found in current scene`);
-            return false;
-        }
-        
-        // Act Transition Logic
-        if (choice.transitionToAct !== undefined) {
-            this.gameStateManager.updateState('currentAct', choice.transitionToAct);
-        }
-        
-        // State Trigger Logic
-        if (choice.worldStateTriggers) {
-            Object.entries(choice.worldStateTriggers).forEach(([key, value]) => {
-                this.gameStateManager.updateState(key, value);
-            });
-        }
-        
-        // Effects Logic
-        if (choice.effects) {
-            if (choice.effects.karma !== undefined) {
-                this.gameStateManager.updateKarma(choice.effects.karma);
-            }
-            
-            if (choice.effects.inventory) {
-                if (choice.effects.inventory.add) {
-                    choice.effects.inventory.add.forEach(item => {
-                        this.gameStateManager.addToInventory(item);
-                    });
-                }
-                
-                if (choice.effects.inventory.remove) {
-                    choice.effects.inventory.remove.forEach(item => {
-                        this.gameStateManager.removeFromInventory(item);
-                    });
-                }
-            }
-            
-            if (choice.effects.dharmicProfile) {
-                Object.entries(choice.effects.dharmicProfile).forEach(([aspect, value]) => {
-                    this.gameStateManager.updateDharmicProfile(aspect, value);
-                });
-            }
-        }
-        
-        // Scene Transition Logic
-        if (choice.nextScene) {
-            this.gameStateManager.updateState('currentSceneId', choice.nextScene);
-        }
-        
-        return true;
-    }
-
-    /**
-     * Get puzzle data for the current scene if it exists
-     */
     getCurrentPuzzle() {
-        const scene = this.getCurrentScene();
-        return scene && scene.puzzle ? scene.puzzle : null;
+      const scene = this.getCurrentScene();
+      return scene && scene.puzzle ? scene.puzzle : null;
     }
-}
+  }
 
-// Export the StoryEngine class
+  // Expose globally
+  window.StoryEngine = StoryEngine;
+})();
