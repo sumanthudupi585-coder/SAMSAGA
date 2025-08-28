@@ -279,10 +279,11 @@
             constructor() {
                 this.loadingProgress = 0;
                 this.requiredSystems = [
-                    'UnifiedGameFlow',
-                    'CinematicUISystem', 
-                    'ENHANCED_ACT1_STORY_DATA'
-                ];
+                'UnifiedGameFlow',
+                'CinematicUISystem',
+                'ENHANCED_ACT1_STORY_DATA'
+            ];
+            this.criticalSystems = ['UnifiedGameFlow']; // Only these are absolutely required
                 this.gameFlow = null;
                 this.uiSystem = null;
                 this.isInitialized = false;
