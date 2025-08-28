@@ -943,26 +943,36 @@ class CinematicUISystem {
         const allChoices = [...choices];
 
         // Add nakshatra-specific choices if available
-        if (sceneData && sceneData.nakshatraChoices && this.gameFlow) {
-            const playerNakshatra = this.gameFlow.playerProfile?.nakshatra;
+        if (sceneData && sceneData.nakshatraChoices && this.gameFlow && this.gameFlow.playerProfile) {
+            const playerNakshatra = this.gameFlow.playerProfile.nakshatra;
             if (playerNakshatra && sceneData.nakshatraChoices[playerNakshatra]) {
-                const nakshatraChoices = sceneData.nakshatraChoices[playerNakshatra].map(choice => ({
-                    ...choice,
-                    isNakshatraChoice: true
-                }));
-                allChoices.push(...nakshatraChoices);
+                try {
+                    const nakshatraChoices = sceneData.nakshatraChoices[playerNakshatra].map(choice => ({
+                        ...choice,
+                        isNakshatraChoice: true
+                    }));
+                    allChoices.push(...nakshatraChoices);
+                    console.log(`✨ Added ${nakshatraChoices.length} nakshatra-specific choices for ${playerNakshatra}`);
+                } catch (error) {
+                    console.warn('Error processing nakshatra choices:', error);
+                }
             }
         }
 
         // Add gana-specific choices if available
-        if (sceneData && sceneData.ganaChoices && this.gameFlow) {
-            const playerGana = this.gameFlow.playerProfile?.gana;
+        if (sceneData && sceneData.ganaChoices && this.gameFlow && this.gameFlow.playerProfile) {
+            const playerGana = this.gameFlow.playerProfile.gana;
             if (playerGana && sceneData.ganaChoices[playerGana]) {
-                const ganaChoices = sceneData.ganaChoices[playerGana].map(choice => ({
-                    ...choice,
-                    isGanaChoice: true
-                }));
-                allChoices.push(...ganaChoices);
+                try {
+                    const ganaChoices = sceneData.ganaChoices[playerGana].map(choice => ({
+                        ...choice,
+                        isGanaChoice: true
+                    }));
+                    allChoices.push(...ganaChoices);
+                    console.log(`✨ Added ${ganaChoices.length} gana-specific choices for ${playerGana}`);
+                } catch (error) {
+                    console.warn('Error processing gana choices:', error);
+                }
             }
         }
 
@@ -1075,7 +1085,7 @@ class CinematicUISystem {
         const icons = {
             wisdom: '🧠',
             compassion: '💝',
-            spiritual_insight: '��️',
+            spiritual_insight: '👁️',
             determination: '💪',
             detachment: '🕊️'
         };
