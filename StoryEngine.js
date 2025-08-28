@@ -44,14 +44,92 @@ class StoryEngine {
     }
 
     /**
-     * Gets all available choices for the current scene based on conditions
-     */
-    getAvailableChoices() {
-        const scene = this.getCurrentScene();
-        if (!scene) return [];
+ * Get all available choices for the current scene based on conditions
+ */
+getAvailableChoices() {
+    const scene = this.getCurrentScene();
+    if (!scene || !scene.choices) {
+        return [];
+    }
+    
+    const gameState = this.gameStateManager.getState();
+    let availableChoices = [];
+    
+    // Get standard choices based on conditions
+    const standardChoices = scene.choices.filter(choice => {
+        // If no condition, always available
+        if (!choice.condition) {
+            return true;
+        }
         
-        const gameState = this.gameStateManager.getState();
-        const validChoices = [];
+        // Convert string condition to function if needed
+        const conditionFunc = typeof choice.condition === 'string' 
+            ? new Function('gameState', `return ${choice.condition}`)
+            : choice.condition;
+        
+        // Evaluate condition
+        try {
+            return conditionFunc(gameState);
+        } catch (error) {
+            console.error(`Error evaluating condition for choice "${choice.id}":`, error);
+            return false;
+        }
+    });
+    
+    availableChoices = [...standardChoices];
+    
+    // Add nakshatra-specific choices if available
+    const nakshatraChoices = this.getNakshatraSpecialChoices(scene);
+    if (nakshatraChoices.length > 0) {
+        availableChoices = [...availableChoices, ...nakshatraChoices];
+    }
+    
+    // Add gana-specific choices if available
+    const ganaChoices = this.getGanaSpecialChoices(scene);
+    if (ganaChoices.length > 0) {
+        availableChoices = [...availableChoices, ...ganaChoices];
+    }
+    
+    return availableChoices;
+}
+
+/**
+ * Get special choices based on player's nakshatra
+ */
+getNakshatraSpecialChoices(scene) {
+    const nakshatra = this.gameStateManager.playerProfile.nakshatra;
+    if (!nakshatra || !scene.nakshatraChoices) {
+        return [];
+    }
+    
+    // Get special choices for this nakshatra
+    const choices = scene.nakshatraChoices[nakshatra] || [];
+    
+    // Mark these as nakshatra choices for UI
+    return choices.map(choice => ({
+        ...choice,
+        isNakshatraChoice: true
+    }));
+}
+
+/**
+ * Get special choices based on player's gana
+ */
+getGanaSpecialChoices(scene) {
+    const gana = this.gameStateManager.playerProfile.gana;
+    if (!gana || !scene.ganaChoices) {
+        return [];
+    }
+    
+    // Get special choices for this gana
+    const choices = scene.ganaChoices[gana] || [];
+    
+    // Mark these as gana choices for UI
+    return choices.map(choice => ({
+        ...choice,
+        isGanaChoice: true
+    }));
+}
         
         // Process regular choices
         if (scene.choices && Array.isArray(scene.choices)) {
