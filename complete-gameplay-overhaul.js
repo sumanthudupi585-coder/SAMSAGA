@@ -479,6 +479,9 @@ class GameplayOverhaulEngine {
         // Replace the existing interface
         gameWrapper.innerHTML = '';
         gameWrapper.appendChild(enhancedInterface);
+
+        // Add CSS styles for the traditional player attributes
+        this.addTraditionalPlayerAttributesCSS();
         
         // Initialize the enhanced interface
         this.populateEnhancedInterface();
