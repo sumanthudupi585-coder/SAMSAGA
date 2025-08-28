@@ -352,6 +352,70 @@ class CinematicUISystem {
     }
     
     /**
+     * Initialize transition effects system
+     */
+    initializeTransitionEffects() {
+        this.transitionTemplates = {
+            scene_change: {
+                duration: 2000,
+                type: 'flowing_energy',
+                message: null
+            },
+            philosophical_insight: {
+                duration: 3000,
+                type: 'lotus_bloom',
+                message: 'A profound understanding blossoms within...'
+            },
+            phase_advancement: {
+                duration: 5000,
+                type: 'cosmic_spiral',
+                message: 'The journey deepens...'
+            },
+            choice_selection: {
+                duration: 1000,
+                type: 'ripple_effect',
+                message: null
+            }
+        };
+
+        console.log('✨ Transition effects system initialized');
+    }
+
+    /**
+     * Set up dynamic UI evolution system
+     */
+    setupUIEvolution() {
+        // Set up system to evolve UI based on player progress
+        this.evolutionStages = {
+            'dawn': {
+                complexity: 'simple',
+                features: ['basic_navigation', 'character_display'],
+                depth: 'introductory'
+            },
+            'awakened': {
+                complexity: 'enhanced',
+                features: ['basic_navigation', 'character_display', 'insights_panel'],
+                depth: 'intermediate'
+            },
+            'illuminated': {
+                complexity: 'advanced',
+                features: ['basic_navigation', 'character_display', 'insights_panel', 'journal', 'meditation'],
+                depth: 'advanced'
+            },
+            'enlightened': {
+                complexity: 'master',
+                features: ['all'],
+                depth: 'expert'
+            }
+        };
+
+        // Set initial stage
+        this.currentEvolutionStage = 'dawn';
+
+        console.log('🌱 UI evolution system initialized');
+    }
+
+    /**
      * Set visual theme based on spiritual progress
      */
     setTheme(themeName) {
