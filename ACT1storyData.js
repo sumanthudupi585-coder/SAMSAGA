@@ -602,7 +602,7 @@ window.ACT1_STORY_DATA = {
 
     "LISTEN_TO_FOREST": {
         "title": "Forest Whispers",
-        "text": "You detect a subtle hum���a vibration that seems to emanate from further up the ridge with a rhythmic quality, almost like a chant.",
+        "text": "You detect a subtle hum—a vibration that seems to emanate from further up the ridge with a rhythmic quality, almost like a chant.",
         "choices": [
             { "text": "Continue to the temple.", "nextScene": "TEMPLE_ENTRANCE" }
         ]
@@ -615,6 +615,9 @@ window.ACT1_STORY_DATA = {
             { "verb": "Examine", "noun": "Temple Pillars", "scene": "EXAMINE_TEMPLE_PILLARS" },
             { "verb": "Study", "noun": "Door Mechanism", "scene": "STUDY_DOOR_MECHANISM" },
             { "verb": "Meditate", "noun": "At the Entrance", "scene": "MEDITATE_AT_ENTRANCE" }
+        ],
+        "choices": [
+            { "text": "Enter the temple.", "nextScene": "TEMPLE_INNER_SANCTUM", "condition": (state) => state.made_offering === true && state.solved_puzzle === true && state.aligned_energy === true }
         ]
     },
 
@@ -622,8 +625,36 @@ window.ACT1_STORY_DATA = {
         "title": "The Nakshatra Pillars",
         "text": "You find the pillar corresponding to your birth star has a recess for an offering.",
         "choices": [
-            { "text": "Make an offering based on your Nakshatra.", "nextScene": "TEMPLE_INNER_SANCTUM", "condition": (state) => state.made_offering === true && state.solved_puzzle === true && state.aligned_energy === true },
-            { "text": "Return to the entrance.", "nextScene": "TEMPLE_ENTRANCE", "worldStateTriggers": { "made_offering": true } }
+            // 27 Nakshatra-specific offerings
+            { "text": "[Ashwini] Offer healing herbs from your journey.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Ashwini', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Bharani] Offer a symbol of life's cycles.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Bharani', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Krittika] Offer a flame to burn away illusions.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Krittika', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Rohini] Offer flowers that represent growth.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Rohini', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Mrigashira] Offer something you found while seeking.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Mrigashira', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Ardra] Offer tears of transformation.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Ardra', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Punarvasu] Offer a token of renewal.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Punarvasu', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Pushya] Offer spiritual energy directly.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Pushya', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Ashlesha] Offer wisdom gained through cunning.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Ashlesha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Magha] Offer respect to ancestral spirits.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Magha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Purva Phalguni] Offer something beautiful and joyful.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Purva Phalguni', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Uttara Phalguni] Offer a formal written pledge.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Uttara Phalguni', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Hasta] Offer something crafted by your hands.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Hasta', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Chitra] Offer an artistic creation.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Chitra', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Swati] Offer something carried by the wind.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Swati', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Vishakha] Offer multiple small tokens.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Vishakha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Anuradha] Offer a prayer of devotion.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Anuradha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Jyeshtha] Offer proof of your leadership.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Jyeshtha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Mula] Offer something from the root of existence.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Mula', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Purva Ashadha] Offer your strength and determination.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Purva Ashadha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Uttara Ashadha] Offer a vow for the highest good.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Uttara Ashadha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Shravana] Offer knowledge you have heard.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Shravana', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Dhanishtha] Offer something of great value.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Dhanishtha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Shatabhisha] Offer a hundred small blessings.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Shatabhisha', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Purva Bhadrapada] Offer something for the overlooked.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Purva Bhadrapada', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Uttara Bhadrapada] Offer water from a sacred source.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Uttara Bhadrapada', "worldStateTriggers": { "made_offering": true } },
+            { "text": "[Revati] Offer nourishment for the future.", "nextScene": "TEMPLE_ENTRANCE", "condition": (profile) => profile.nakshatra === 'Revati', "worldStateTriggers": { "made_offering": true } },
+
+            { "text": "Return to the entrance.", "nextScene": "TEMPLE_ENTRANCE" }
         ]
     },
 
@@ -631,8 +662,8 @@ window.ACT1_STORY_DATA = {
         "title": "Celestial Lock",
         "text": "The door has a complex astronomical lock.",
         "choices": [
-            { "text": "Attempt to solve the celestial puzzle.", "nextScene": "TEMPLE_INNER_SANCTUM", "condition": (state) => state.made_offering === true && state.solved_puzzle === true && state.aligned_energy === true },
-            { "text": "Return to the entrance.", "nextScene": "TEMPLE_ENTRANCE", "worldStateTriggers": { "solved_puzzle": true } }
+            { "text": "Attempt to solve the celestial puzzle.", "nextScene": "TEMPLE_ENTRANCE", "worldStateTriggers": { "solved_puzzle": true } },
+            { "text": "Return to the entrance.", "nextScene": "TEMPLE_ENTRANCE" }
         ]
     },
 
@@ -640,8 +671,8 @@ window.ACT1_STORY_DATA = {
         "title": "Spiritual Alignment",
         "text": "You sense the temple is aligned with cosmic forces and you must resonate with them to enter.",
         "choices": [
-            { "text": "Align your energy with the temple.", "nextScene": "TEMPLE_INNER_SANCTUM", "condition": (state) => state.made_offering === true && state.solved_puzzle === true && state.aligned_energy === true },
-            { "text": "Return to the entrance.", "nextScene": "TEMPLE_ENTRANCE", "worldStateTriggers": { "aligned_energy": true } }
+            { "text": "Align your energy with the temple.", "nextScene": "TEMPLE_ENTRANCE", "worldStateTriggers": { "aligned_energy": true } },
+            { "text": "Return to the entrance.", "nextScene": "TEMPLE_ENTRANCE" }
         ]
     },
 
