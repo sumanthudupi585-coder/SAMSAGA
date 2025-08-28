@@ -1699,6 +1699,41 @@
         
         // ===== GLOBAL FUNCTIONS =====
         let gameState;
+
+        // Global notification function for early error handling
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            if (!container) {
+                console.log(`Notification: ${message}`);
+                return;
+            }
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                info: 'fas fa-info-circle',
+                warning: 'fas fa-exclamation-triangle'
+            };
+
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="notification-icon ${icons[type] || icons.info}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+        }
         
         // Initialize game
         document.addEventListener('DOMContentLoaded', () => {
