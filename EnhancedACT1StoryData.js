@@ -1,11 +1,13 @@
 /**
  * EnhancedACT1StoryData.js
- * 
+ *
  * Complete Act 1 story progression designed for seamless integration with UnifiedGameFlow.
  * Features progressive philosophical learning, meaningful character development, and clear objectives.
  */
 
-window.ENHANCED_ACT1_STORY_DATA = {
+console.log('🌟 Loading Enhanced ACT1 Story Data...');
+
+const ENHANCED_ACT1_STORY_DATA = {
     
     // ===== PROLOGUE: AWAKENING =====
     
