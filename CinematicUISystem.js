@@ -640,7 +640,264 @@ class CinematicUISystem {
         // Update progress indicators
         this.updateProgressIndicators();
     }
-    
+
+    /**
+     * Handle special scene features like meditation, insights, special items
+     */
+    handleSpecialFeatures(sceneData) {
+        if (!sceneData) return;
+
+        // Handle meditation availability
+        if (sceneData.meditation && sceneData.meditation.available) {
+            this.enableMeditation(sceneData.meditation);
+        } else {
+            this.disableMeditation();
+        }
+
+        // Handle philosophical insights
+        if (sceneData.philosophicalGrowth) {
+            this.showPhilosophicalGrowth(sceneData.philosophicalGrowth);
+        }
+
+        // Handle special items
+        if (sceneData.specialItems && Array.isArray(sceneData.specialItems)) {
+            this.displaySpecialItems(sceneData.specialItems);
+        }
+
+        // Handle acquired knowledge
+        if (sceneData.acquiredKnowledge && Array.isArray(sceneData.acquiredKnowledge)) {
+            this.displayAcquiredKnowledge(sceneData.acquiredKnowledge);
+        }
+
+        // Handle nakshatra and gana specific choices
+        if (sceneData.nakshatraChoices || sceneData.ganaChoices) {
+            this.handleSpecialChoices(sceneData);
+        }
+
+        // Handle atmospheric changes
+        if (sceneData.atmosphericDescription) {
+            this.updateAtmosphere(sceneData.atmosphericDescription);
+        }
+
+        console.log('✨ Special scene features handled');
+    }
+
+    /**
+     * Enable meditation for current scene
+     */
+    enableMeditation(meditationData) {
+        const meditationBtn = document.getElementById('meditation-btn');
+        if (meditationBtn) {
+            meditationBtn.style.display = 'flex';
+            meditationBtn.title = meditationData.text || 'Enter meditation';
+
+            // Update meditation text
+            const meditationText = meditationBtn.querySelector('.meditation-text');
+            if (meditationText && meditationData.text) {
+                meditationText.textContent = 'Meditate';
+            }
+        }
+    }
+
+    /**
+     * Disable meditation for current scene
+     */
+    disableMeditation() {
+        const meditationBtn = document.getElementById('meditation-btn');
+        if (meditationBtn) {
+            meditationBtn.style.display = 'none';
+        }
+    }
+
+    /**
+     * Show philosophical growth insight
+     */
+    showPhilosophicalGrowth(growthData) {
+        if (!growthData.concept) return;
+
+        // Queue philosophical insight transition
+        this.queueTransition('philosophical_insight', {
+            concept: growthData.concept,
+            insight: growthData.insight,
+            effects: growthData.effects,
+            callback: () => {
+                // Apply growth effects
+                if (growthData.effects && this.gameFlow) {
+                    this.applyGrowthEffects(growthData.effects);
+                }
+            }
+        });
+    }
+
+    /**
+     * Apply growth effects to player
+     */
+    applyGrowthEffects(effects) {
+        if (!this.gameFlow) return;
+
+        // Apply philosophical advancement
+        if (effects.philosophical) {
+            Object.entries(effects.philosophical).forEach(([theme, advancement]) => {
+                if (typeof this.gameFlow.advancePhilosophicalUnderstanding === 'function') {
+                    this.gameFlow.advancePhilosophicalUnderstanding(theme, { text: advancement });
+                }
+            });
+        }
+
+        // Apply attribute increases
+        if (effects.attributes) {
+            Object.entries(effects.attributes).forEach(([attr, value]) => {
+                if (this.gameFlow.playerProfile.attributes[attr] !== undefined) {
+                    this.gameFlow.playerProfile.attributes[attr] += value;
+
+                    // Show growth notification
+                    this.showNotification(
+                        `${this.getAttributeName(attr)} increased by ${value}!`,
+                        'growth',
+                        2000
+                    );
+                }
+            });
+
+            // Update UI to reflect changes
+            this.updateCharacterDisplay();
+        }
+    }
+
+    /**
+     * Display special items found in scene
+     */
+    displaySpecialItems(items) {
+        items.forEach(item => {
+            // Check if item condition is met
+            if (item.condition && !this.checkItemCondition(item.condition)) {
+                return;
+            }
+
+            // Show item discovery notification
+            this.showNotification(
+                `✨ You discovered: ${item.name}`,
+                'success',
+                4000
+            );
+
+            // Add to player inventory if gameFlow available
+            if (this.gameFlow && typeof this.gameFlow.addSpecialItem === 'function') {
+                this.gameFlow.addSpecialItem(item);
+            }
+        });
+    }
+
+    /**
+     * Check if item condition is met
+     */
+    checkItemCondition(condition) {
+        // Simple condition checking - can be expanded
+        switch (condition) {
+            case 'earned_through_service':
+                return this.gameFlow?.playerProfile?.attributes?.compassion >= 3;
+            case 'wisdom_threshold':
+                return this.gameFlow?.playerProfile?.attributes?.wisdom >= 5;
+            case 'spiritual_insight_high':
+                return this.gameFlow?.playerProfile?.attributes?.spiritual_insight >= 4;
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Display acquired knowledge
+     */
+    displayAcquiredKnowledge(knowledge) {
+        knowledge.forEach(item => {
+            this.showNotification(
+                `📚 Knowledge gained: ${item}`,
+                'insight',
+                3000
+            );
+        });
+
+        // Add to player profile if gameFlow available
+        if (this.gameFlow && this.gameFlow.playerProfile) {
+            if (!this.gameFlow.playerProfile.acquiredKnowledge) {
+                this.gameFlow.playerProfile.acquiredKnowledge = [];
+            }
+            knowledge.forEach(item => {
+                if (!this.gameFlow.playerProfile.acquiredKnowledge.includes(item)) {
+                    this.gameFlow.playerProfile.acquiredKnowledge.push(item);
+                }
+            });
+        }
+    }
+
+    /**
+     * Handle special choices (nakshatra/gana specific)
+     */
+    handleSpecialChoices(sceneData) {
+        // This is handled in loadChoices, but we can add visual indicators here
+        if (sceneData.nakshatraChoices || sceneData.ganaChoices) {
+            // Add special indicator that player has unique options
+            const choicesHeader = this.uiElements.container.querySelector('.choices-header');
+            if (choicesHeader) {
+                const indicator = document.createElement('span');
+                indicator.className = 'special-choices-indicator';
+                indicator.innerHTML = ' ✨ <em>Your unique nature reveals special paths...</em>';
+                indicator.style.color = 'var(--color-primary)';
+                indicator.style.fontSize = '0.9rem';
+                indicator.style.marginLeft = '1rem';
+
+                // Remove existing indicator
+                const existing = choicesHeader.querySelector('.special-choices-indicator');
+                if (existing) existing.remove();
+
+                choicesHeader.appendChild(indicator);
+            }
+        }
+    }
+
+    /**
+     * Update atmospheric effects based on scene description
+     */
+    updateAtmosphere(description) {
+        // Simple atmospheric updates based on keywords in description
+        const atmosphericContainer = this.uiElements.container.querySelector('.cosmic-background');
+        if (!atmosphericContainer) return;
+
+        // Remove existing atmospheric classes
+        atmosphericContainer.classList.remove(
+            'atmosphere-tense', 'atmosphere-peaceful', 'atmosphere-sacred',
+            'atmosphere-mysterious', 'atmosphere-joyful'
+        );
+
+        // Add atmospheric class based on description content
+        const lowerDesc = description.toLowerCase();
+        if (lowerDesc.includes('tense') || lowerDesc.includes('tension')) {
+            atmosphericContainer.classList.add('atmosphere-tense');
+        } else if (lowerDesc.includes('peace') || lowerDesc.includes('calm')) {
+            atmosphericContainer.classList.add('atmosphere-peaceful');
+        } else if (lowerDesc.includes('sacred') || lowerDesc.includes('temple')) {
+            atmosphericContainer.classList.add('atmosphere-sacred');
+        } else if (lowerDesc.includes('mysterious') || lowerDesc.includes('ancient')) {
+            atmosphericContainer.classList.add('atmosphere-mysterious');
+        } else if (lowerDesc.includes('joy') || lowerDesc.includes('celebration')) {
+            atmosphericContainer.classList.add('atmosphere-joyful');
+        }
+    }
+
+    /**
+     * Get readable attribute name for notifications
+     */
+    getAttributeName(attr) {
+        const names = {
+            wisdom: 'Wisdom',
+            compassion: 'Compassion',
+            spiritual_insight: 'Spiritual Insight',
+            determination: 'Determination',
+            detachment: 'Detachment'
+        };
+        return names[attr] || attr.charAt(0).toUpperCase() + attr.slice(1);
+    }
+
     /**
      * Reveal scene content with beautiful animation
      */
