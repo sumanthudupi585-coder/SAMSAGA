@@ -1038,7 +1038,25 @@ window.ACT1_STORY_DATA = {
         "text": "Your journey through the trials of Dharmapura has transformed both the village and yourself. You have grown into your Nakshatra's full potential, embodying its unique qualities and powers. The village prospers under your guidance, becoming a beacon of harmony between cosmic forces and earthly life. Yet you sense that this is just the beginning of your saga—greater adventures await beyond the horizon, as the wheel of samsara continues to turn.",
         "choices": [
             { "text": "The End... For Now", "nextScene": "JOURNEY_START" }
+            "ACT1_ENDING": {
+    "title": "The First Trial Completed",
+    "text": "As you complete the final challenge, a sense of accomplishment washes over you. The village of Dharmapura seems brighter, its people more at peace. Yet, you sense that your journey has only just begun. A new path opens before you, leading to unknown challenges and greater mysteries.",
+    "choices": [
+        {
+            "id": "continue_to_act2",
+            "text": "Continue your journey...",
+            "nextAct": 2,
+            "effects": {
+                "karma": 10,
+                "dharmicProfile": {
+                    "moksha": 5
+                }
+            }
+        }
+    ]
+}
         ]
     }
 
 };
+
