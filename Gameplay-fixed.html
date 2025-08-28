@@ -1175,24 +1175,91 @@
             }
             
             initializeCharacter() {
-                // Extract character data from URL parameters (maintain compatibility)
+                // Extract character data from URL parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const nakshatraNum = urlParams.get('nakshatra');
-                
-                // Nakshatra data
+                const guna1 = urlParams.get('guna1');
+                const pada = urlParams.get('pada');
+                const guna3 = urlParams.get('guna3');
+
+                console.log('Loading character data:', { nakshatraNum, guna1, pada, guna3 });
+
+                // Complete Nakshatra data mapping
                 const nakshatraData = {
-                    12: { name: 'Uttara Phalguni', gana: 'Manushya', element: 'fire' },
-                    1: { name: 'Ashwini', gana: 'Deva', element: 'fire' },
-                    2: { name: 'Bharani', gana: 'Manushya', element: 'earth' },
-                    3: { name: 'Krittika', gana: 'Rakshasa', element: 'fire' }
+                    1: { name: 'Ashwini', gana: 'Deva', element: 'fire', shakti: 'To heal quickly' },
+                    2: { name: 'Bharani', gana: 'Manushya', element: 'earth', shakti: 'To renew and purify' },
+                    3: { name: 'Krittika', gana: 'Rakshasa', element: 'fire', shakti: 'To burn illusion' },
+                    4: { name: 'Rohini', gana: 'Manushya', element: 'earth', shakti: 'To make things grow' },
+                    5: { name: 'Mrigashira', gana: 'Deva', element: 'air', shakti: 'To find fulfillment' },
+                    6: { name: 'Ardra', gana: 'Manushya', element: 'water', shakti: 'To feel and act' },
+                    7: { name: 'Punarvasu', gana: 'Deva', element: 'air', shakti: 'To regenerate and recover' },
+                    8: { name: 'Pushya', gana: 'Deva', element: 'water', shakti: 'To create spiritual energy' },
+                    9: { name: 'Ashlesha', gana: 'Rakshasa', element: 'water', shakti: 'To poison and heal' },
+                    10: { name: 'Magha', gana: 'Rakshasa', element: 'fire', shakti: 'To leave the body' },
+                    11: { name: 'Purva Phalguni', gana: 'Manushya', element: 'fire', shakti: 'To find love and enjoyment' },
+                    12: { name: 'Uttara Phalguni', gana: 'Manushya', element: 'fire', shakti: 'To accumulate security' },
+                    13: { name: 'Hasta', gana: 'Manushya', element: 'fire', shakti: 'To manifest desires' },
+                    14: { name: 'Chitra', gana: 'Rakshasa', element: 'fire', shakti: 'To gather merit' },
+                    15: { name: 'Swati', gana: 'Deva', element: 'air', shakti: 'To scatter and disperse' },
+                    16: { name: 'Vishakha', gana: 'Rakshasa', element: 'fire', shakti: 'To achieve goals' },
+                    17: { name: 'Anuradha', gana: 'Deva', element: 'water', shakti: 'To worship and connect' },
+                    18: { name: 'Jyeshtha', gana: 'Rakshasa', element: 'air', shakti: 'To be eldest' },
+                    19: { name: 'Mula', gana: 'Rakshasa', element: 'air', shakti: 'To destroy' },
+                    20: { name: 'Purva Ashadha', gana: 'Manushya', element: 'water', shakti: 'To invigorate' },
+                    21: { name: 'Uttara Ashadha', gana: 'Manushya', element: 'water', shakti: 'To gain victory' },
+                    22: { name: 'Shravana', gana: 'Deva', element: 'air', shakti: 'To connect and link' },
+                    23: { name: 'Dhanishta', gana: 'Rakshasa', element: 'air', shakti: 'To give fame' },
+                    24: { name: 'Shatabhisha', gana: 'Rakshasa', element: 'air', shakti: 'To heal' },
+                    25: { name: 'Purva Bhadrapada', gana: 'Manushya', element: 'air', shakti: 'To raise up' },
+                    26: { name: 'Uttara Bhadrapada', gana: 'Manushya', element: 'air', shakti: 'To bring rain' },
+                    27: { name: 'Revati', gana: 'Deva', element: 'air', shakti: 'To nourish and protect' }
                 };
-                
+
+                // Initialize GameStateManager with character data
                 if (nakshatraNum && nakshatraData[nakshatraNum]) {
                     const nakshatra = nakshatraData[nakshatraNum];
+
+                    // Set character data in GameStateManager
+                    window.gameStateManager.playerProfile = {
+                        nakshatra: nakshatra.name,
+                        gana: nakshatra.gana,
+                        shakti: nakshatra.shakti,
+                        gunas: {
+                            sattva: guna1 === 'Sattva' ? 2 : (guna3 === 'Sattva' ? 1 : 0),
+                            rajas: guna1 === 'Rajas' ? 2 : (guna3 === 'Rajas' ? 1 : 0),
+                            tamas: guna1 === 'Tamas' ? 2 : (guna3 === 'Tamas' ? 1 : 0)
+                        },
+                        pada: pada || 'Dharma',
+                        avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                    };
+
+                    // Initialize game state for ACT 1
+                    window.gameStateManager.playerState.currentAct = 1;
+                    window.gameStateManager.playerState.currentSceneId = 'JOURNEY_START';
+
+                    // Save the character data
+                    window.gameStateManager.saveGame();
+
+                    // Update display
                     document.getElementById('character-name').textContent = nakshatra.name;
                     document.getElementById('character-gana').textContent = nakshatra.gana + ' Gana';
+
+                    console.log('Character initialized:', window.gameStateManager.playerProfile);
+                } else {
+                    console.warn('Invalid or missing character data in URL');
+                    // Set default character data
+                    window.gameStateManager.playerProfile = {
+                        nakshatra: 'Uttara Phalguni',
+                        gana: 'Manushya',
+                        shakti: 'To accumulate security',
+                        gunas: { sattva: 1, rajas: 2, tamas: 1 },
+                        pada: 'Dharma',
+                        avatar: 'images/avatars/manushya.png'
+                    };
+                    window.gameStateManager.playerState.currentAct = 1;
+                    window.gameStateManager.playerState.currentSceneId = 'JOURNEY_START';
                 }
-                
+
                 this.updateDisplay();
                 this.initializeStage1();
             }
