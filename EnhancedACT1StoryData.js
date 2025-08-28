@@ -94,7 +94,7 @@ const ENHANCED_ACT1_STORY_DATA = {
         "choices": [
             {
                 "id": "analyze_patterns",
-                "text": "��� Analyze the patterns you observe to understand the deeper issue",
+                "text": "🔍 Analyze the patterns you observe to understand the deeper issue",
                 "nextScene": "PATTERN_ANALYSIS",
                 "philosophicalTheme": "understanding",
                 "effects": {
@@ -531,10 +531,16 @@ const ENHANCED_ACT1_STORY_DATA = {
         "text": `As you prepare to leave Dharmapura, you reflect on the profound transformation that has occurred—not just in the village, but within yourself. You arrived as a newly awakened being, uncertain of your purpose. You leave as one who has begun to understand the deeper patterns of existence.
         
         **What you have learned:**
-        ${window.ENHANCED_ACT1_STORY_DATA?.getPhilosophicalSummary?.() || "• Understanding of integration between sacred and mundane"}
+        • Understanding of integration between sacred and mundane
+        • Experience with compassionate action and deep listening
+        • Knowledge of how spiritual disconnection manifests in communities
+        • Practice with unity consciousness and healing meditation
         
         **Your character has grown:**
-        ${window.ENHANCED_ACT1_STORY_DATA?.getAttributeSummary?.() || "• Wisdom: Enhanced through careful observation and learning"}
+        • Wisdom: Enhanced through careful observation and learning
+        • Compassion: Deepened through service to others
+        • Spiritual Insight: Expanded through sacred practices
+        • Determination: Strengthened through overcoming challenges
         
         The village gathers to bid you farewell, but this isn't an ending—it's a graduation. You have completed your first great teaching, learned your first profound lesson about the nature of reality.
         
