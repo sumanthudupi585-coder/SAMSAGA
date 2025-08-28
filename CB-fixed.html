@@ -124,16 +124,43 @@
         function updateProgressDots(e){const t='result-screen'===e?6:parseInt(e.replace('q',''))||0,n=document.querySelectorAll('.progress-dot');n.forEach((e,o)=>{o+1<t?(e.classList.add('completed'),e.classList.remove('active')):o+1===t?(e.classList.add('active'),e.classList.remove('completed')):e.classList.remove('active','completed')}),t>n.length&&n.forEach(e=>e.classList.add('completed'))}
         function populateShaktiQuestion(){const e=`${userAnswers.gana}-${userAnswers.guna1}`,t=shaktiQuestions[e],n=document.getElementById('q3-options');if(n.innerHTML='',t)for(const e of t){const t=document.createElement('button');t.className='option',t.dataset.value=e.result,t.innerHTML=`<div class="option-icon"><i class="fas fa-star-of-life"></i></div><div class="option-content"><div class="option-description">${e.text}</div></div>`,n.appendChild(t)}}
         function showResult(){
-            let e=parseInt(userAnswers.nakshatraNum,10);
-            if(Number.isNaN(e) || !nakshatraData[e]){
-                const key=`${userAnswers.gana}-${userAnswers.guna1}`;
-                const opts=shaktiQuestions && shaktiQuestions[key];
-                if(Array.isArray(opts) && opts.length){
-                    e=parseInt(opts[0].result,10);
-                    userAnswers.nakshatraNum=String(e);
+            // Ensure userAnswers.nakshatraNum exists and is valid
+            if (!userAnswers.nakshatraNum || userAnswers.nakshatraNum === 'undefined' || userAnswers.nakshatraNum === 'null') {
+                console.warn('No nakshatra number provided, attempting to derive from user answers');
+                const key = `${userAnswers.gana}-${userAnswers.guna1}`;
+                const opts = shaktiQuestions && shaktiQuestions[key];
+                if (Array.isArray(opts) && opts.length > 0) {
+                    userAnswers.nakshatraNum = String(opts[0].result);
+                    console.log('Set nakshatra number from fallback:', userAnswers.nakshatraNum);
+                } else {
+                    console.error('Unable to determine nakshatra from user answers. Key:', key);
+                    alert('Error: Unable to determine your Nakshatra. Please restart the oracle.');
+                    return;
                 }
             }
-            if(Number.isNaN(e) || !nakshatraData[e]){ console.error('Invalid nakshatra number:', e); return; }
+
+            let e = parseInt(userAnswers.nakshatraNum, 10);
+
+            // Additional validation
+            if (Number.isNaN(e) || e < 1 || e > 27 || !nakshatraData[e]) {
+                console.warn('Invalid nakshatra number detected:', userAnswers.nakshatraNum, 'Parsed as:', e);
+
+                // Try fallback approach
+                const key = `${userAnswers.gana}-${userAnswers.guna1}`;
+                const opts = shaktiQuestions && shaktiQuestions[key];
+                if (Array.isArray(opts) && opts.length > 0) {
+                    e = parseInt(opts[0].result, 10);
+                    userAnswers.nakshatraNum = String(e);
+                    console.log('Corrected nakshatra number using fallback:', e);
+                }
+            }
+
+            // Final validation
+            if (Number.isNaN(e) || e < 1 || e > 27 || !nakshatraData[e]) {
+                console.error('Invalid nakshatra number after all attempts:', e);
+                alert('Error: Invalid Nakshatra number. Please restart the oracle.');
+                return;
+            }
             const t=nakshatraData[e],n=spiritualArchetypes[e];
             try{
                 document.getElementById('result-name').textContent=t.name,
