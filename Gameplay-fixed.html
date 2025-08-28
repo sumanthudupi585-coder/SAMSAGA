@@ -1755,10 +1755,13 @@
                 console.log('🌟 Samsara Saga Master\'s Trial initialized successfully!');
 
                 // Ensure all elements are properly initialized
-                if (!document.getElementById('freq-1') || !document.getElementById('feedback-message')) {
-                    console.error('Critical UI elements missing');
-                    showNotification('Game initialization incomplete. Please refresh the page.', 'error');
-                    return;
+                const criticalElements = ['freq-1', 'freq-2', 'freq-3', 'feedback-message', 'notification-container'];
+                const missingElements = criticalElements.filter(id => !document.getElementById(id));
+
+                if (missingElements.length > 0) {
+                    console.error('Critical UI elements missing:', missingElements);
+                    showNotification('Game initialization incomplete. Some elements are missing.', 'error');
+                    // Continue anyway, but with warnings
                 }
 
                 showNotification('🌟 Master\'s Trial Ready! Begin your cosmic journey...', 'success');
