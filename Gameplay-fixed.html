@@ -859,6 +859,20 @@
                 puzzleEl.innerHTML = '';
                 const puzzle = storyEngine.getCurrentPuzzle();
                 if (puzzle && puzzle.puzzleId) {
+                    // Skip puzzles already completed to avoid repeat and flicker
+                    if (
+                        (puzzle.puzzleId === 'BanyanTreeHarmony' && gsm.worldState.banyan_balanced) ||
+                        (puzzle.puzzleId === 'BarrierOfNegativity' && gsm.worldState.river_purified) ||
+                        (gsm.worldState[`${puzzle.puzzleId}_completed`] === true)
+                    ) {
+                        const sol = (puzzle.solutions || []).find(s => s.successScene);
+                        if (sol && sol.successScene) {
+                            gsm.playerState.currentSceneId = sol.successScene;
+                            renderScene();
+                            return;
+                        }
+                    }
+
                     const box = document.createElement('div');
                     box.className = 'puzzle-box';
                     const title = document.createElement('div');
@@ -870,42 +884,67 @@
                     box.appendChild(desc);
 
                     if (puzzle.puzzleId === 'BarrierOfNegativity') {
-                        const hasLotus = !!gsm.worldState.has_lotus_petal;
                         const info = document.createElement('p');
-                        info.textContent = hasLotus ? 'You hold a Lotus Petal imbued with purity.' : 'You feel a sorrowful barrier. Perhaps a pure item could dissolve it...';
+                        info.textContent = 'Drag a pure item from your inventory onto the barrier.';
                         box.appendChild(info);
 
-                        const actions = document.createElement('div');
-                        actions.className = 'puzzle-action-row';
+                        const dndWrap = document.createElement('div');
+                        dndWrap.className = 'puzzle-action-row';
 
-                        const touchBtn = document.createElement('button');
-                        touchBtn.className = 'menu-button';
-                        touchBtn.innerHTML = '<i class="fas fa-hand"></i> Touch Barrier';
-                        touchBtn.addEventListener('click', () => {
-                            if (hasLotus) return; // no failure if you already can solve
-                            if (puzzle.defaultFailure && puzzle.defaultFailure.effects && typeof puzzle.defaultFailure.effects.karma === 'number') {
-                                gsm.updateKarma(puzzle.defaultFailure.effects.karma);
-                            }
-                            // brief feedback
-                            showNotification('The barrier repels you with despair.', 'error');
+                        const drop = document.createElement('div');
+                        drop.id = 'barrier-drop-zone';
+                        drop.className = 'drop-zone';
+                        drop.style.minHeight = '140px';
+                        drop.style.display = 'flex';
+                        drop.style.alignItems = 'center';
+                        drop.style.justifyContent = 'center';
+                        drop.style.border = '1px dashed rgba(224,150,88,0.5)';
+                        drop.innerHTML = '<i class="fas fa-shield-virus"></i> Drop here';
+
+                        const inv = document.createElement('div');
+                        inv.className = 'inventory-source';
+                        inv.innerHTML = '<h4>Your Inventory</h4>';
+
+                        const invList = document.createElement('div');
+                        const items = new Set(gsm.playerState.inventory || []);
+                        if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
+                        items.forEach(name => {
+                            const el = document.createElement('div');
+                            el.className = 'draggable-item';
+                            el.draggable = true;
+                            el.dataset.itemName = name;
+                            el.textContent = name;
+                            el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', name));
+                            invList.appendChild(el);
                         });
-                        actions.appendChild(touchBtn);
+                        inv.appendChild(invList);
 
-                        const useBtn = document.createElement('button');
-                        useBtn.className = 'menu-button';
-                        useBtn.innerHTML = '<i class="fas fa-seedling"></i> Use Lotus Petal';
-                        useBtn.disabled = !hasLotus;
-                        useBtn.title = hasLotus ? '' : 'Find something pure along the river...';
-                        useBtn.addEventListener('click', () => {
-                            const sol = (puzzle.solutions || []).find(s => s.successScene);
-                            if (sol && sol.successScene) {
-                                gsm.playerState.currentSceneId = sol.successScene;
+                        dndWrap.appendChild(drop);
+                        dndWrap.appendChild(inv);
+                        box.appendChild(dndWrap);
+
+                        const validItems = (window.PUZZLES && window.PUZZLES.BarrierOfNegativity && window.PUZZLES.BarrierOfNegativity.mechanics && window.PUZZLES.BarrierOfNegativity.mechanics.solution && window.PUZZLES.BarrierOfNegativity.mechanics.solution.validItems) || ['Lotus Petal'];
+
+                        drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.boxShadow = '0 0 15px rgba(224,150,88,0.6)'; });
+                        drop.addEventListener('dragleave', () => { drop.style.boxShadow = 'none'; });
+                        drop.addEventListener('drop', (e) => {
+                            e.preventDefault();
+                            drop.style.boxShadow = 'none';
+                            const itemName = e.dataTransfer.getData('text/plain');
+                            if (validItems.includes(itemName)) {
+                                const sol = (puzzle.solutions || []).find(s => s.successScene);
+                                const next = (sol && sol.successScene) || 'PURIFY_CRYSTAL_SUCCESS';
+                                gsm.playerState.currentSceneId = next;
                                 renderScene();
+                            } else {
+                                if (puzzle.defaultFailure && puzzle.defaultFailure.effects && typeof puzzle.defaultFailure.effects.karma === 'number') {
+                                    gsm.updateKarma(puzzle.defaultFailure.effects.karma);
+                                }
+                                drop.classList.add('shake');
+                                setTimeout(() => drop.classList.remove('shake'), 600);
+                                showNotification('The barrier repels impure intent.', 'error');
                             }
                         });
-                        actions.appendChild(useBtn);
-
-                        box.appendChild(actions);
                     }
 
                     if (puzzle.puzzleId === 'BanyanTreeHarmony') {

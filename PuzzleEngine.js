@@ -238,14 +238,42 @@ class PuzzleEngine {
                 if (updateResult.feedback) {
                     // e.g., UIController.showNotification(updateResult.feedback);
                 }
-                // Check for failure conditions (e.g., max attempts)
-                if (this.activePuzzle.activeState.attempts >= this.activePuzzle.puzzleData.mechanics.maxAttempts) {
+                // Check for failure conditions when a maxAttempts is defined
+                const maxAttempts = this.activePuzzle.puzzleData?.mechanics?.maxAttempts;
+                if (typeof maxAttempts === 'number' && this.activePuzzle.activeState.attempts >= maxAttempts) {
                     this.processPuzzleFailure();
                 }
             }
         }
     }
-    
+
+    /**
+     * Convenience API used by UI to evaluate an attempt in one call.
+     * Ensures a strategy is started, applies interaction, and returns whether solved.
+     * @param {string} puzzleId
+     * @param {object} interactionData
+     * @returns {boolean} true if solved, false otherwise
+     */
+    evaluatePuzzleAttempt(puzzleId, interactionData) {
+        if (!this.activePuzzle || this.activePuzzle?.puzzleData?.id !== puzzleId) {
+            this.startPuzzle(puzzleId);
+        }
+        if (!this.activePuzzle) return false;
+
+        // Allow bulk state updates from UI (e.g., ringRotations)
+        if (interactionData && interactionData.ringRotations && this.activePuzzle.activeState?.ringRotations) {
+            this.activePuzzle.activeState.ringRotations = { ...interactionData.ringRotations };
+        } else {
+            this.handleInteraction(interactionData || {});
+        }
+
+        if (this.activePuzzle && this.activePuzzle.isSolved()) {
+            this.processPuzzleSuccess();
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Processes the effects and state changes for a successful puzzle.
      */
@@ -255,19 +283,36 @@ class PuzzleEngine {
 
         // Apply rewards
         if (puzzleData.rewards) {
-            if (puzzleData.rewards.item) this.gameStateManager.addToInventory(puzzleData.rewards.item);
-            if (puzzleData.rewards.ability) this.gameStateManager.addAbility(puzzleData.rewards.ability);
-            // More complex reward logic can be added here
+            if (puzzleData.rewards.item) {
+                try { this.gameStateManager.addToInventory(puzzleData.rewards.item); } catch (_) {}
+            }
+            if (puzzleData.rewards.ability) {
+                try {
+                    const prog = this.gameStateManager.playerState.progression;
+                    if (prog && Array.isArray(prog.abilities) && !prog.abilities.includes(puzzleData.rewards.ability)) {
+                        prog.abilities.push(puzzleData.rewards.ability);
+                    }
+                } catch (_) {}
+            }
         }
 
         // Update world state to mark puzzle as completed
         this.gameStateManager.updateState(`${puzzleData.id}_completed`, true);
-        
-        // Find the success scene from the story data and transition
+
+        // Determine success scene
+        let nextSceneId = null;
         const currentScene = this.storyEngine.getCurrentScene();
-        const successSolution = currentScene.puzzle.solutions.find(s => s.successScene); // Simplified assumption
-        if (successSolution && successSolution.successScene) {
-            this.storyEngine.processChoice({ nextScene: successSolution.successScene });
+        if (currentScene && currentScene.puzzle && Array.isArray(currentScene.puzzle.solutions)) {
+            const sol = currentScene.puzzle.solutions.find(s => s.successScene);
+            if (sol && sol.successScene) nextSceneId = sol.successScene;
+        }
+        if (!nextSceneId && puzzleData.nextSceneOnSuccess) {
+            nextSceneId = puzzleData.nextSceneOnSuccess;
+        }
+
+        if (nextSceneId) {
+            // Transition by directly setting the scene id
+            this.gameStateManager.playerState.currentSceneId = nextSceneId;
         }
 
         this.endPuzzle();
@@ -281,10 +326,13 @@ class PuzzleEngine {
         console.log(`Puzzle ${puzzleData.id} failed.`);
 
         // Apply failure effects
-        const failureInfo = this.storyEngine.getCurrentScene().puzzle.defaultFailure;
+        const scene = this.storyEngine.getCurrentScene();
+        const failureInfo = scene && scene.puzzle ? scene.puzzle.defaultFailure : null;
         if (failureInfo) {
             if (failureInfo.effects) this.storyEngine.processEffects(failureInfo.effects);
-            if (failureInfo.nextScene) this.storyEngine.processChoice({ nextScene: failureInfo.nextScene });
+            if (failureInfo.nextScene) {
+                this.gameStateManager.playerState.currentSceneId = failureInfo.nextScene;
+            }
         }
 
         this.endPuzzle();

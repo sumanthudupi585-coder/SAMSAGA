@@ -549,6 +549,11 @@ resumeGame() {
         puzzleHeader.innerHTML = `<h3>${puzzleData.title}</h3><p class="puzzle-description">${puzzleData.description}</p>`;
         this.elements.puzzleContainer.appendChild(puzzleHeader);
 
+        // Ensure engine has an active strategy instance
+        if (this.puzzleEngine && puzzleData.id) {
+            this.puzzleEngine.startPuzzle(puzzleData.id);
+        }
+
         switch (puzzleData.visualType) {
             case 'MandalaWheel':
                 this.renderMandalaWheel(puzzleData);
@@ -594,20 +599,49 @@ resumeGame() {
         this.elements.puzzleContainer.appendChild(puzzleArea);
         
         const ringStates = {};
+        const containerEl = this.elements.puzzleContainer.querySelector('.mandala-container');
+        const getCenter = () => {
+            const rect = containerEl.getBoundingClientRect();
+            return { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
+        };
+        const angleAt = (x, y) => {
+            const { cx, cy } = getCenter();
+            const rad = Math.atan2(y - cy, x - cx);
+            let deg = (rad * 180) / Math.PI + 90; // 0 at top
+            if (deg < 0) deg += 360;
+            return deg % 360;
+        };
+
         rings.forEach(ring => {
             const ringElement = document.getElementById(ring.id);
             ringStates[ring.id] = ring.initialRotation;
-            ringElement.addEventListener('click', () => {
-                ringStates[ring.id] = (ringStates[ring.id] + 15) % 360;
+
+            let dragging = false;
+            const onPointerDown = (e) => {
+                dragging = true;
+                ringElement.setPointerCapture(e.pointerId);
+            };
+            const onPointerMove = (e) => {
+                if (!dragging) return;
+                const deg = angleAt(e.clientX, e.clientY);
+                ringStates[ring.id] = Math.round(deg);
                 ringElement.style.transform = `rotate(${ringStates[ring.id]}deg)`;
-            });
+            };
+            const onPointerUp = (e) => {
+                dragging = false;
+                ringElement.releasePointerCapture(e.pointerId);
+            };
+            ringElement.addEventListener('pointerdown', onPointerDown);
+            ringElement.addEventListener('pointermove', onPointerMove);
+            ringElement.addEventListener('pointerup', onPointerUp);
+            ringElement.addEventListener('pointercancel', onPointerUp);
         });
 
         document.getElementById('check-mandala-btn').addEventListener('click', () => {
             const result = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { ringRotations: ringStates });
             if (result) {
                 this.showNotification('The mandala aligns in perfect harmony!', 'success');
-                this.render(); 
+                this.render();
             } else {
                 this.showNotification('The energies are not yet balanced.', 'error');
             }

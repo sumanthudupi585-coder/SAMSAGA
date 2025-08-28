@@ -123,6 +123,7 @@
           let fallback = null;
           if (/^RIVER_/i.test(target)) fallback = 'FOLLOW_UPSTREAM';
           else if (/^BANYAN_/i.test(target)) fallback = 'DHARMAPURA_SQUARE';
+          else if (/^TAX_/i.test(target)) fallback = 'TAX_RESOLUTION';
           else if (target === 'TEMPLE_PUZZLE') fallback = 'TEMPLE_ENTRANCE';
           else fallback = 'RIVERBANK';
           this.gameStateManager.playerState.currentSceneId = this.sceneExists(fallback) ? fallback : this.getFirstSceneIdForAct(this.gameStateManager.playerState.currentAct);
