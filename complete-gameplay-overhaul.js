@@ -486,6 +486,177 @@ class GameplayOverhaulEngine {
         // Initialize the enhanced interface
         this.populateEnhancedInterface();
     }
+
+    addTraditionalPlayerAttributesCSS() {
+        // Add CSS styles for traditional player attributes
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Traditional Player Attributes Styles */
+            .character-summary {
+                text-align: center;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(224, 150, 88, 0.1);
+                margin-bottom: 1.5rem;
+            }
+
+            .character-symbol {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 1rem;
+                filter: drop-shadow(0 0 15px var(--color-shadow));
+                animation: float 4s ease-in-out infinite;
+            }
+
+            .character-name {
+                font-family: var(--font-title);
+                font-size: 1.8rem;
+                color: var(--color-primary-glow);
+                margin: 0;
+            }
+
+            .panel-section {
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(224, 150, 88, 0.1);
+                margin-bottom: 1.5rem;
+            }
+
+            .panel-section:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            .panel-title {
+                font-family: var(--font-title);
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--color-primary);
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+
+            .stats-grid {
+                display: grid;
+                gap: 0.75rem;
+            }
+
+            .stat-item {
+                display: grid;
+                grid-template-columns: 50px 1fr 30px;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .stat-label {
+                color: var(--color-text-muted);
+                font-size: 0.85rem;
+            }
+
+            .stat-value {
+                text-align: right;
+                font-weight: bold;
+                color: var(--color-text);
+            }
+
+            .stat-bar {
+                height: 8px;
+                background: rgba(0,0,0,0.3);
+                border-radius: 4px;
+                overflow: hidden;
+                border: 1px solid rgba(224, 150, 88, 0.2);
+            }
+
+            .stat-bar > div {
+                height: 100%;
+                border-radius: 4px;
+                transition: width 0.5s ease-in-out;
+                box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+            }
+
+            .karma-bar > div {
+                background: linear-gradient(90deg, #bca06a, #d9c69a);
+            }
+
+            .sattva-bar > div {
+                background: linear-gradient(90deg, #63b4d1, #9fd2e4);
+            }
+
+            .rajas-bar > div {
+                background: linear-gradient(90deg, #d96c47, #f09b7c);
+            }
+
+            .tamas-bar > div {
+                background: linear-gradient(90deg, #5c527f, #8a80a8);
+            }
+
+            .element-display {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1.2rem;
+                text-transform: capitalize;
+            }
+
+            .element-icon {
+                font-size: 2rem;
+            }
+
+            .element-earth { color: #8c6a46; }
+            .element-water { color: #5c8b9c; }
+            .element-fire { color: #d96c47; }
+            .element-air { color: #a9b7c0; }
+            .element-ether { color: #8c6da6; }
+
+            #inventory-list {
+                list-style: none;
+                text-align: center;
+                min-height: 40px;
+                font-size: 0.9rem;
+            }
+
+            #inventory-list li {
+                padding: 0.25rem 0;
+                color: var(--color-text);
+            }
+
+            .inventory-empty {
+                color: var(--color-text-muted);
+                font-style: italic;
+            }
+
+            .abilities-title {
+                font-family: var(--font-title);
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--color-primary);
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+
+            /* Float animation for character symbol */
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-8px); }
+            }
+
+            /* Karma animation effects */
+            .karma-increase { animation: karma-flash-green 1s; }
+            .karma-decrease { animation: karma-flash-red 1s; }
+
+            @keyframes karma-flash-green {
+                50% { color: #63b4d1; transform: scale(1.1); }
+            }
+
+            @keyframes karma-flash-red {
+                50% { color: #d96c47; transform: scale(1.1); }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
     
     initializeExplorationSystem() {
         // Create escape room style exploration mechanics
