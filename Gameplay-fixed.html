@@ -16,6 +16,7 @@
     
     <!-- Link to the external CSS files -->
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="atmospheric-ui-system.css">
     <link rel="stylesheet" href="fixed-banyan-puzzle.css">
 
     <!-- Data files first -->
@@ -35,7 +36,10 @@
     <script src="AudioManager.js"></script>
     <script src="UIController.js"></script>
     <script src="VisualEffects.js"></script>
-    <script src="fixed-banyan-puzzle.js">
+    <script src="adventure-game-engine.js"></script>
+    <script src="enhanced-puzzle-systems.js"></script>
+    <script src="complete-gameplay-overhaul.js"></script>
+    <script src="fixed-banyan-puzzle.js"></script>
     <script src="navigation.js"></script>
 
 </head>
@@ -806,8 +810,13 @@
                 }, 1000);
             });
 
-            // Initialize story engine-driven gameplay
+            // Initialize enhanced adventure gameplay system
             const gsm = window.gameStateManager;
+
+            // Initialize the complete gameplay overhaul
+            const gameplayOverhaul = initializeCompleteGameplayOverhaul(gsm);
+
+            // Keep original story engine for compatibility
             const storyEngine = new StoryEngine(gsm);
             const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
 
@@ -886,85 +895,94 @@
                     box.appendChild(desc);
 
                     if (puzzle.puzzleId === 'BarrierOfNegativity') {
-                        const info = document.createElement('p');
-                        info.textContent = 'Drag a pure item from your inventory onto the barrier.';
-                        box.appendChild(info);
+                        // Use the enhanced psychological transformation puzzle
+                        box.innerHTML = '';
 
-                        const dndWrap = document.createElement('div');
-                        dndWrap.className = 'puzzle-action-row';
+                        // Check if enhanced overhaul is active
+                        if (window.gameplayOverhaul) {
+                            window.gameplayOverhaul.loadEnhancedPuzzle('BarrierOfNegativity');
+                        } else {
+                            // Fallback to simplified drag-and-drop version
+                            const info = document.createElement('p');
+                            info.textContent = 'Drag a pure item from your inventory onto the barrier.';
+                            box.appendChild(info);
 
-                        const drop = document.createElement('div');
-                        drop.id = 'barrier-drop-zone';
-                        drop.className = 'drop-zone';
-                        drop.style.minHeight = '140px';
-                        drop.style.display = 'flex';
-                        drop.style.alignItems = 'center';
-                        drop.style.justifyContent = 'center';
-                        drop.style.border = '1px dashed rgba(224,150,88,0.5)';
-                        drop.innerHTML = '<i class="fas fa-shield-virus"></i> Drop here';
+                            const dndWrap = document.createElement('div');
+                            dndWrap.className = 'puzzle-action-row';
 
-                        const inv = document.createElement('div');
-                        inv.className = 'inventory-source';
-                        inv.innerHTML = '<h4>Your Inventory</h4>';
+                            const drop = document.createElement('div');
+                            drop.id = 'barrier-drop-zone';
+                            drop.className = 'drop-zone';
+                            drop.style.minHeight = '140px';
+                            drop.style.display = 'flex';
+                            drop.style.alignItems = 'center';
+                            drop.style.justifyContent = 'center';
+                            drop.style.border = '1px dashed rgba(224,150,88,0.5)';
+                            drop.innerHTML = '<i class="fas fa-shield-virus"></i> Drop here';
 
-                        const invList = document.createElement('div');
-                        const items = new Set(gsm.playerState.inventory || []);
-                        if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
-                        items.forEach(name => {
-                            const el = document.createElement('div');
-                            el.className = 'draggable-item';
-                            el.draggable = true;
-                            el.dataset.itemName = name;
-                            el.textContent = name;
-                            el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', name));
-                            invList.appendChild(el);
-                        });
-                        inv.appendChild(invList);
+                            const inv = document.createElement('div');
+                            inv.className = 'inventory-source';
+                            inv.innerHTML = '<h4>Your Inventory</h4>';
 
-                        dndWrap.appendChild(drop);
-                        dndWrap.appendChild(inv);
-                        box.appendChild(dndWrap);
+                            const invList = document.createElement('div');
+                            const items = new Set(gsm.playerState.inventory || []);
+                            if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
+                            items.forEach(name => {
+                                const el = document.createElement('div');
+                                el.className = 'draggable-item';
+                                el.draggable = true;
+                                el.dataset.itemName = name;
+                                el.textContent = name;
+                                el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', name));
+                                invList.appendChild(el);
+                            });
+                            inv.appendChild(invList);
 
-                        const validItems = (window.PUZZLES && window.PUZZLES.BarrierOfNegativity && window.PUZZLES.BarrierOfNegativity.mechanics && window.PUZZLES.BarrierOfNegativity.mechanics.solution && window.PUZZLES.BarrierOfNegativity.mechanics.solution.validItems) || ['Lotus Petal'];
+                            dndWrap.appendChild(drop);
+                            dndWrap.appendChild(inv);
+                            box.appendChild(dndWrap);
 
-                        drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.boxShadow = '0 0 15px rgba(224,150,88,0.6)'; });
-                        drop.addEventListener('dragleave', () => { drop.style.boxShadow = 'none'; });
-                        drop.addEventListener('drop', (e) => {
-                            e.preventDefault();
-                            drop.style.boxShadow = 'none';
-                            const itemName = e.dataTransfer.getData('text/plain');
-                            if (validItems.includes(itemName)) {
-                                const sol = (puzzle.solutions || []).find(s => s.successScene);
-                                const next = (sol && sol.successScene) || 'PURIFY_CRYSTAL_SUCCESS';
-                                gsm.playerState.currentSceneId = next;
-                                renderScene();
-                            } else {
-                                if (puzzle.defaultFailure && puzzle.defaultFailure.effects && typeof puzzle.defaultFailure.effects.karma === 'number') {
-                                    gsm.updateKarma(puzzle.defaultFailure.effects.karma);
+                            const validItems = ['Lotus Petal'];
+
+                            drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.boxShadow = '0 0 15px rgba(224,150,88,0.6)'; });
+                            drop.addEventListener('dragleave', () => { drop.style.boxShadow = 'none'; });
+                            drop.addEventListener('drop', (e) => {
+                                e.preventDefault();
+                                drop.style.boxShadow = 'none';
+                                const itemName = e.dataTransfer.getData('text/plain');
+                                if (validItems.includes(itemName)) {
+                                    const sol = (puzzle.solutions || []).find(s => s.successScene);
+                                    const next = (sol && sol.successScene) || 'PURIFY_CRYSTAL_SUCCESS';
+                                    gsm.playerState.currentSceneId = next;
+                                    renderScene();
+                                } else {
+                                    drop.classList.add('shake');
+                                    setTimeout(() => drop.classList.remove('shake'), 600);
+                                    showNotification('The barrier repels impure intent.', 'error');
                                 }
-                                drop.classList.add('shake');
-                                setTimeout(() => drop.classList.remove('shake'), 600);
-                                showNotification('The barrier repels impure intent.', 'error');
-                            }
-                        });
+                            });
+                        }
                     }
 
                     if (puzzle.puzzleId === 'BanyanTreeHarmony') {
-                        // Use the fixed interactive puzzle with intuitive physics and clear visual communication
+                        // Use the enhanced multi-stage puzzle with deep complexity
                         box.innerHTML = '';
 
-                        const fixedPuzzle = new window.FixedBanyanTreeHarmony(
-                            box,
-                            gsm,
-                            () => {
-                                // Success callback
-                                gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
-                                renderScene();
-                            }
-                        );
-
-                        // Store reference for cleanup if needed
-                        window.currentBanyanPuzzle = fixedPuzzle;
+                        // Check if enhanced overhaul is active
+                        if (window.gameplayOverhaul) {
+                            window.gameplayOverhaul.loadEnhancedPuzzle('BanyanTreeHarmony');
+                        } else {
+                            // Fallback to fixed puzzle
+                            const fixedPuzzle = new window.FixedBanyanTreeHarmony(
+                                box,
+                                gsm,
+                                () => {
+                                    gsm.playerState.currentSceneId = 'BANYAN_HARMONY_SUCCESS';
+                                    renderScene();
+                                }
+                            );
+                            window.currentBanyanPuzzle = fixedPuzzle;
+                        }
                     }
 
                     puzzleEl.appendChild(box);
