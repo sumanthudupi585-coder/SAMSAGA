@@ -896,21 +896,30 @@ class SpiritualAdventureEngine {
     }
     
     loadEnhancedGameState() {
-        if (this.gameStateManager && 
-            this.gameStateManager.worldState && 
+        if (this.gameStateManager &&
+            this.gameStateManager.worldState &&
             this.gameStateManager.worldState.enhancedAdventureState) {
-            
+
             const state = this.gameStateManager.worldState.enhancedAdventureState;
-            
+
             this.characterAbilities = state.characterAbilities || this.characterAbilities;
             this.discoveries = new Set(state.discoveries || []);
             this.mysteryClues = new Map(Object.entries(state.mysteryClues || {}));
             this.philosophicalInsights = state.philosophicalInsights || [];
             this.interactionHistory = state.interactionHistory || [];
-            
+
+            // Restore narrative progression
+            if (state.narrativeProgression) {
+                this.narrativeProgression = {
+                    ...state.narrativeProgression,
+                    unlockedNarratives: new Set(state.narrativeProgression.unlockedNarratives || []),
+                    branchingPaths: new Map(Object.entries(state.narrativeProgression.branchingPaths || {}))
+                };
+            }
+
             // Restore unlocked mechanics
             this.restoreUnlockedMechanics();
-            
+
             // Restore atmospheric state
             this.restoreAtmosphericState(state.atmosphericState);
         }
