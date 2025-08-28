@@ -819,6 +819,15 @@
                 const choicesEl = document.getElementById('choices-container');
                 const puzzleEl = document.getElementById('puzzle-container');
 
+                // Apply one-time world state triggers on entering a scene
+                if (scene && scene.worldStateTriggers) {
+                    const appliedKey = `scene_applied_${gsm.playerState.currentSceneId}`;
+                    if (!gsm.worldState[appliedKey]) {
+                        Object.entries(scene.worldStateTriggers).forEach(([k, v]) => gsm.updateState(k, v));
+                        gsm.worldState[appliedKey] = true;
+                    }
+                }
+
                 // Fallback if data not ready
                 if (!scene) {
                     // Try resetting to Act 1 start
@@ -906,6 +915,12 @@
                 // Render choices
                 const choices = storyEngine.getAvailableChoices();
                 choicesEl.innerHTML = '';
+
+                // Special unlock: inner sanctum becomes available when temple flags are met
+                if (gsm.playerState.currentSceneId === 'TEMPLE_ENTRANCE' && (gsm.worldState.made_offering && gsm.worldState.solved_puzzle && gsm.worldState.aligned_energy)) {
+                    choices.unshift({ id: 'ENTER_INNER_SANCTUM', text: 'Enter the inner sanctum...', nextScene: 'TEMPLE_INNER_SANCTUM' });
+                }
+
                 choices.forEach((c) => {
                     const btn = document.createElement('button');
                     btn.className = 'choice-button';
@@ -914,12 +929,35 @@
                     btn.addEventListener('click', () => {
                         btn.classList.add('choice-selected');
                         setTimeout(() => {
-                            storyEngine.processChoice(c.id);
+                            if (c.nextScene === 'TEMPLE_INNER_SANCTUM') {
+                                gsm.playerState.currentSceneId = 'TEMPLE_INNER_SANCTUM';
+                            } else {
+                                storyEngine.processChoice(c.id);
+                            }
                             renderScene();
                         }, 250);
                     });
                     choicesEl.appendChild(btn);
                 });
+                // Update inventory UI based on game state
+                const invEl = document.getElementById('inventory-list');
+                if (invEl) {
+                    invEl.innerHTML = '';
+                    const items = new Set(gsm.playerState.inventory || []);
+                    if (gsm.worldState.has_lotus_petal) items.add('Lotus Petal');
+                    if (items.size === 0) {
+                        const li = document.createElement('li');
+                        li.className = 'inventory-empty';
+                        li.textContent = '(Empty)';
+                        invEl.appendChild(li);
+                    } else {
+                        items.forEach((name) => {
+                            const li = document.createElement('li');
+                            li.textContent = name;
+                            invEl.appendChild(li);
+                        });
+                    }
+                }
             }
 
             renderScene();
