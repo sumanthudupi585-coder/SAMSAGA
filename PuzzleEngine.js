@@ -1,138 +1,308 @@
 /**
  * PuzzleEngine.js
- * 
- * This module is the puzzle master. It contains the specific logic for
- * evaluating every puzzle in the game.
+ * * This module is the puzzle master. It has been re-architected to manage the lifecycle
+ * and logic for complex, interactive, and visual puzzles. It uses a Strategy design
+ * pattern to handle different puzzle mechanics in a modular and extensible way.
+ * * @version 3.0.0 (Architectural Enhancement)
+ * @license MIT
  */
+
+// =================================================================
+// SECTION 1: PUZZLE STRATEGY INTERFACE (Abstract Base Class)
+// =================================================================
+
+/**
+ * Defines the interface for all puzzle evaluation strategies.
+ * Each puzzle type (e.g., EnergyBalancing, RotationalAlignment) will have its own
+ * concrete strategy class that implements this interface. This adheres to the
+ * Strategy design pattern and SOLID principles (Open/Closed, Liskov Substitution).
+ */
+class BasePuzzleStrategy {
+    /**
+     * @param {object} puzzleData The static puzzle definition from puzzles.js.
+     * @param {object} initialGameState The current state of the game from GameStateManager.
+     */
+    constructor(puzzleData, initialGameState) {
+        this.puzzleData = puzzleData;
+        this.gameState = initialGameState;
+        // The activeState holds the mutable, in-progress data for the puzzle instance.
+        this.activeState = this.initializeActiveState();
+    }
+
+    /**
+     * Initializes the specific state for this puzzle instance.
+     * Must be implemented by subclasses.
+     * @returns {object} The initial state for the active puzzle.
+     */
+    initializeActiveState() {
+        throw new Error("PuzzleStrategy subclasses must implement initializeActiveState()");
+    }
+
+    /**
+     * Handles a user interaction and updates the puzzle's active state.
+     * Must be implemented by subclasses.
+     * @param {object} interactionData Data from the UI event (e.g., { ringId: 'wisdom', angle: 90 }).
+     * @returns {object} An object with feedback for the UI, e.g., { stateUpdated: true }.
+     */
+    handleInteraction(interactionData) {
+        throw new Error("PuzzleStrategy subclasses must implement handleInteraction()");
+    }
+
+    /**
+     * Evaluates the current activeState to see if the puzzle is solved.
+     * Must be implemented by subclasses.
+     * @returns {boolean} True if the puzzle is solved, false otherwise.
+     */
+    isSolved() {
+        throw new Error("PuzzleStrategy subclasses must implement isSolved()");
+    }
+
+    /**
+     * Provides the current state of the puzzle for the UI to render.
+     * @returns {object} The current active state of the puzzle.
+     */
+    getState() {
+        return this.activeState;
+    }
+}
+
+// =================================================================
+// SECTION 2: CONCRETE PUZZLE STRATEGIES
+// =================================================================
+
+/**
+ * Strategy for the Banyan Tree's EnergyBalancing puzzle.
+ * Manages the state of the three energy levels.
+ */
+class EnergyBalancingStrategy extends BasePuzzleStrategy {
+    initializeActiveState() {
+        // Clone the initial energy levels to create a mutable state for this puzzle instance.
+        return {
+            energyTypes: JSON.parse(JSON.stringify(this.puzzleData.mechanics.energyTypes)),
+            attempts: 0
+        };
+    }
+
+    handleInteraction(interactionData) {
+        const { action } = interactionData;
+        const method = this.puzzleData.mechanics.adjustmentMethods.find(m => m.name === action);
+
+        if (!method) {
+            console.error(`Invalid adjustment method: ${action}`);
+            return { stateUpdated: false, error: "Invalid action" };
+        }
+
+        if (this.activeState.attempts >= this.puzzleData.mechanics.maxAttempts) {
+            return { stateUpdated: false, feedback: "Max attempts reached." };
+        }
+
+        this.activeState.attempts++;
+
+        // Apply the energy adjustments to the active state
+        this.activeState.energyTypes.forEach(energy => {
+            const effect = method.effect[energy.name] || 0;
+            energy.currentLevel = Math.max(energy.minLevel, Math.min(energy.maxLevel, energy.currentLevel + effect));
+        });
+
+        return { stateUpdated: true };
+    }
+
+    isSolved() {
+        const { balanceThreshold } = this.puzzleData.mechanics;
+        return this.activeState.energyTypes.every(energy => 
+            Math.abs(energy.currentLevel - energy.idealLevel) <= balanceThreshold
+        );
+    }
+}
+
+/**
+ * Strategy for Rotational Alignment puzzles like the MandalaWheel.
+ * Manages the rotation state of each ring.
+ */
+class RotationalAlignmentStrategy extends BasePuzzleStrategy {
+    initializeActiveState() {
+        const ringRotations = {};
+        this.puzzleData.uiConfig.rings.forEach(ring => {
+            ringRotations[ring.id] = ring.initialRotation;
+        });
+        return { ringRotations };
+    }
+
+    handleInteraction(interactionData) {
+        const { ringId, newAngle } = interactionData;
+        if (this.activeState.ringRotations.hasOwnProperty(ringId)) {
+            this.activeState.ringRotations[ringId] = newAngle % 360;
+            return { stateUpdated: true };
+        }
+        return { stateUpdated: false, error: `Invalid ring ID: ${ringId}` };
+    }
+
+    isSolved() {
+        const { solutionAngle, solutionTolerance } = this.puzzleData.uiConfig;
+        return Object.values(this.activeState.ringRotations).every(angle => {
+            const difference = Math.abs(angle - solutionAngle);
+            // Handle circular angle difference (e.g., 359 degrees is close to 0)
+            const circularDifference = Math.min(difference, 360 - difference);
+            return circularDifference <= solutionTolerance;
+        });
+    }
+}
+
+/**
+ * Strategy for Item Application puzzles like the SymbolDnd.
+ */
+class ItemApplicationStrategy extends BasePuzzleStrategy {
+    initializeActiveState() {
+        return { lastAttemptedItem: null };
+    }
+
+    handleInteraction(interactionData) {
+        const { droppedItem } = interactionData;
+        this.activeState.lastAttemptedItem = droppedItem;
+        // The check for success happens immediately in isSolved after this interaction.
+        return { stateUpdated: true };
+    }
+
+    isSolved() {
+        const { validItems } = this.puzzleData.mechanics.solution;
+        return validItems.includes(this.activeState.lastAttemptedItem);
+    }
+}
+
+// =================================================================
+// SECTION 3: THE PUZZLE ENGINE (Main Class)
+// =================================================================
 
 class PuzzleEngine {
     constructor(gameStateManager, storyEngine) {
         this.gameStateManager = gameStateManager;
-        this.storyEngine = storyEngine;
+        this.storyEngine = storyEngine; // Used for applying effects/scene changes
         
-        // Load puzzle data from the global puzzles object
         this.puzzleData = window.PUZZLES || {};
+        this.activePuzzle = null; // Holds the currently active puzzle strategy instance
+
+        // The Strategy Map. This is the key to the extensible architecture.
+        // To add a new puzzle type, just add a new entry here.
+        this.strategyMap = {
+            'EnergyBalancing': EnergyBalancingStrategy,
+            'RotationalAlignment': RotationalAlignmentStrategy,
+            'ItemApplication': ItemApplicationStrategy,
+            'PurityAlignment': ItemApplicationStrategy // Re-using strategy for similar mechanics
+            // Add other strategies here as they are created
+        };
     }
 
     /**
-     * Solve a puzzle with the chosen solution
+     * Starts a new puzzle, creating an instance of the correct strategy.
+     * This should be called by the UIController when a puzzle scene is rendered.
+     * @param {string} puzzleId The ID of the puzzle from puzzles.js.
      */
-    solvePuzzle(puzzleId, chosenSolution) {
-        const gameState = this.gameStateManager.getState();
-        let isSuccess = true;
-        
-        // Get the current scene's puzzle data
-        const currentPuzzle = this.storyEngine.getCurrentPuzzle();
-        if (!currentPuzzle || currentPuzzle.puzzleId !== puzzleId) {
-            console.error(`Puzzle with ID "${puzzleId}" not found in current scene`);
-            return false;
+    startPuzzle(puzzleId) {
+        const puzzleData = this.getPuzzleById(puzzleId);
+        if (!puzzleData) {
+            console.error(`Puzzle with ID "${puzzleId}" not found.`);
+            return;
         }
-        
-        // Evaluation Logic
-        // Check if the solution has a condition function
-        if (chosenSolution.condition) {
-            // Convert string condition to function if needed
-            const conditionFunc = typeof chosenSolution.condition === 'string' 
-                ? new Function('gameState', `return ${chosenSolution.condition}`)
-                : chosenSolution.condition;
-            
-            isSuccess = conditionFunc(gameState);
+
+        const StrategyClass = this.strategyMap[puzzleData.mechanics.type];
+        if (!StrategyClass) {
+            console.error(`No strategy found for puzzle type: "${puzzleData.mechanics.type}"`);
+            return;
         }
-        
-        // Check if the solution requires an item
-        if (isSuccess && chosenSolution.requiresItem) {
-            isSuccess = this.gameStateManager.hasItem(chosenSolution.requiresItem);
+
+        const initialGameState = this.gameStateManager.getState();
+        this.activePuzzle = new StrategyClass(puzzleData, initialGameState);
+        console.log(`Puzzle started: ${puzzleId}`, this.activePuzzle.getState());
+    }
+
+    /**
+     * The main entry point for all user interactions with a puzzle.
+     * The UIController calls this method with data from the user's action.
+     * @param {object} interactionData Describes the user's action.
+     */
+    handleInteraction(interactionData) {
+        if (!this.activePuzzle) {
+            console.warn("handleInteraction called with no active puzzle.");
+            return;
         }
-        
-        // Outcome Logic
-        if (isSuccess) {
-            // Process success effects
-            if (chosenSolution.effects) {
-                this.processEffects(chosenSolution.effects);
-            }
-            
-            // Process world state triggers
-            if (chosenSolution.worldStateTriggers) {
-                Object.entries(chosenSolution.worldStateTriggers).forEach(([key, value]) => {
-                    this.gameStateManager.updateState(key, value);
-                });
-            }
-            
-            // Move to success scene
-            if (chosenSolution.successScene) {
-                this.gameStateManager.updateState('currentSceneId', chosenSolution.successScene);
-                return true;
-            }
-        } else {
-            // Process failure
-            const defaultFailure = currentPuzzle.defaultFailure;
-            
-            if (defaultFailure) {
-                // Apply failure effects
-                if (defaultFailure.effects) {
-                    this.processEffects(defaultFailure.effects);
+
+        // 1. Delegate the interaction to the active strategy
+        const updateResult = this.activePuzzle.handleInteraction(interactionData);
+
+        if (updateResult.stateUpdated) {
+            // 2. Check if the puzzle has been solved
+            if (this.activePuzzle.isSolved()) {
+                this.processPuzzleSuccess();
+            } else {
+                // Optional: Provide feedback for non-solving moves
+                if (updateResult.feedback) {
+                    // e.g., UIController.showNotification(updateResult.feedback);
                 }
-                
-                // Move to failure scene
-                if (defaultFailure.nextScene) {
-                    this.gameStateManager.updateState('currentSceneId', defaultFailure.nextScene);
+                // Check for failure conditions (e.g., max attempts)
+                if (this.activePuzzle.activeState.attempts >= this.activePuzzle.puzzleData.mechanics.maxAttempts) {
+                    this.processPuzzleFailure();
                 }
             }
         }
-        
-        return isSuccess;
     }
-
+    
     /**
-     * Process effects from puzzle solutions
+     * Processes the effects and state changes for a successful puzzle.
      */
-    processEffects(effects) {
-        // Process karma effects
-        if (effects.karma !== undefined) {
-            this.gameStateManager.updateKarma(effects.karma);
+    processPuzzleSuccess() {
+        const puzzleData = this.activePuzzle.puzzleData;
+        console.log(`Puzzle ${puzzleData.id} solved successfully!`);
+
+        // Apply rewards
+        if (puzzleData.rewards) {
+            if (puzzleData.rewards.item) this.gameStateManager.addToInventory(puzzleData.rewards.item);
+            if (puzzleData.rewards.ability) this.gameStateManager.addAbility(puzzleData.rewards.ability);
+            // More complex reward logic can be added here
         }
+
+        // Update world state to mark puzzle as completed
+        this.gameStateManager.updateState(`${puzzleData.id}_completed`, true);
         
-        // Process inventory effects
-        if (effects.inventory) {
-            if (effects.inventory.add) {
-                effects.inventory.add.forEach(item => {
-                    this.gameStateManager.addToInventory(item);
-                });
-            }
-            
-            if (effects.inventory.remove) {
-                effects.inventory.remove.forEach(item => {
-                    this.gameStateManager.removeFromInventory(item);
-                });
-            }
+        // Find the success scene from the story data and transition
+        const currentScene = this.storyEngine.getCurrentScene();
+        const successSolution = currentScene.puzzle.solutions.find(s => s.successScene); // Simplified assumption
+        if (successSolution && successSolution.successScene) {
+            this.storyEngine.processChoice({ nextScene: successSolution.successScene });
         }
-        
-        // Process dharmic profile effects
-        if (effects.dharmicProfile) {
-            Object.entries(effects.dharmicProfile).forEach(([aspect, value]) => {
-                this.gameStateManager.updateDharmicProfile(aspect, value);
-            });
-        }
+
+        this.endPuzzle();
     }
 
     /**
-     * Get puzzle data by ID
+     * Processes the effects for a failed puzzle attempt.
+     */
+    processPuzzleFailure() {
+        const puzzleData = this.activePuzzle.puzzleData;
+        console.log(`Puzzle ${puzzleData.id} failed.`);
+
+        // Apply failure effects
+        const failureInfo = this.storyEngine.getCurrentScene().puzzle.defaultFailure;
+        if (failureInfo) {
+            if (failureInfo.effects) this.storyEngine.processEffects(failureInfo.effects);
+            if (failureInfo.nextScene) this.storyEngine.processChoice({ nextScene: failureInfo.nextScene });
+        }
+
+        this.endPuzzle();
+    }
+
+    /**
+     * Cleans up the active puzzle state.
+     */
+    endPuzzle() {
+        this.activePuzzle = null;
+    }
+
+    /**
+     * Get puzzle data by ID from the global puzzle object.
+     * @param {string} puzzleId
+     * @returns {object | undefined}
      */
     getPuzzleById(puzzleId) {
         return this.puzzleData[puzzleId];
     }
-
-    /**
-     * Check if a puzzle is solved based on world state
-     */
-    isPuzzleSolved(puzzleId) {
-        const puzzle = this.getPuzzleById(puzzleId);
-        if (!puzzle || !puzzle.solvedFlag) {
-            return false;
-        }
-        
-        return !!this.gameStateManager.worldState[puzzle.solvedFlag];
-    }
 }
-
-// Export the PuzzleEngine class
