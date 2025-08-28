@@ -1781,6 +1781,11 @@
         }
         
         function checkCurrentStage() {
+            if (!gameState) {
+                showNotification('Game not yet initialized. Please wait...', 'warning');
+                return;
+            }
+
             switch (gameState.currentStage) {
                 case 1:
                     gameState.checkHarmonicResonance();
