@@ -287,7 +287,94 @@ class GameplayOverhaulEngine {
         if (!element.requiresAbility) return 'discoverable';
         return 'locked';
     }
-    
+
+    updateLocationDisplay(location) {
+        // Update the location name and atmosphere display
+        const locationNameEl = document.getElementById('current-location-name');
+        const locationAtmosphereEl = document.getElementById('location-atmosphere');
+
+        if (locationNameEl) {
+            locationNameEl.textContent = location.name;
+        }
+
+        if (locationAtmosphereEl) {
+            locationAtmosphereEl.textContent = location.description;
+        }
+
+        // Update the atmospheric effects for this location
+        this.updateLocationAtmosphere(location);
+    }
+
+    updateLocationAtmosphere(location) {
+        // Update atmospheric background based on location
+        const atmosphericBg = document.querySelector('.atmospheric-background');
+        if (atmosphericBg) {
+            // Remove existing atmosphere classes
+            atmosphericBg.classList.remove('mystical-dawn', 'dark-mystical', 'sacred-grove', 'corrupted-cave');
+
+            // Add new atmosphere class based on location
+            const atmosphereClass = this.getAtmosphereClass(location.atmosphere);
+            if (atmosphereClass) {
+                atmosphericBg.classList.add(atmosphereClass);
+            }
+        }
+
+        // Update particle effects
+        this.updateLocationParticles(location);
+    }
+
+    getAtmosphereClass(atmosphere) {
+        const atmosphereMap = {
+            'mystical-dawn': 'mystical-dawn',
+            'dark-mystical': 'dark-mystical',
+            'sacred-grove': 'sacred-grove',
+            'corrupted-cave': 'corrupted-cave'
+        };
+
+        return atmosphereMap[atmosphere] || 'mystical-dawn';
+    }
+
+    updateLocationParticles(location) {
+        // Update particle system based on location
+        const particleContainer = document.querySelector('.mystical-particles');
+        if (particleContainer) {
+            // Clear existing particles
+            particleContainer.innerHTML = '';
+
+            // Add new particles based on location atmosphere
+            const particleType = this.getParticleType(location.atmosphere);
+            this.createLocationParticles(particleContainer, particleType);
+        }
+    }
+
+    getParticleType(atmosphere) {
+        const particleMap = {
+            'mystical-dawn': 'golden-motes',
+            'dark-mystical': 'shadow-wisps',
+            'sacred-grove': 'nature-sparkles',
+            'corrupted-cave': 'dark-energy'
+        };
+
+        return particleMap[atmosphere] || 'golden-motes';
+    }
+
+    createLocationParticles(container, particleType) {
+        // Create appropriate particles for the location
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = `particle ${particleType}`;
+
+            // Randomize particle properties
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 4 + 's';
+            particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+
+            container.appendChild(particle);
+        }
+    }
+
     setupExplorationInteractions() {
         // Enhanced click/touch interactions
         document.addEventListener('click', (e) => {
