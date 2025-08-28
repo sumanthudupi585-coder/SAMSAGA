@@ -287,6 +287,27 @@ class UltraEnhancedAtmosphericSystem {
         this.resizeHandler = resizeCanvas;
     }
 
+    startCinematicRenderLoop() {
+        // Initialize the main render loop for cinematic effects
+        this.lastFrameTime = performance.now();
+        this.deltaTime = 0;
+
+        const renderFrame = (currentTime) => {
+            this.deltaTime = (currentTime - this.lastFrameTime) / 1000;
+            this.lastFrameTime = currentTime;
+
+            // Only update if frame rate is optimal (avoid excessive computation)
+            if (this.deltaTime < 0.1) {
+                this.updateAllSystems(this.deltaTime);
+                this.renderAllEffects();
+            }
+
+            requestAnimationFrame(renderFrame);
+        };
+
+        requestAnimationFrame(renderFrame);
+    }
+
     setupDynamicLighting() {
         // Create dynamic lighting system that responds to player spiritual state
         this.lightingSystem = {
