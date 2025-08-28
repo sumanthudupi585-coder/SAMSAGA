@@ -120,7 +120,168 @@ class GameplayOverhaulEngine {
         // Validate loaded data
         this.validateLoadedData();
     }
-    
+
+    // Helper methods for initialization
+    setupEnhancedInputHandling() {
+        // Enhanced input handling for better user experience
+        this.inputHandling = {
+            mouseTracking: true,
+            keyboardShortcuts: true,
+            multiTouch: true
+        };
+    }
+
+    setupGestureRecognition() {
+        // Setup gesture recognition for touch devices
+        this.gestureRecognition = {
+            swipeGestures: true,
+            pinchZoom: false, // Disabled for UI stability
+            tapHold: true
+        };
+    }
+
+    initializeVoiceCommands() {
+        // Initialize voice command system (placeholder)
+        this.voiceCommands = {
+            enabled: false, // Disabled by default
+            commands: []
+        };
+    }
+
+    setupAccessibilityFeatures() {
+        // Setup accessibility features
+        this.accessibility = {
+            highContrast: false,
+            largeText: false,
+            reducedMotion: false,
+            screenReaderSupport: true
+        };
+    }
+
+    initializeParticleSystems() {
+        // Initialize particle systems
+        this.particleSystems = {
+            mysticalParticles: true,
+            environmentalEffects: true,
+            interactionFeedback: true
+        };
+    }
+
+    initializeLightingEffects() {
+        // Initialize lighting effects
+        this.lightingEffects = {
+            ambientLighting: true,
+            dynamicShadows: false, // Performance consideration
+            colorTemperature: 'warm'
+        };
+    }
+
+    initializeSoundAtmosphere() {
+        // Initialize sound atmosphere
+        this.soundAtmosphere = {
+            ambientSounds: true,
+            interactionSounds: true,
+            musicEnabled: true,
+            volume: 0.5
+        };
+    }
+
+    initializeEnvironmentalEffects() {
+        // Initialize environmental effects
+        this.environmentalEffects = {
+            weatherEffects: false, // Disabled for performance
+            seasonalChanges: false,
+            timeOfDayEffects: true
+        };
+    }
+
+    setupNotificationContainer() {
+        // Setup notification container
+        if (!document.getElementById('notification-container')) {
+            const container = document.createElement('div');
+            container.id = 'notification-container';
+            container.className = 'notification-container';
+            document.body.appendChild(container);
+        }
+    }
+
+    initializeNotificationTypes() {
+        // Initialize different notification types
+        this.notificationTypes = {
+            discovery: { icon: '🌟', duration: 4000 },
+            achievement: { icon: '🏆', duration: 5000 },
+            insight: { icon: '💡', duration: 6000 },
+            error: { icon: '⚠️', duration: 3000 },
+            success: { icon: '✅', duration: 3000 }
+        };
+    }
+
+    setupNotificationSounds() {
+        // Setup notification sound effects (placeholder)
+        this.notificationSounds = {
+            discovery: 'chime',
+            achievement: 'fanfare',
+            insight: 'gong',
+            error: 'error',
+            success: 'success'
+        };
+    }
+
+    initializeCelebrationEffects() {
+        // Initialize celebration effects
+        this.celebrationEffects = {
+            particleBurst: true,
+            screenFlash: false, // Accessibility consideration
+            confetti: true
+        };
+    }
+
+    loadFromStorage() {
+        // Load game state from localStorage or game state manager
+        if (this.gameStateManager && this.gameStateManager.worldState) {
+            const savedState = this.gameStateManager.worldState.gameplayOverhaulState;
+            if (savedState) {
+                this.restoreFromSavedState(savedState);
+            }
+        }
+    }
+
+    restorePlayerProgress() {
+        // Restore player progress from saved state
+        if (this.gameStateManager) {
+            // Restore location
+            this.currentLocation = this.gameStateManager.worldState.currentLocation || 'DHARMAPURA_SQUARE';
+
+            // Restore discovery points
+            this.discoveryPoints = this.gameStateManager.worldState.discoveryPoints || 0;
+
+            // Restore mystery level
+            this.mysteryLevel = this.gameStateManager.worldState.mysteryLevel || 1;
+        }
+    }
+
+    applyLoadedStateToUI() {
+        // Apply loaded state to the UI
+        this.updateLocationDisplay = this.updateLocationDisplay || (() => {});
+        this.updateDiscoveryProgress = this.updateDiscoveryProgress || (() => {});
+        this.updateAtmosphericMeters = this.updateAtmosphericMeters || (() => {});
+    }
+
+    validateLoadedData() {
+        // Validate that loaded data is consistent
+        if (this.discoveryPoints < 0) this.discoveryPoints = 0;
+        if (this.mysteryLevel < 1) this.mysteryLevel = 1;
+        if (this.mysteryLevel > 4) this.mysteryLevel = 4;
+    }
+
+    restoreFromSavedState(savedState) {
+        // Restore specific state from saved data
+        this.currentLocation = savedState.currentLocation || this.currentLocation;
+        this.discoveryPoints = savedState.discoveryPoints || this.discoveryPoints;
+        this.mysteryLevel = savedState.mysteryLevel || this.mysteryLevel;
+        this.philosophicalDiscoveries = savedState.philosophicalDiscoveries || [];
+    }
+
     createEnhancedGameInterface() {
         // Find the main game container and transform it
         const gameWrapper = document.querySelector('.game-wrapper');
