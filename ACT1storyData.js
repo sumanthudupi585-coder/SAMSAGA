@@ -55,6 +55,7 @@ window.ACT1_STORY_DATA = {
         "title": "The Great Banyan",
         "text": "The Banyan is immense, its bark gnarled and almost stone-like. It feels ancient and powerful, yet there's a subtle wrongness to it, a feeling of stagnant energy.",
         "choices": [
+            { "text": "Attempt to harmonize the tree's energies.", "nextScene": "BANYAN_PUZZLE" },
             // Deva Gana
             { "text": "[Ashwini] Use your healing senses to diagnose the tree.", "nextScene": "BANYAN_SOLUTION_ASHWINI", "condition": (profile) => profile.nakshatra === 'Ashwini' },
             { "text": "[Anuradha] Attempt to commune with the tree's indwelling spirit.", "nextScene": "BANYAN_SOLUTION_ANURADHA", "condition": (profile) => profile.nakshatra === 'Anuradha' },
@@ -1030,6 +1031,24 @@ window.ACT1_STORY_DATA = {
         "questStatus": "The Celestial Alignment - Completed",
         "choices": [
             { "text": "Accept your destiny.", "nextScene": "GAME_CONCLUSION" }
+        ]
+    },
+
+    "BANYAN_PUZZLE": {
+        "title": "The Sacred Balance",
+        "text": "You focus on the subtle flows within the Banyan. Three energetic rings—Vitality, Wisdom, Harmony—must be aligned to restore balance.",
+        "puzzle": { "puzzleId": "BanyanTreeHarmony" },
+        "choices": [ { "text": "Step back.", "nextScene": "DHARMAPURA_SQUARE" } ]
+    },
+
+    "BANYAN_HARMONY_SUCCESS": {
+        "title": "The Tree Breathes Again",
+        "text": "As the rings align in perfect symmetry, a warm radiance flows through the Banyan. The malaise over Dharmapura begins to lift as the tree exhales a sigh older than the village itself.",
+        "worldStateTriggers": { "banyan_balanced": true },
+        "effects": { "karma": 10 },
+        "choices": [
+            { "text": "Return to the square.", "nextScene": "DHARMAPURA_SQUARE" },
+            { "text": "Prepare for the next trial.", "nextScene": "QUEST_2_START" }
         ]
     },
 
