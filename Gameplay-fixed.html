@@ -846,13 +846,60 @@
                 // Render scene text
                 storyTextEl.innerHTML = scene.text ? `<p>${scene.text}</p>` : '';
 
-                // Render puzzle placeholder if any
+                // Render puzzle UI if present
                 puzzleEl.innerHTML = '';
                 const puzzle = storyEngine.getCurrentPuzzle();
                 if (puzzle && puzzle.puzzleId) {
                     const box = document.createElement('div');
                     box.className = 'puzzle-box';
-                    box.innerHTML = `<div class="panel-title">Puzzle: ${puzzle.puzzleId}</div><p>Interact with the world to progress the puzzle.</p>`;
+                    const title = document.createElement('div');
+                    title.className = 'panel-title';
+                    title.textContent = `Puzzle: ${puzzle.puzzleId}`;
+                    const desc = document.createElement('p');
+                    desc.textContent = puzzle.description || '';
+                    box.appendChild(title);
+                    box.appendChild(desc);
+
+                    if (puzzle.puzzleId === 'BarrierOfNegativity') {
+                        const hasLotus = !!gsm.worldState.has_lotus_petal;
+                        const info = document.createElement('p');
+                        info.textContent = hasLotus ? 'You hold a Lotus Petal imbued with purity.' : 'You feel a sorrowful barrier. Perhaps a pure item could dissolve it...';
+                        box.appendChild(info);
+
+                        const actions = document.createElement('div');
+                        actions.style.display = 'flex';
+                        actions.style.gap = '10px';
+
+                        const touchBtn = document.createElement('button');
+                        touchBtn.className = 'menu-button';
+                        touchBtn.innerHTML = '<i class="fas fa-hand"></i> Touch Barrier';
+                        touchBtn.addEventListener('click', () => {
+                            if (hasLotus) return; // no failure if you already can solve
+                            if (puzzle.defaultFailure && puzzle.defaultFailure.effects && typeof puzzle.defaultFailure.effects.karma === 'number') {
+                                gsm.updateKarma(puzzle.defaultFailure.effects.karma);
+                            }
+                            // brief feedback
+                            showNotification('The barrier repels you with despair.', 'error');
+                        });
+                        actions.appendChild(touchBtn);
+
+                        const useBtn = document.createElement('button');
+                        useBtn.className = 'menu-button';
+                        useBtn.innerHTML = '<i class="fas fa-seedling"></i> Use Lotus Petal';
+                        useBtn.disabled = !hasLotus;
+                        useBtn.title = hasLotus ? '' : 'Find something pure along the river...';
+                        useBtn.addEventListener('click', () => {
+                            const sol = (puzzle.solutions || []).find(s => s.successScene);
+                            if (sol && sol.successScene) {
+                                gsm.playerState.currentSceneId = sol.successScene;
+                                renderScene();
+                            }
+                        });
+                        actions.appendChild(useBtn);
+
+                        box.appendChild(actions);
+                    }
+
                     puzzleEl.appendChild(box);
                 }
 
