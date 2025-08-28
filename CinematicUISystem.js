@@ -1734,16 +1734,34 @@ class CinematicUISystem {
     updateProgressIndicators() {
         if (!this.gameFlow || typeof this.gameFlow.getGameStatus !== 'function') return;
 
-        const status = this.gameFlow.getGameStatus();
-        
-        // Update stats in footer
-        const insightsCount = document.getElementById('insights-count');
-        const decisionsCount = document.getElementById('decisions-count');
-        const growthLevel = document.getElementById('growth-level');
-        
-        if (insightsCount) insightsCount.textContent = status.progress?.philosophical || 0;
-        if (decisionsCount) decisionsCount.textContent = status.progress?.decisions || 0;
-        if (growthLevel) growthLevel.textContent = this.getGrowthLevelName(status.character?.level || 1);
+        try {
+            const status = this.gameFlow.getGameStatus();
+
+            // Update stats in footer
+            const insightsCount = document.getElementById('insights-count');
+            const decisionsCount = document.getElementById('decisions-count');
+            const growthLevel = document.getElementById('growth-level');
+
+            if (insightsCount) {
+                const philosophicalCount = status.progress?.philosophical ||
+                    Object.values(status.progress?.philosophical || {}).reduce((sum, p) => sum + (p.insights || 0), 0) || 0;
+                insightsCount.textContent = philosophicalCount;
+            }
+
+            if (decisionsCount) {
+                decisionsCount.textContent = status.progress?.decisions || 0;
+            }
+
+            if (growthLevel) {
+                growthLevel.textContent = this.getGrowthLevelName(status.character?.level || 1);
+            }
+
+            // Update insights panel
+            this.updateInsightsPanel();
+
+        } catch (error) {
+            console.warn('Error updating progress indicators:', error);
+        }
     }
     
     /**
