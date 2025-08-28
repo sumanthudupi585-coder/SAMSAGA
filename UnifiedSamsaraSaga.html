@@ -815,18 +815,38 @@ Features required:
 • Modern CSS animations`);
         }
         
+        // Immediate debugging check
+        console.log('🔍 Immediate post-script check:');
+        console.log('UnifiedGameFlow:', typeof window.UnifiedGameFlow);
+        console.log('ENHANCED_ACT1_STORY_DATA:', typeof window.ENHANCED_ACT1_STORY_DATA);
+        console.log('CinematicUISystem:', typeof window.CinematicUISystem);
+
         // Auto-start application when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 Starting Samsara Saga application...');
+
+            // Additional check at DOM ready
+            console.log('📋 DOM Ready check:');
+            console.log('UnifiedGameFlow:', typeof window.UnifiedGameFlow);
+            console.log('ENHANCED_ACT1_STORY_DATA:', typeof window.ENHANCED_ACT1_STORY_DATA);
+            console.log('CinematicUISystem:', typeof window.CinematicUISystem);
+
             window.samsaraSagaApp = new SamsaraSagaApp();
         });
-        
+
         // Fallback for older browsers
         if (document.readyState === 'loading') {
             // DOM is still loading
         } else {
             // DOM already loaded
             console.log('🚀 Starting Samsara Saga application (DOM already ready)...');
+
+            // Additional check for immediate start
+            console.log('⚡ Immediate start check:');
+            console.log('UnifiedGameFlow:', typeof window.UnifiedGameFlow);
+            console.log('ENHANCED_ACT1_STORY_DATA:', typeof window.ENHANCED_ACT1_STORY_DATA);
+            console.log('CinematicUISystem:', typeof window.CinematicUISystem);
+
             window.samsaraSagaApp = new SamsaraSagaApp();
         }
     </script>
