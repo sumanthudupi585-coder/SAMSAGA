@@ -38,6 +38,11 @@
     <script src="VisualEffects.js"></script>
     <script src="adventure-game-engine.js"></script>
     <script src="enhanced-puzzle-systems.js"></script>
+    <script src="ultra-enhanced-atmospheric-system.js"></script>
+    <script src="ultra-enhanced-escape-room-system.js"></script>
+    <script src="ultra-enhanced-progression-system.js"></script>
+    <script src="ultra-enhanced-banyan-puzzle.js"></script>
+    <script src="ultra-enhanced-barrier-puzzle.js"></script>
     <script src="complete-gameplay-overhaul.js"></script>
     <script src="fixed-banyan-puzzle.js"></script>
     <script src="navigation.js"></script>
@@ -717,6 +722,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const nakshatraNum = urlParams.get('nakshatra');
             const pada = urlParams.get('pada');
+            const guna1 = urlParams.get('guna1');
             const guna3 = urlParams.get('guna3');
             // Set up auto-save
             if (window.gameStateManager) {
@@ -726,15 +732,31 @@
             if (nakshatraNum && nakshatraData[nakshatraNum]) {
                 const nakshatra = nakshatraData[nakshatraNum];
                 
-                // Update character information
+                // Initialize complete player profile in game state manager
+                if (window.gameStateManager) {
+                    window.gameStateManager.playerProfile = {
+                        nakshatra: nakshatra.name,
+                        gana: nakshatra.gana,
+                        shakti: nakshatra.shakti,
+                        gunas: {
+                            sattva: nakshatra.gunas?.sattva || 0,
+                            rajas: nakshatra.gunas?.rajas || 0,
+                            tamas: nakshatra.gunas?.tamas || 0
+                        },
+                        avatar: `images/avatars/${nakshatra.gana.toLowerCase()}.png`
+                    };
+
+                    // Set additional URL parameters
+                    if (pada) window.gameStateManager.updateState('pada', pada);
+                    if (guna1) window.gameStateManager.updateState('guna1', guna1);
+                    if (guna3) window.gameStateManager.updateState('guna3', guna3);
+                }
+
+                // Update character information display
                 const characterNameEl = document.getElementById('character-name');
                 if (characterNameEl) characterNameEl.textContent = nakshatra.name;
                 const nakshatraNameEl = document.getElementById('nakshatra-name');
                 if (nakshatraNameEl) nakshatraNameEl.textContent = nakshatra.name;
-                if (window.gameStateManager) {
-                    window.gameStateManager.playerProfile.nakshatra = nakshatra.name;
-                    window.gameStateManager.playerProfile.gana = nakshatra.gana;
-                }
                 
                 // Set character symbol
                 const symbolSvg = document.getElementById('character-symbol-svg');
@@ -813,6 +835,10 @@
             // Initialize enhanced adventure gameplay system
             const gsm = window.gameStateManager;
 
+            // Character profile already initialized above, proceed with game initialization
+            console.log('Initializing gameplay systems...');
+            console.log('Player profile:', gsm.playerProfile);
+
             // Initialize the complete gameplay overhaul
             const gameplayOverhaul = initializeCompleteGameplayOverhaul(gsm);
 
@@ -820,15 +846,52 @@
             const storyEngine = new StoryEngine(gsm);
             const puzzleEngine = new PuzzleEngine(gsm, storyEngine);
 
+            // Debug: Check if story data is loaded
+            console.log('Story data loaded:', {
+                ACT1: !!window.ACT1_STORY_DATA,
+                ACT2: !!window.ACT2_STORY_DATA,
+                ACT3: !!window.ACT3_STORY_DATA
+            });
+
+            if (window.ACT1_STORY_DATA) {
+                console.log('ACT1 scenes available:', Object.keys(window.ACT1_STORY_DATA));
+                console.log('JOURNEY_START scene:', window.ACT1_STORY_DATA.JOURNEY_START);
+            } else {
+                console.error('ACT1_STORY_DATA not loaded!');
+            }
+
             // Set initial act/scene
             gsm.playerState.currentAct = 1;
-            gsm.playerState.currentSceneId = storyEngine.getFirstSceneIdForAct(1);
+            const firstSceneId = storyEngine.getFirstSceneIdForAct(1);
+            gsm.playerState.currentSceneId = firstSceneId;
+
+            console.log('Initial scene setup:', {
+                currentAct: gsm.playerState.currentAct,
+                currentSceneId: gsm.playerState.currentSceneId,
+                firstSceneId: firstSceneId
+            });
 
             function renderScene() {
+                console.log('Rendering scene...', {
+                    currentAct: gsm.playerState.currentAct,
+                    currentSceneId: gsm.playerState.currentSceneId
+                });
+
                 let scene = storyEngine.getCurrentScene();
+                console.log('Scene retrieved:', scene);
+
                 const storyTextEl = document.getElementById('story-text');
                 const choicesEl = document.getElementById('choices-container');
                 const puzzleEl = document.getElementById('puzzle-container');
+
+                if (!storyTextEl || !choicesEl || !puzzleEl) {
+                    console.error('Story UI elements not found!', {
+                        storyTextEl: !!storyTextEl,
+                        choicesEl: !!choicesEl,
+                        puzzleEl: !!puzzleEl
+                    });
+                    return;
+                }
 
                 // Apply one-time world state triggers on entering a scene
                 if (scene && scene.worldStateTriggers) {
