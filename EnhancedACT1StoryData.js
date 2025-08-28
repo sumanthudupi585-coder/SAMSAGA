@@ -94,7 +94,7 @@ const ENHANCED_ACT1_STORY_DATA = {
         "choices": [
             {
                 "id": "analyze_patterns",
-                "text": "🔍 Analyze the patterns you observe to understand the deeper issue",
+                "text": "��� Analyze the patterns you observe to understand the deeper issue",
                 "nextScene": "PATTERN_ANALYSIS",
                 "philosophicalTheme": "understanding",
                 "effects": {
@@ -419,7 +419,9 @@ const ENHANCED_ACT1_STORY_DATA = {
         The Elder, the Priestess, and the villagers have gathered, drawn by an inexplicable sense that resolution is at hand. The ancient tree's leaves rustle with anticipation, as if it too knows that change comes.
         
         Your journey has prepared you for this moment. You possess:
-        ${window.ENHANCED_ACT1_STORY_DATA?.getPlayerKnowledge?.() || "• The wisdom gained through your unique journey"}
+        • The wisdom gained through your unique journey
+        • Deep understanding of the patterns connecting all things
+        • Strong bonds of trust with the community
         
         The time has come to heal not just the tree, but the deeper wound of separation that afflicts this entire community.`,
         "choices": [
