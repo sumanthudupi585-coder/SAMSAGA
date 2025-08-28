@@ -256,10 +256,37 @@ class UltraEnhancedAtmosphericSystem {
         document.body.appendChild(cinematicCanvas);
         
         this.cinematicContext = cinematicCanvas.getContext('2d');
+        this.cinematicCanvas = cinematicCanvas;
         this.setupCanvasResizing(cinematicCanvas);
         this.startCinematicRenderLoop();
     }
-    
+
+    setupCanvasResizing(canvas) {
+        // Handle canvas resizing for responsive display
+        const resizeCanvas = () => {
+            const pixelRatio = window.devicePixelRatio || 1;
+            const displayWidth = window.innerWidth;
+            const displayHeight = window.innerHeight;
+
+            canvas.width = displayWidth * pixelRatio;
+            canvas.height = displayHeight * pixelRatio;
+            canvas.style.width = displayWidth + 'px';
+            canvas.style.height = displayHeight + 'px';
+
+            // Scale the context to handle high DPI displays
+            this.cinematicContext.scale(pixelRatio, pixelRatio);
+        };
+
+        // Initial resize
+        resizeCanvas();
+
+        // Listen for window resize events
+        window.addEventListener('resize', resizeCanvas);
+
+        // Store resize function for cleanup if needed
+        this.resizeHandler = resizeCanvas;
+    }
+
     setupDynamicLighting() {
         // Create dynamic lighting system that responds to player spiritual state
         this.lightingSystem = {
