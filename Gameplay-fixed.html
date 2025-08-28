@@ -1250,18 +1250,24 @@
                 const slider = document.getElementById(`freq-${chamber}`);
                 const marker = document.getElementById(`marker-${chamber}`);
                 const display = document.getElementById(`display-${chamber}`);
-                
+
+                // Safety checks
+                if (!slider || !marker || !display) {
+                    console.warn(`Missing frequency elements for chamber ${chamber}`);
+                    return;
+                }
+
                 const angle = slider.value;
                 this.harmonics[`freq${chamber}`] = parseInt(angle);
-                
+
                 // Update visual marker
                 marker.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-55px)`;
-                
+
                 // Calculate frequency based on angle (sacred mathematics)
                 const baseFreq = [432, 528, 639][chamber - 1];
                 const frequency = Math.round(baseFreq + (angle / 360) * 200);
                 display.textContent = `${frequency} Hz`;
-                
+
                 // Check for harmonic resonance in real-time
                 this.checkHarmonicResonance();
             }
