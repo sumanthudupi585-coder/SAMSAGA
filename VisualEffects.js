@@ -602,41 +602,19 @@ class VisualEffects {
      * Create a scene transition effect
      */
     sceneTransitionEffect(callback) {
-        // Create transition overlay
         const overlay = document.createElement('div');
         overlay.className = 'scene-transition-overlay';
-        overlay.style.position = 'fixed';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.width = '100%';
-        overlay.style.height = '100%';
-        overlay.style.backgroundColor = 'black';
-        overlay.style.opacity = '0';
-        overlay.style.zIndex = '5000';
-        overlay.style.transition = 'opacity 0.5s ease-in-out';
-        
-        // Add to body
         document.body.appendChild(overlay);
-        
         // Fade in
-        setTimeout(() => {
-            overlay.style.opacity = '1';
-        }, 10);
-        
+        requestAnimationFrame(() => {
+            overlay.classList.add('visible');
+        });
         // Execute callback after fade in
         setTimeout(() => {
-            if (typeof callback === 'function') {
-                callback();
-            }
-            
-            // Fade out
-            overlay.style.opacity = '0';
-            
-            // Remove overlay after fade out
+            if (typeof callback === 'function') callback();
+            overlay.classList.remove('visible');
             setTimeout(() => {
-                if (document.body.contains(overlay)) {
-                    document.body.removeChild(overlay);
-                }
+                if (document.body.contains(overlay)) document.body.removeChild(overlay);
             }, 500);
         }, 600);
     }
