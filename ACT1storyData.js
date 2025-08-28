@@ -1052,7 +1052,6 @@ window.ACT1_STORY_DATA = {
         ]
     },
 
-    "+BANYAN_HINT_WIND_PLACEHOLDER+": "",
 
     "BANYAN_HINT_WIND": {
         "title": "Breath of the Canopy",
