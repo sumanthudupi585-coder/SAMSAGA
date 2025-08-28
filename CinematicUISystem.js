@@ -2550,6 +2550,113 @@ const cinematicUIStyles = `
     grid-template-columns: 2fr 1fr;
 }
 
+/* Insight Items */
+.insight-item {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.insight-item:hover {
+    background: rgba(99, 180, 209, 0.1);
+    transform: translateY(-2px);
+}
+
+.insight-theme {
+    font-weight: bold;
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.insight-concept {
+    font-family: var(--font-title);
+    color: var(--color-primary);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.insight-description {
+    color: var(--color-text);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* Special Choice Indicators */
+.special-choices-indicator {
+    animation: gentleGlow 2s infinite ease-in-out;
+}
+
+@keyframes gentleGlow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+/* Atmospheric Classes */
+.atmosphere-tense .starfield .star {
+    animation-duration: 1s;
+    color: #d96c47;
+}
+
+.atmosphere-peaceful .energy-flows .energy-flow {
+    opacity: 0.5;
+    animation-duration: 20s;
+}
+
+.atmosphere-sacred .cosmic-background {
+    background: radial-gradient(circle, rgba(224, 150, 88, 0.1) 0%, transparent 50%);
+}
+
+.atmosphere-mysterious .starfield .star {
+    animation-duration: 5s;
+    opacity: 0.6;
+}
+
+.atmosphere-joyful .energy-flows .energy-flow {
+    background: linear-gradient(180deg,
+        transparent 0%,
+        #ffc994 50%,
+        transparent 100%);
+}
+
+/* UI Complexity Variations */
+.complexity-simple .advanced-feature {
+    display: none;
+}
+
+.complexity-enhanced .intermediate-feature {
+    display: block;
+}
+
+.complexity-advanced .advanced-feature {
+    display: block;
+}
+
+.complexity-master .master-feature {
+    display: block;
+}
+
+/* Philosophical Depth Indicators */
+.depth-locked {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.depth-introductory .depth-advanced,
+.depth-introductory .depth-expert {
+    display: none;
+}
+
+.depth-intermediate .depth-expert {
+    display: none;
+}
+
 /* Theme Variations */
 .cinematic-ui-container.theme-awakened {
     --color-primary: #ffc994;
