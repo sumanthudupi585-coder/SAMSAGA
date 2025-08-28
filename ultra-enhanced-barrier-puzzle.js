@@ -170,13 +170,13 @@ class UltraEnhancedBarrierPuzzle {
                 }
             },
             
-            transformationEquations: {
+            transformationEquations: [
                 'Fear + Acceptance = Courage',
                 'Anger + Understanding = Compassion',
                 'Sadness + Meaning = Wisdom',
                 'Shame + Love = Authenticity',
                 'Despair + Connection = Hope'
-            }
+            ]
         };
     }
     
