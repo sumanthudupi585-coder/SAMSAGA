@@ -248,35 +248,40 @@ class WorkingGameController {
                     <div class="character-info">
                         <div class="character-name">${this.gameState.playerProfile?.nakshatra || 'Seeker'}</div>
                         <div class="character-attributes">
-                            ${Object.entries(this.gameState.playerProfile?.attributes || {}).map(([attr, value]) => 
+                            ${Object.entries(this.gameState.playerProfile?.attributes || {}).map(([attr, value]) =>
                                 `<span class="attribute" data-attribute="${attr}">${this.getAttributeIcon(attr)} ${value}</span>`
                             ).join('')}
                         </div>
                     </div>
                 </header>
-                
+
                 <!-- Main Content -->
                 <main class="game-content">
-                    <div class="scene-display">
-                        <div class="scene-header">
-                            <h2 class="scene-title">Loading...</h2>
-                            <div class="scene-subtitle"></div>
+                    <section class="scene-section">
+                        <div class="scene-display">
+                            <div class="scene-header">
+                                <h2 class="scene-title">Loading...</h2>
+                                <div class="scene-subtitle"></div>
+                            </div>
+                            <div class="scene-text">
+                                <p>Preparing your spiritual journey...</p>
+                            </div>
+                            <div class="atmospheric-description"></div>
                         </div>
-                        <div class="scene-text">
-                            <p>Preparing your spiritual journey...</p>
-                        </div>
-                        <div class="atmospheric-description"></div>
-                    </div>
-                    
-                    <div class="choices-section">
+                    </section>
+
+                    <aside class="choices-section">
                         <h3>Choose your path:</h3>
                         <div class="choices-list">
                             <!-- Choices will be populated here -->
                         </div>
-                    </div>
-                    
+                    </aside>
+                </main>
+
+                <!-- Footer Actions -->
+                <footer class="game-footer">
                     <div class="game-actions">
-                        <button class="action-btn meditation-btn" id="meditation-btn" style="display: none;">
+                        <button class="action-btn meditation-btn is-hidden" id="meditation-btn">
                             🧘 Meditate
                         </button>
                         <button class="action-btn save-btn" id="save-btn">
@@ -286,18 +291,16 @@ class WorkingGameController {
                             📊 View Status
                         </button>
                     </div>
-                </main>
-                
+                </footer>
+
                 <!-- Notifications -->
                 <div class="notifications-container" id="notifications"></div>
-                
+
                 <!-- Status Modal -->
-                <div class="modal" id="status-modal" style="display: none;">
+                <div class="modal is-hidden" id="status-modal">
                     <div class="modal-content">
                         <h3>Character Status</h3>
-                        <div class="status-content">
-                            <!-- Status info will be populated here -->
-                        </div>
+                        <div class="status-content"></div>
                         <button class="close-modal">Close</button>
                     </div>
                 </div>
@@ -318,14 +321,20 @@ class WorkingGameController {
         }
         
         styleElement.textContent = `
+            html, body { height: 100%; }
+            body { overflow: hidden; }
+            .is-hidden { display: none !important; }
+
             .working-game-ui {
-                min-height: 100vh;
+                height: 100vh;
                 background: linear-gradient(135deg, #0a0908 0%, #1a1817 50%, #2a2827 100%);
                 color: #c5c1b9;
                 font-family: 'Georgia', serif;
                 line-height: 1.6;
+                display: flex;
+                flex-direction: column;
             }
-            
+
             .game-header {
                 display: flex;
                 justify-content: space-between;
@@ -333,32 +342,35 @@ class WorkingGameController {
                 padding: 1rem 2rem;
                 background: rgba(224, 150, 88, 0.1);
                 border-bottom: 2px solid rgba(224, 150, 88, 0.3);
+                flex: 0 0 auto;
             }
-            
+
             .title-section h1 {
                 font-size: 2rem;
                 color: #e09658;
                 margin: 0;
                 text-shadow: 0 0 10px rgba(224, 150, 88, 0.5);
             }
-            
+
             .subtitle {
                 color: #a97142;
                 font-style: italic;
             }
-            
+
             .character-name {
                 font-size: 1.2rem;
                 font-weight: bold;
                 color: #e09658;
             }
-            
+
             .character-attributes {
                 display: flex;
                 gap: 1rem;
                 margin-top: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: flex-end;
             }
-            
+
             .attribute {
                 background: rgba(224, 150, 88, 0.2);
                 padding: 0.25rem 0.5rem;
@@ -366,63 +378,78 @@ class WorkingGameController {
                 font-size: 0.9rem;
                 border: 1px solid rgba(224, 150, 88, 0.3);
             }
-            
+
             .game-content {
+                flex: 1 1 auto;
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
                 padding: 2rem;
-                max-width: 900px;
+                max-width: 1200px;
+                width: 100%;
                 margin: 0 auto;
+                box-sizing: border-box;
             }
-            
+
+            .scene-section, .choices-section { min-height: 0; }
+
             .scene-display {
                 background: rgba(26, 24, 23, 0.8);
                 padding: 2rem;
                 border-radius: 15px;
-                margin-bottom: 2rem;
                 border: 1px solid rgba(224, 150, 88, 0.2);
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                height: 100%;
+                overflow-y: auto;
             }
-            
+
             .scene-title {
                 font-size: 2rem;
                 color: #e09658;
                 margin-bottom: 0.5rem;
                 text-shadow: 0 0 8px rgba(224, 150, 88, 0.4);
             }
-            
+
             .scene-subtitle {
                 font-style: italic;
                 color: #a97142;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1rem;
             }
-            
+
             .scene-text {
                 font-size: 1.1rem;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1rem;
                 line-height: 1.8;
             }
-            
+
             .atmospheric-description {
                 font-style: italic;
                 color: #8a7a6a;
                 padding: 1rem;
                 background: rgba(224, 150, 88, 0.05);
                 border-left: 3px solid #e09658;
-                margin-top: 1rem;
+                margin-top: 0.5rem;
             }
-            
+
+            .choices-section {
+                display: flex;
+                flex-direction: column;
+            }
+
             .choices-section h3 {
                 color: #e09658;
-                margin-bottom: 1rem;
+                margin: 0 0 0.75rem;
                 text-align: center;
             }
-            
+
             .choices-list {
+                flex: 1 1 auto;
+                overflow-y: auto;
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
-                margin-bottom: 2rem;
             }
-            
+
             .choice-option {
                 background: linear-gradient(145deg, rgba(26, 24, 23, 0.8), rgba(42, 40, 39, 0.6));
                 border: 2px solid rgba(224, 150, 88, 0.3);
@@ -433,36 +460,33 @@ class WorkingGameController {
                 position: relative;
                 overflow: hidden;
             }
-            
+
             .choice-option:hover {
                 border-color: #e09658;
                 background: linear-gradient(145deg, rgba(224, 150, 88, 0.1), rgba(26, 24, 23, 0.9));
                 transform: translateY(-2px);
                 box-shadow: 0 6px 20px rgba(224, 150, 88, 0.2);
             }
-            
-            .choice-option:active {
-                transform: translateY(0);
+
+            .choice-option:active { transform: translateY(0); }
+
+            .choice-text { font-size: 1.1rem; margin-bottom: 0.5rem; }
+
+            .choice-theme { font-size: 0.9rem; color: #a97142; font-style: italic; }
+
+            .game-footer {
+                padding: 0.75rem 2rem;
+                background: rgba(224, 150, 88, 0.08);
+                border-top: 2px solid rgba(224, 150, 88, 0.3);
+                flex: 0 0 auto;
             }
-            
-            .choice-text {
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .choice-theme {
-                font-size: 0.9rem;
-                color: #a97142;
-                font-style: italic;
-            }
-            
+
             .game-actions {
                 display: flex;
                 justify-content: center;
                 gap: 1rem;
-                margin-top: 2rem;
             }
-            
+
             .action-btn {
                 background: linear-gradient(145deg, #e09658, #a97142);
                 border: none;
@@ -474,19 +498,19 @@ class WorkingGameController {
                 transition: all 0.3s ease;
                 font-size: 1rem;
             }
-            
+
             .action-btn:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 6px 15px rgba(224, 150, 88, 0.4);
             }
-            
+
             .notifications-container {
                 position: fixed;
                 top: 20px;
                 right: 20px;
                 z-index: 1000;
             }
-            
+
             .notification {
                 background: rgba(224, 150, 88, 0.9);
                 color: #0a0908;
@@ -496,25 +520,15 @@ class WorkingGameController {
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
                 animation: slideIn 0.3s ease;
             }
-            
-            .notification.success {
-                background: rgba(76, 175, 80, 0.9);
-            }
-            
-            .notification.warning {
-                background: rgba(255, 193, 7, 0.9);
-            }
-            
-            .notification.error {
-                background: rgba(244, 67, 54, 0.9);
-                color: white;
-            }
-            
+            .notification.success { background: rgba(76, 175, 80, 0.9); }
+            .notification.warning { background: rgba(255, 193, 7, 0.9); }
+            .notification.error { background: rgba(244, 67, 54, 0.9); color: white; }
+
             @keyframes slideIn {
                 from { transform: translateX(100%); opacity: 0; }
                 to { transform: translateX(0); opacity: 1; }
             }
-            
+
             .modal {
                 position: fixed;
                 top: 0;
@@ -527,7 +541,7 @@ class WorkingGameController {
                 align-items: center;
                 z-index: 2000;
             }
-            
+
             .modal-content {
                 background: #1a1817;
                 padding: 2rem;
@@ -537,13 +551,9 @@ class WorkingGameController {
                 width: 90%;
                 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
             }
-            
-            .modal-content h3 {
-                color: #e09658;
-                margin-bottom: 1rem;
-                text-align: center;
-            }
-            
+
+            .modal-content h3 { color: #e09658; margin-bottom: 1rem; text-align: center; }
+
             .close-modal {
                 background: #e09658;
                 border: none;
@@ -555,26 +565,17 @@ class WorkingGameController {
                 width: 100%;
                 font-weight: bold;
             }
-            
+
+            @media (max-width: 1024px) {
+                .game-content { grid-template-columns: 1.5fr 1fr; }
+            }
             @media (max-width: 768px) {
-                .game-header {
-                    flex-direction: column;
-                    gap: 1rem;
-                    text-align: center;
-                }
-                
-                .character-attributes {
-                    justify-content: center;
-                }
-                
-                .game-content {
-                    padding: 1rem;
-                }
-                
-                .game-actions {
-                    flex-direction: column;
-                    align-items: center;
-                }
+                .game-header { flex-direction: column; gap: 1rem; text-align: center; }
+                .character-attributes { justify-content: center; }
+                .game-content { padding: 1rem; grid-template-columns: 1fr; grid-auto-rows: 1fr; }
+                .choices-section { order: 2; }
+                .scene-section { order: 1; }
+                .game-actions { flex-direction: column; align-items: center; }
             }
         `;
     }
@@ -634,11 +635,8 @@ class WorkingGameController {
         // Handle meditation
         const meditationBtn = document.getElementById('meditation-btn');
         if (meditationBtn) {
-            if (scene.meditation && scene.meditation.available) {
-                meditationBtn.style.display = 'block';
-            } else {
-                meditationBtn.style.display = 'none';
-            }
+            const available = !!(scene.meditation && scene.meditation.available);
+            meditationBtn.classList.toggle('is-hidden', !available);
         }
         
         console.log('✅ Scene loaded:', scene.title);
@@ -861,7 +859,7 @@ class WorkingGameController {
         document.addEventListener('click', (event) => {
             if (event.target.classList.contains('close-modal')) {
                 const modal = event.target.closest('.modal');
-                if (modal) modal.style.display = 'none';
+                if (modal) modal.classList.add('is-hidden');
             }
         });
         
@@ -918,7 +916,7 @@ class WorkingGameController {
             </div>
         `;
         
-        modal.style.display = 'flex';
+        modal.classList.remove('is-hidden');
     }
     
     saveProgress() {
