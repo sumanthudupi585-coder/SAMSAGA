@@ -375,7 +375,7 @@
             
             checkCompatibility() {
                 console.log('🔍 Checking browser compatibility...');
-
+                
                 // Check for localStorage
                 try {
                     if (typeof localStorage === 'undefined') {
@@ -389,25 +389,25 @@
                     this.showError('localStorage is not functional (may be in private mode)');
                     return false;
                 }
-
+                
                 // Check for JSON
                 if (typeof JSON === 'undefined' || typeof JSON.parse !== 'function') {
                     this.showError('Browser missing required feature: JSON support');
                     return false;
                 }
-
+                
                 // Check for addEventListener (on document)
                 if (typeof document.addEventListener !== 'function') {
                     this.showError('Browser missing required feature: addEventListener');
                     return false;
                 }
-
+                
                 // Check for querySelector (on document)
                 if (typeof document.querySelector !== 'function') {
                     this.showError('Browser missing required feature: querySelector');
                     return false;
                 }
-
+                
                 // Check for basic ES6 features
                 try {
                     // Test arrow functions, const/let, template literals
@@ -419,7 +419,7 @@
                     this.showError('Browser missing required feature: Modern JavaScript (ES6)');
                     return false;
                 }
-
+                
                 console.log('✅ Browser compatibility check passed');
                 return true;
             }
@@ -528,51 +528,77 @@
             }
             
             showMinimalFallback() {
-                // Create a minimal playable version
-                const gameContainer = document.getElementById('game-container');
-                if (gameContainer) {
-                    gameContainer.innerHTML = `
-                        <div style="padding: 2rem; max-width: 800px; margin: 0 auto; color: #c5c1b9;">
-                            <header style="text-align: center; margin-bottom: 3rem;">
-                                <h1 style="color: #e09658; font-size: 2.5rem; margin-bottom: 0.5rem;">Samsara Saga</h1>
-                                <h2 style="color: #a97142; font-size: 1.5rem; font-style: italic;">Act 1: The Awakening</h2>
-                            </header>
-                            
-                            <main style="background: rgba(26, 24, 23, 0.8); padding: 2rem; border-radius: 15px; border: 1px solid rgba(224, 150, 88, 0.3);">
-                                <h3 style="color: #e09658; margin-bottom: 1rem;">Your Journey Begins</h3>
-                                <p style="margin-bottom: 1.5rem; line-height: 1.8;">
-                                    You find yourself in the peaceful village of Dharmapura, where ancient wisdom meets everyday challenges. 
-                                    As you begin to understand the deeper mysteries of existence, you sense that this place holds the keys to spiritual awakening.
-                                </p>
-                                <p style="margin-bottom: 2rem; font-style: italic; color: #a97142;">
-                                    The cosmic winds stir as consciousness takes form, and your path of discovery begins...
-                                </p>
-                                
-                                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <button onclick="exploreVillage()" style="background: linear-gradient(145deg, #e09658, #a97142); border: none; padding: 1rem 2rem; border-radius: 8px; color: #0a0908; font-weight: bold; cursor: pointer; font-size: 1rem;">
-                                        🏘️ Explore the village to understand the situation
-                                    </button>
-                                    <button onclick="seekGuidance()" style="background: linear-gradient(145deg, #e09658, #a97142); border: none; padding: 1rem 2rem; border-radius: 8px; color: #0a0908; font-weight: bold; cursor: pointer; font-size: 1rem;">
-                                        ��️ Seek spiritual guidance from the temple
-                                    </button>
-                                    <button onclick="helpVillagers()" style="background: linear-gradient(145deg, #e09658, #a97142); border: none; padding: 1rem 2rem; border-radius: 8px; color: #0a0908; font-weight: bold; cursor: pointer; font-size: 1rem;">
-                                        🤝 Approach the villagers to offer help
-                                    </button>
-                                </div>
-                                
-                                <div style="margin-top: 2rem; text-align: center;">
-                                    <button onclick="location.reload()" style="background: rgba(224, 150, 88, 0.2); border: 1px solid #e09658; padding: 0.5rem 1rem; border-radius: 5px; color: #e09658; cursor: pointer;">
-                                        🔄 Reload Full Experience
-                                    </button>
-                                </div>
-                            </main>
-                        </div>
-                    `;
-                    
-                    gameContainer.style.display = 'block';
+                console.log('🔧 Activating minimal fallback mode...');
+                
+                // Hide loading screen if it exists
+                const loadingScreen = document.getElementById('critical-loading');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
                 }
                 
-                console.log('🔧 Minimal fallback mode activated');
+                // Create or get game container
+                let gameContainer = document.getElementById('game-container');
+                if (!gameContainer) {
+                    gameContainer = document.createElement('div');
+                    gameContainer.id = 'game-container';
+                    document.body.appendChild(gameContainer);
+                }
+                
+                gameContainer.innerHTML = `
+                    <div style="padding: 2rem; max-width: 800px; margin: 0 auto; color: #c5c1b9; min-height: 100vh; display: flex; flex-direction: column; justify-content: center;">
+                        <header style="text-align: center; margin-bottom: 3rem;">
+                            <h1 style="color: #e09658; font-size: 2.5rem; margin-bottom: 0.5rem; text-shadow: 0 0 10px rgba(224, 150, 88, 0.5);">Samsara Saga</h1>
+                            <h2 style="color: #a97142; font-size: 1.5rem; font-style: italic;">Act 1: The Awakening</h2>
+                            <p style="color: #8a7a6a; font-size: 0.9rem; margin-top: 1rem;">Minimal Mode - Core Systems Unavailable</p>
+                        </header>
+                        
+                        <main style="background: rgba(26, 24, 23, 0.8); padding: 2rem; border-radius: 15px; border: 1px solid rgba(224, 150, 88, 0.3); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                            <h3 style="color: #e09658; margin-bottom: 1rem;">Your Journey Begins</h3>
+                            <p style="margin-bottom: 1.5rem; line-height: 1.8;">
+                                You find yourself in the peaceful village of Dharmapura, where ancient wisdom meets everyday challenges. 
+                                As you begin to understand the deeper mysteries of existence, you sense that this place holds the keys to spiritual awakening.
+                            </p>
+                            <p style="margin-bottom: 2rem; font-style: italic; color: #a97142; background: rgba(224, 150, 88, 0.05); padding: 1rem; border-left: 3px solid #e09658; border-radius: 0 8px 8px 0;">
+                                The cosmic winds stir as consciousness takes form, and your path of discovery begins...
+                            </p>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                                <button onclick="exploreVillage()" style="background: linear-gradient(145deg, #e09658, #a97142); border: none; padding: 1rem 2rem; border-radius: 8px; color: #0a0908; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    🏘️ Explore the village to understand the situation
+                                </button>
+                                <button onclick="seekGuidance()" style="background: linear-gradient(145deg, #e09658, #a97142); border: none; padding: 1rem 2rem; border-radius: 8px; color: #0a0908; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    🕉️ Seek spiritual guidance from the temple
+                                </button>
+                                <button onclick="helpVillagers()" style="background: linear-gradient(145deg, #e09658, #a97142); border: none; padding: 1rem 2rem; border-radius: 8px; color: #0a0908; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    🤝 Approach the villagers to offer help
+                                </button>
+                            </div>
+                            
+                            <hr style="border: none; border-top: 1px solid rgba(224, 150, 88, 0.3); margin: 2rem 0;">
+                            
+                            <div style="text-align: center;">
+                                <h4 style="color: #e09658; margin-bottom: 1rem;">Experiencing Issues?</h4>
+                                <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+                                    <button onclick="location.reload()" style="background: rgba(224, 150, 88, 0.2); border: 1px solid #e09658; padding: 0.75rem 1.5rem; border-radius: 5px; color: #e09658; cursor: pointer; font-weight: bold;">
+                                        🔄 Reload Full Experience
+                                    </button>
+                                    <button onclick="window.location.href='CB-fixed.html'" style="background: rgba(99, 180, 209, 0.2); border: 1px solid #63b4d1; padding: 0.75rem 1.5rem; border-radius: 5px; color: #63b4d1; cursor: pointer; font-weight: bold;">
+                                        🌟 Create New Character
+                                    </button>
+                                    <button onclick="window.location.href='index.html'" style="background: rgba(169, 113, 66, 0.2); border: 1px solid #a97142; padding: 0.75rem 1.5rem; border-radius: 5px; color: #a97142; cursor: pointer; font-weight: bold;">
+                                        🏠 Return Home
+                                    </button>
+                                </div>
+                                <p style="margin-top: 1rem; font-size: 0.9rem; color: #8a7a6a;">
+                                    For the best experience, please use a modern browser like Chrome, Firefox, Safari, or Edge.
+                                </p>
+                            </div>
+                        </main>
+                    </div>
+                `;
+                
+                gameContainer.style.display = 'block';
+                console.log('✅ Minimal fallback mode activated successfully');
             }
         }
         
@@ -617,7 +643,7 @@
                 return;
             }
             
-            // Only show critical errors
+            // Only show critical errors during loading
             if (!window.gameController && !window.workingGameController) {
                 const loader = document.querySelector('.critical-loading');
                 if (loader && !loader.classList.contains('hidden')) {
@@ -641,7 +667,7 @@
         // Initialize the critical loader immediately
         window.criticalLoader = new CriticalGameLoader();
         
-        console.log('🌟 Fixed Game Entry Point loaded successfully');
+        console.log('🌟 Fixed Game Entry Point v2 loaded successfully');
     </script>
 </body>
 </html>
