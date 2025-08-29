@@ -234,7 +234,12 @@ class CinematicUISystem {
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Puzzle Overlay -->
+            <div class="puzzle-overlay" id="puzzle-overlay" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 20000; align-items: center; justify-content: center;">
+                <div id="puzzle-content" style="background: var(--color-surface, #1a1817); border: 1px solid var(--color-primary, #e09658); border-radius: 12px; padding: 20px; width: min(700px, 92vw); max-height: 85vh; overflow: auto;"></div>
+            </div>
+
             <!-- Floating Notifications -->
             <div class="notification-system">
                 <div class="notifications-container" id="notifications"></div>
