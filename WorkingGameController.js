@@ -713,8 +713,14 @@ class WorkingGameController {
             return text.map(p => `<p>${p}</p>`).join('');
         }
         
-        // Convert plain text to paragraphs
-        return text.split('\n\n').map(p => `<p>${p.trim()}</p>`).join('');
+        // Convert plain text to paragraphs & highlight key terms
+        const keywords = ['Dashashwamedh','Ghat','Ganga','ritual','bowl','boatman','lotus','Nyāya','Nyaya','Vaiśeṣika','Vaisesika','Dravya','Warden','Silas'];
+        const safe = text.split('\n\n').map(p => {
+            let t = p.trim();
+            keywords.forEach(k=>{ const re = new RegExp(`(\\b${k}\\b)`,`g`); t = t.replace(re, '<span style="color:#e09658; text-shadow:0 0 8px rgba(224,150,88,.4)">$1</span>'); });
+            return `<p>${t}</p>`;
+        }).join('');
+        return safe;
     }
     
     loadChoices(choices) {
