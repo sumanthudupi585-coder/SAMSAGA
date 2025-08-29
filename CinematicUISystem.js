@@ -37,7 +37,10 @@ class CinematicUISystem {
         
         // Set up dynamic UI evolution
         this.setupUIEvolution();
-        
+
+        // Setup enhanced puzzle styles
+        this.setupPuzzleStyles?.();
+
         console.log('✅ Cinematic UI System initialized');
     }
     
@@ -234,7 +237,12 @@ class CinematicUISystem {
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Puzzle Overlay -->
+            <div class="puzzle-overlay" id="puzzle-overlay">
+                <div id="puzzle-content" class="puzzle-content"></div>
+            </div>
+
             <!-- Floating Notifications -->
             <div class="notification-system">
                 <div class="notifications-container" id="notifications"></div>
@@ -292,6 +300,72 @@ class CinematicUISystem {
         this.setupEventListeners();
     }
     
+    /**
+     * Inject styles for puzzle overlay and widgets
+     */
+    setupPuzzleStyles() {
+        const styles = `
+        <style id="puzzle-styles">
+        .puzzle-overlay { display:none; position:fixed; inset:0; background: radial-gradient(1200px 600px at 50% 30%, rgba(224,150,88,0.08), rgba(0,0,0,0.85)); z-index:20000; align-items:center; justify-content:center; padding:24px; }
+        .puzzle-content { background: var(--color-surface, #1a1817); border: 1px solid var(--color-primary, #e09658); border-radius: 14px; width: min(880px, 92vw); max-height: 86vh; overflow:auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.03); }
+        .puzzle-header { position:sticky; top:0; backdrop-filter: blur(6px); background: linear-gradient(180deg, rgba(26,24,23,0.9), rgba(26,24,23,0.6)); border-bottom:1px solid rgba(224,150,88,0.25); padding:18px 22px; display:flex; align-items:center; gap:14px; z-index:2; }
+        .puzzle-icon { font-size:22px; filter: drop-shadow(0 0 6px rgba(224,150,88,0.35)); }
+        .puzzle-title-wrap { display:flex; flex-direction:column; }
+        .puzzle-title { margin:0; font-size:1.4rem; color: var(--color-text, #c5c1b9); letter-spacing:0.3px; }
+        .puzzle-sub { margin:4px 0 0; font-size:0.95rem; color: #bca06a; opacity:0.9; }
+        .puzzle-body { padding:20px 22px 24px; display:grid; gap:18px; }
+        .puzzle-hint-row { display:flex; gap:10px; align-items:center; justify-content:space-between; }
+        .hint-btn, .close-btn, .primary-btn, .ghost-btn { border:1px solid var(--color-primary, #e09658); color: var(--color-text, #c5c1b9); background: transparent; border-radius:10px; padding:8px 12px; cursor:pointer; transition: all .2s ease; }
+        .primary-btn { background: linear-gradient(180deg, rgba(224,150,88,0.2), rgba(224,150,88,0.05)); }
+        .ghost-btn { border-color: rgba(224,150,88,0.35); opacity:0.9; }
+        .hint-text { font-size:0.9rem; color:#d2c8be; opacity:0.9; display:none; }
+        .hint-text.show { display:block; animation: fadeIn .25s ease; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform:none; } }
+        .themed-panel { border:1px solid rgba(224,150,88,0.18); border-radius:12px; padding:14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+        /* Rotational Alignment UI */
+        .rings-wrap { display:grid; grid-template-columns: minmax(240px,1fr) minmax(260px,1fr); gap:18px; align-items:center; }
+        .mandala-preview { position:relative; aspect-ratio:1/1; background: radial-gradient(circle at 50% 50%, rgba(255,220,148,0.06), transparent 65%); border-radius:12px; border:1px solid rgba(224,150,88,0.25); overflow:hidden; }
+        .ring { position:absolute; inset:10%; border:1px dashed rgba(224,150,88,0.25); border-radius:50%; pointer-events:none; }
+        .ring.r2 { inset:20%; }
+        .ring.r3 { inset:30%; }
+        .ring-marker { position:absolute; top:0; left:50%; width:2px; height:12%; background: #ffc994; transform-origin: bottom center; box-shadow: 0 0 10px rgba(255,201,148,0.6); }
+        .sliders { display:grid; gap:12px; }
+        .slider-row { display:flex; align-items:center; gap:10px; }
+        .slider-row label { min-width:84px; color:#d2c8be; opacity:0.9; }
+        .slider-row input[type=range] { width:100%; accent-color: #e09658; }
+        .alignment-meter { height:8px; background: linear-gradient(90deg, #7b3f00, #b37a3c, #ffc994); border-radius:999px; overflow:hidden; position:relative; }
+        .alignment-fill { position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(90deg, #b37a3c, #ffc994); box-shadow: 0 0 16px rgba(255,201,148,0.6); transition: width .2s ease; }
+        /* Item Application (Barrier) */
+        .barrier-grid { display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; }
+        .barrier-zone { position:relative; border-radius:12px; border:1px solid rgba(224,150,88,0.25); min-height:220px; display:flex; align-items:center; justify-content:center; background: radial-gradient(240px 140px at 50% 50%, rgba(99,180,209,0.12), rgba(0,0,0,0.15)); overflow:hidden; }
+        .barrier-veil { position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(99,180,209,0.18) 0 6px, transparent 6px 12px); animation: shimmer 2.5s linear infinite; }
+        @keyframes shimmer { from {transform: translateX(-20%);} to { transform: translateX(20%);} }
+        .inventory { display:flex; flex-wrap:wrap; gap:10px; align-content:flex-start; }
+        .token { border:1px solid rgba(224,150,88,0.35); padding:8px 10px; border-radius:999px; cursor:grab; user-select:none; background: rgba(224,150,88,0.06); transition: transform .15s ease; }
+        .token:active { transform: scale(0.98); cursor:grabbing; }
+        .drop-hint { position:absolute; bottom:10px; color:#bca06a; font-size:0.85rem; opacity:0.9; }
+        /* Crafting */
+        .craft-stage { display:flex; align-items:center; gap:10px; }
+        .progress { flex:1; height:8px; background: rgba(255,255,255,0.06); border-radius:999px; overflow:hidden; }
+        .progress > span { display:block; height:100%; width:0%; background: linear-gradient(90deg,#63b4d1,#ffc994); transition: width .3s ease; }
+        .stage-list { display:grid; gap:10px; }
+        .stage-item { display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; border:1px solid rgba(224,150,88,0.2); background: rgba(255,255,255,0.02); }
+        .stage-item.active { border-color:#e09658; box-shadow: 0 0 12px rgba(224,150,88,0.15) inset; }
+        /* Musical Sequence */
+        .chimes { display:flex; gap:10px; flex-wrap:wrap; }
+        .chime { padding:12px 14px; border-radius:10px; border:1px solid rgba(224,150,88,0.3); background: rgba(99,180,209,0.08); cursor:pointer; transition: transform .08s ease, box-shadow .2s ease; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03); }
+        .chime:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,180,209,0.2); }
+        .sequence { display:flex; gap:8px; min-height:36px; align-items:center; }
+        .seq-note { padding:6px 10px; border-radius:999px; border:1px solid rgba(224,150,88,0.3); color:#ffc994; }
+        /* Theming */
+        .puzzle-overlay.theme-banyan .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(188,160,106,0.06), rgba(26,24,23,1)); }
+        .puzzle-overlay.theme-barrier .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(99,180,209,0.08), rgba(26,24,23,1)); }
+        .puzzle-overlay.theme-crafting .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(255,201,148,0.08), rgba(26,24,23,1)); }
+        .puzzle-overlay.theme-harmony .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(123,206,255,0.08), rgba(26,24,23,1)); }
+        </style>`;
+        if (!document.getElementById('puzzle-styles')) document.head.insertAdjacentHTML('beforeend', styles);
+    }
+
     /**
      * Initialize theme system with evolving visual styles
      */
@@ -647,6 +721,9 @@ class CinematicUISystem {
     handleSpecialFeatures(sceneData) {
         if (!sceneData) return;
 
+        // Puzzle integration
+        this.handlePuzzleIntegration?.(sceneData);
+
         // Handle meditation availability
         if (sceneData.meditation && sceneData.meditation.available) {
             this.enableMeditation(sceneData.meditation);
@@ -680,6 +757,243 @@ class CinematicUISystem {
         }
 
         console.log('✨ Special scene features handled');
+    }
+
+    /**
+     * Integrate puzzles into scenes by providing a Start Puzzle entry
+     */
+    handlePuzzleIntegration(sceneData) {
+        const puzzleId = sceneData.puzzleId || (sceneData.puzzle && (sceneData.puzzle.id || sceneData.puzzle.puzzleId));
+        if (!puzzleId || !window.PUZZLES || !window.PUZZLES[puzzleId]) return;
+        const existing = this.uiElements.choicesList.querySelector('[data-puzzle-entry]');
+        if (existing) existing.remove();
+        const entry = document.createElement('div');
+        entry.className = 'choice-option';
+        entry.dataset.puzzleEntry = 'true';
+        entry.innerHTML = `<div class="choice-content"><div class="choice-text">🧩 Begin Puzzle: ${window.PUZZLES[puzzleId].title || puzzleId}</div></div>`;
+        entry.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); this.launchPuzzle(puzzleId, sceneData); });
+        this.uiElements.choicesList.prepend(entry);
+    }
+
+    launchPuzzle(puzzleId, sceneData) {
+        if (!this.puzzleEngine) {
+            try {
+                const gsm = window.gameStateManager || new window.GameStateManager();
+                this.puzzleEngine = new window.PuzzleEngine(gsm, null);
+            } catch (e) { console.warn('PuzzleEngine init failed', e); this.showNotification?.('Unable to initialize puzzle system.', 'error', 3000); return; }
+        }
+        let overlay = document.getElementById('puzzle-overlay');
+        let content = document.getElementById('puzzle-content');
+        const puzzle = (window.PUZZLES && window.PUZZLES[puzzleId]) ? window.PUZZLES[puzzleId] : null;
+        if (!overlay || !content) {
+            const container = this.uiElements?.container || document.body;
+            overlay = document.createElement('div');
+            overlay.id = 'puzzle-overlay';
+            overlay.className = 'puzzle-overlay';
+            content = document.createElement('div');
+            content.id = 'puzzle-content';
+            content.className = 'puzzle-content';
+            overlay.appendChild(content);
+            container.appendChild(overlay);
+        }
+        if (!puzzle) { this.showNotification?.('Puzzle data missing. Please try again.', 'warning', 2500); return; }
+        // Apply theme class
+        overlay.classList.remove('theme-banyan','theme-barrier','theme-crafting','theme-harmony');
+        if (puzzleId === 'BanyanTreeHarmony') overlay.classList.add('theme-banyan');
+        else if (puzzleId === 'BarrierOfNegativity') overlay.classList.add('theme-barrier');
+        else if (puzzleId === 'ShilpaShastraCrafting') overlay.classList.add('theme-crafting');
+        else if (puzzleId === 'HarmonicResonance') overlay.classList.add('theme-harmony');
+
+        const header = `
+            <div class=\"puzzle-header\">
+                <div class=\"puzzle-icon\">🧩</div>
+                <div class=\"puzzle-title-wrap\">
+                    <h3 class=\"puzzle-title\">${puzzle.title || 'Puzzle'}</h3>
+                    <div class=\"puzzle-sub\">${puzzle.description || ''}</div>
+                </div>
+                <div style=\"margin-left:auto; display:flex; gap:8px;\">
+                    <button class=\"ghost-btn\" id=\"puzzle-close\">✖</button>
+                </div>
+            </div>`;
+        const type = puzzle.mechanics?.type;
+        let body = '';
+        if (type === 'RotationalAlignment') {
+            const rings = puzzle.uiConfig?.rings || [];
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel rings-wrap\">
+                <div class=\"mandala-preview\" id=\"mandala-preview\">
+                    <div class=\"ring r1\"><div class=\"ring-marker\" data-marker=\"vitality\"></div></div>
+                    <div class=\"ring r2\"><div class=\"ring-marker\" data-marker=\"wisdom\"></div></div>
+                    <div class=\"ring r3\"><div class=\"ring-marker\" data-marker=\"harmony\"></div></div>
+                </div>
+                <div class=\"sliders\">
+                    ${rings.map(r => `
+                    <div class=\"slider-row\">
+                        <label>${r.id}</label>
+                        <input type=\"range\" min=\"0\" max=\"359\" value=\"${r.initialRotation||0}\" data-ring=\"${r.id}\">
+                        <span class=\"deg\" data-deg=\"${r.id}\">${r.initialRotation||0}°</span>
+                    </div>`).join('')}
+                    <div class=\"alignment-meter\"><div class=\"alignment-fill\" id=\"align-fill\"></div></div>
+                    <div style=\"display:flex; gap:10px;\">
+                        <button id=\"puzzle-check\" class=\"primary-btn\">Check Alignment</button>
+                        <button id=\"reset-rings\" class=\"ghost-btn\">Reset</button>
+                    </div>
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
+        } else if (type === 'ItemApplication' || type === 'PurityAlignment') {
+            const items = (puzzle.mechanics?.solution?.validItems) || [];
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel barrier-grid\">
+                <div class=\"barrier-zone\" id=\"drop-zone\">
+                    <div class=\"barrier-veil\"></div>
+                    <div class=\"drop-hint\">Drag a pure item here</div>
+                </div>
+                <div>
+                    <div class=\"inventory\">
+                        ${items.map(it => `<div class=\"token\" draggable=\"true\" data-item=\"${it}\">${it}</div>`).join('')}
+                    </div>
+                    <div style=\"margin-top:10px; display:flex; gap:10px;\">
+                        ${items.map(it => `<button class=\"ghost-btn\" data-item-click=\"${it}\">Use ${it}</button>`).join('')}
+                    </div>
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
+        } else if (type === 'MultiStageCrafting') {
+            const stages = puzzle.stages || [];
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel\">
+                <div class=\"craft-stage\">
+                  <div class=\"progress\"><span id=\"craft-progress\"></span></div>
+                  <button id=\"advance-stage\" class=\"primary-btn\">Advance Stage</button>
+                </div>
+                <div class=\"stage-list\">
+                  ${stages.map((s, i) => `<div class=\"stage-item\" data-stage-item=\"${i+1}\"><strong>${i+1}. ${s.name}</strong><span style=\"opacity:.8\">— ${s.description}</span></div>`).join('')}
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
+        } else if (type === 'MusicalSequence') {
+            const notes = puzzle.mechanics?.notes || ['Sa','Ga','Pa','Dha','Ni'];
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel\">
+                <div class=\"chimes\">
+                    ${notes.map(n => `<button class=\"chime\" data-note=\"${n}\">${n}</button>`).join('')}
+                </div>
+                <div style=\"margin-top:10px; display:flex; gap:10px; align-items:center;\">
+                    <div class=\"sequence\" id=\"sequence\"></div>
+                    <button id=\"seq-reset\" class=\"ghost-btn\">Reset</button>
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
+        } else {
+            body += `<div class=\"puzzle-body\"><p>Interactive UI not available; auto-solving for demo.</p><button id=\"auto-solve\" class=\"primary-btn\">Complete</button></div>`;
+        }
+        content.innerHTML = `${header}${body}`;
+        overlay.style.display = 'flex';
+        const finish = () => {
+            overlay.style.display = 'none';
+            const successScene = (sceneData.puzzle && sceneData.puzzle.successScene) || puzzle.nextSceneOnSuccess || 'ACT1_CONCLUSION';
+            if (successScene) this.transitionToScene(successScene);
+        };
+        // Common hint toggle
+        const hintBtn = content.querySelector('#show-hint');
+        if (hintBtn) hintBtn.addEventListener('click', () => {
+            const t = content.querySelector('#hint-text');
+            if (t) t.classList.toggle('show');
+        });
+        // Close
+        const closeBtnEl = content.querySelector('#puzzle-close');
+        if (closeBtnEl) closeBtnEl.addEventListener('click', () => overlay.style.display = 'none');
+
+        if (type === 'RotationalAlignment') {
+            const inputs = Array.from(content.querySelectorAll('input[data-ring]'));
+            const degEls = Object.fromEntries(inputs.map(i => [i.dataset.ring, content.querySelector(`[data-deg="${i.dataset.ring}"]`)]));
+            const markers = {
+                vitality: content.querySelector('[data-marker="vitality"]'),
+                wisdom: content.querySelector('[data-marker="wisdom"]'),
+                harmony: content.querySelector('[data-marker="harmony"]')
+            };
+            const fill = content.querySelector('#align-fill');
+            const updatePreview = () => {
+                const values = {};
+                inputs.forEach(i => { values[i.dataset.ring] = parseInt(i.value)||0; if (degEls[i.dataset.ring]) degEls[i.dataset.ring].textContent = `${values[i.dataset.ring]}°`; });
+                if (markers.vitality) markers.vitality.style.transform = `rotate(${values.vitality||0}deg)`;
+                if (markers.wisdom) markers.wisdom.style.transform = `rotate(${values.wisdom||0}deg)`;
+                if (markers.harmony) markers.harmony.style.transform = `rotate(${values.harmony||0}deg)`;
+                const avgDelta = Object.values(values).reduce((a,v)=> a + Math.min(Math.abs(v%360), 360-Math.abs(v%360)), 0) / 3;
+                const pct = Math.max(0, 100 - (avgDelta/180)*100);
+                if (fill) fill.style.width = `${pct}%`;
+            };
+            inputs.forEach(i => i.addEventListener('input', updatePreview));
+            updatePreview();
+            const check = content.querySelector('#puzzle-check');
+            if (check) check.addEventListener('click', () => {
+                const ringRotations = {};
+                inputs.forEach(i => ringRotations[i.dataset.ring] = parseInt(i.value));
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { ringRotations });
+                if (solved) finish();
+            });
+            const reset = content.querySelector('#reset-rings');
+            if (reset) reset.addEventListener('click', () => { inputs.forEach(i => { i.value = 0; }); updatePreview(); });
+        } else if (type === 'ItemApplication' || type === 'PurityAlignment') {
+            const zone = content.querySelector('#drop-zone');
+            const onSolve = (item) => {
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { droppedItem: item });
+                if (solved) finish();
+            };
+            content.querySelectorAll('[data-item-click]').forEach(btn => btn.addEventListener('click', () => onSolve(btn.dataset.itemClick)));
+            content.querySelectorAll('.token').forEach(tok => {
+                tok.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', tok.dataset.item); });
+            });
+            if (zone) {
+                zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.outline = '2px solid #63b4d1'; });
+                zone.addEventListener('dragleave', () => { zone.style.outline = 'none'; });
+                zone.addEventListener('drop', (e) => { e.preventDefault(); zone.style.outline = 'none'; const item = e.dataTransfer.getData('text/plain'); onSolve(item); });
+            }
+        } else if (type === 'MultiStageCrafting') {
+            const progress = content.querySelector('#craft-progress');
+            const items = Array.from(content.querySelectorAll('[data-stage-item]'));
+            const update = () => {
+                const state = this.puzzleEngine.activePuzzle?.activeState || { currentStage: 1 };
+                const total = (puzzle.stages||[]).length;
+                const pct = Math.min(100, ((state.currentStage-1)/total)*100);
+                if (progress) progress.style.width = `${pct}%`;
+                items.forEach((el, idx) => el.classList.toggle('active', idx < state.currentStage));
+            };
+            this.puzzleEngine.startPuzzle(puzzleId);
+            update();
+            const adv = content.querySelector('#advance-stage');
+            if (adv) adv.addEventListener('click', () => {
+                this.puzzleEngine.handleInteraction({ action: 'advance_stage' });
+                update();
+                if (this.puzzleEngine.activePuzzle?.isSolved()) finish();
+            });
+        } else if (type === 'MusicalSequence') {
+            this.puzzleEngine.startPuzzle(puzzleId);
+            const seq = content.querySelector('#sequence');
+            const reset = content.querySelector('#seq-reset');
+            const addNote = (n) => {
+                const tag = document.createElement('div');
+                tag.className = 'seq-note';
+                tag.textContent = n;
+                seq.appendChild(tag);
+                this.puzzleEngine.handleInteraction({ note: n });
+                if (this.puzzleEngine.activePuzzle?.isSolved()) finish();
+            };
+            content.querySelectorAll('[data-note]').forEach(btn => btn.addEventListener('click', () => addNote(btn.dataset.note)));
+            if (reset) reset.addEventListener('click', () => { seq.innerHTML=''; this.puzzleEngine.activePuzzle.activeState.sequence = []; });
+        } else {
+            const auto = document.getElementById('auto-solve');
+            if (auto) auto.onclick = finish;
+        }
     }
 
     /**
@@ -1172,7 +1486,13 @@ class CinematicUISystem {
         if (window.ENHANCED_ACT1_STORY_DATA && window.ENHANCED_ACT1_STORY_DATA[sceneId]) {
             this.loadScene(window.ENHANCED_ACT1_STORY_DATA[sceneId]);
         } else {
-            console.warn('Scene not found:', sceneId);
+            const fallback = 'THE_GREAT_CONVERGENCE';
+            if (window.ENHANCED_ACT1_STORY_DATA && window.ENHANCED_ACT1_STORY_DATA[fallback]) {
+                this.loadScene(window.ENHANCED_ACT1_STORY_DATA[fallback]);
+                if (this.showNotification) {
+                    this.showNotification('Guiding to a key convergence point...', 'info', 2500);
+                }
+            }
         }
     }
     
