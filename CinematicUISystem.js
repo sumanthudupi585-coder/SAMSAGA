@@ -362,6 +362,21 @@ class CinematicUISystem {
         .puzzle-overlay.theme-barrier .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(99,180,209,0.08), rgba(26,24,23,1)); }
         .puzzle-overlay.theme-crafting .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(255,201,148,0.08), rgba(26,24,23,1)); }
         .puzzle-overlay.theme-harmony .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(123,206,255,0.08), rgba(26,24,23,1)); }
+        /* Orrery */
+        .orrery-puzzle-area { display:grid; gap:12px; }
+        .orrery-container { position:relative; aspect-ratio:1/1; border-radius:12px; border:1px solid rgba(224,150,88,0.25); background: radial-gradient(circle at 50% 50%, rgba(148,212,255,0.06), rgba(0,0,0,0.2) 65%); overflow:hidden; }
+        .orrery-center { position:absolute; top:50%; left:50%; width:10px; height:10px; border-radius:50%; background:#ffc994; transform: translate(-50%, -50%); box-shadow: 0 0 12px rgba(255,201,148,0.6); }
+        .orrery-planet { position:absolute; top:50%; left:50%; transform: rotate(var(--angle)) translate(40%) rotate(calc(-1 * var(--angle))); transform-origin: center; padding:4px 8px; border-radius:999px; border:1px solid rgba(224,150,88,0.35); background: rgba(99,180,209,0.08); color:#d2c8be; user-select:none; cursor:grab; }
+        .orrery-planet:active { cursor:grabbing; }
+        /* Klesha Trials */
+        .klesha-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+        .klesha-card { padding:12px; border:1px solid rgba(224,150,88,0.2); border-radius:12px; background: rgba(255,255,255,0.02); }
+        .klesha-card.resolved { opacity:0.75; box-shadow: 0 0 12px rgba(224,150,88,0.15) inset; }
+        .klesha-card .resolve-btn { margin-top:8px; }
+        /* Dharma Scales */
+        .dharma-area { display:grid; gap:12px; }
+        .scenario-panel { padding:12px; border:1px solid rgba(224,150,88,0.2); border-radius:12px; background: rgba(255,255,255,0.02); }
+        .scenario-panel .choices { display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
         </style>`;
         if (!document.getElementById('puzzle-styles')) document.head.insertAdjacentHTML('beforeend', styles);
     }
