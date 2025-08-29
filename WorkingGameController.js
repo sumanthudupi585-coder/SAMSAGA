@@ -960,6 +960,24 @@ class WorkingGameController {
         setInterval(() => {
             this.saveProgress();
         }, 30000);
+
+        // Journal interactions
+        const journalBtn = document.getElementById('journal-btn');
+        const journalModal = document.getElementById('journal-modal');
+        if (journalBtn && journalModal) {
+            journalBtn.addEventListener('click', () => { journalModal.classList.remove('is-hidden'); this.populateJournal(); });
+            journalModal.addEventListener('click', (e)=>{ if (e.target === journalModal) journalModal.classList.add('is-hidden'); });
+            journalModal.querySelectorAll('.journal-tab').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    journalModal.querySelectorAll('.journal-tab').forEach(b=>b.classList.remove('active'));
+                    journalModal.querySelectorAll('.journal-panel').forEach(p=>p.classList.remove('active'));
+                    btn.classList.add('active');
+                    const tabId = 'journal-' + btn.dataset.tab;
+                    const panel = document.getElementById(tabId);
+                    if (panel) panel.classList.add('active');
+                });
+            });
+        }
     }
     
     performMeditation() {
