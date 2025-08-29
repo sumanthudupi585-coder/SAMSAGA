@@ -686,6 +686,105 @@ class CinematicUISystem {
     }
 
     /**
+     * Integrate puzzles into scenes by providing a Start Puzzle entry
+     */
+    handlePuzzleIntegration(sceneData) {
+        const puzzleId = sceneData.puzzleId || (sceneData.puzzle && (sceneData.puzzle.id || sceneData.puzzle.puzzleId));
+        if (!puzzleId || !window.PUZZLES || !window.PUZZLES[puzzleId]) return;
+        const existing = this.uiElements.choicesList.querySelector('[data-puzzle-entry]');
+        if (existing) existing.remove();
+        const entry = document.createElement('div');
+        entry.className = 'choice-option';
+        entry.dataset.puzzleEntry = 'true';
+        entry.innerHTML = `<div class="choice-content"><div class="choice-text">🧩 Begin Puzzle: ${window.PUZZLES[puzzleId].title || puzzleId}</div></div>`;
+        entry.addEventListener('click', () => this.launchPuzzle(puzzleId, sceneData));
+        this.uiElements.choicesList.prepend(entry);
+    }
+
+    launchPuzzle(puzzleId, sceneData) {
+        if (!this.puzzleEngine) {
+            try {
+                const gsm = new window.GameStateManager();
+                this.puzzleEngine = new window.PuzzleEngine(gsm, null);
+            } catch (e) { console.warn('PuzzleEngine init failed', e); return; }
+        }
+        const overlay = document.getElementById('puzzle-overlay');
+        const content = document.getElementById('puzzle-content');
+        const puzzle = window.PUZZLES[puzzleId];
+        if (!overlay || !content || !puzzle) return;
+        const closeBtn = `<button id=\"puzzle-close\" class=\"action-btn\" style=\"float:right\">✖</button>`;
+        const header = `<h2 class=\"puzzle-title\">${puzzle.title || 'Puzzle'}</h2><p class=\"puzzle-philosophical-context\">${puzzle.description || ''}</p>`;
+        const type = puzzle.mechanics?.type;
+        let body = '';
+        if (type === 'RotationalAlignment') {
+            const rings = puzzle.uiConfig?.rings || [];
+            body += '<div style="display:grid; gap:12px">';
+            rings.forEach(r => { body += `<label>${r.id}: <input type=\"range\" min=\"0\" max=\"359\" value=\"${r.initialRotation||0}\" data-ring=\"${r.id}\"></label>`; });
+            body += '</div><button id=\"puzzle-check\" class=\"action-btn\" style=\"margin-top:12px\">Check Alignment</button>';
+        } else if (type === 'ItemApplication' || type === 'PurityAlignment') {
+            const items = (puzzle.mechanics?.solution?.validItems) || [];
+            body += '<div style="display:flex; flex-wrap:wrap; gap:10px">';
+            items.forEach(it => { body += `<button class=\"action-btn\" data-item=\"${it}\">${it}</button>`; });
+            body += '</div>';
+        } else if (type === 'MultiStageCrafting') {
+            body += '<div id=\"craft-stage\" style=\"margin:8px 0\"></div><button id=\"advance-stage\" class=\"action-btn\">Advance Stage</button>';
+        } else if (type === 'MusicalSequence') {
+            const notes = puzzle.mechanics?.notes || ['Sa','Ga','Pa','Dha','Ni'];
+            body += '<div style="display:flex; gap:8px; flex-wrap:wrap">';
+            notes.forEach(n => { body += `<button class=\"action-btn\" data-note=\"${n}\">${n}</button>`; });
+            body += '</div>';
+        } else {
+            body += '<p>Interactive UI not available; auto-solving for demo.</p><button id=\"auto-solve\" class=\"action-btn\">Complete</button>';
+        }
+        content.innerHTML = `${closeBtn}${header}${body}`;
+        overlay.style.display = 'flex';
+        const finish = () => {
+            overlay.style.display = 'none';
+            const successScene = (sceneData.puzzle && sceneData.puzzle.successScene) || puzzle.nextSceneOnSuccess || 'ACT1_CONCLUSION';
+            if (successScene) this.transitionToScene(successScene);
+        };
+        if (type === 'RotationalAlignment') {
+            document.getElementById('puzzle-check').onclick = () => {
+                const inputs = content.querySelectorAll('input[data-ring]');
+                const ringRotations = {};
+                inputs.forEach(i => ringRotations[i.dataset.ring] = parseInt(i.value));
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { ringRotations });
+                if (solved) finish();
+            };
+        } else if (type === 'ItemApplication' || type === 'PurityAlignment') {
+            content.querySelectorAll('button[data-item]').forEach(btn => btn.addEventListener('click', () => {
+                const item = btn.dataset.item;
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { droppedItem: item });
+                if (solved) finish();
+            }));
+        } else if (type === 'MultiStageCrafting') {
+            const stageEl = document.getElementById('craft-stage');
+            const update = () => {
+                const state = this.puzzleEngine.activePuzzle?.activeState || { currentStage: 1 };
+                const total = (puzzle.stages||[]).length;
+                stageEl.textContent = `Stage ${state.currentStage} of ${total}`;
+            };
+            this.puzzleEngine.startPuzzle(puzzleId);
+            update();
+            document.getElementById('advance-stage').onclick = () => {
+                this.puzzleEngine.handleInteraction({ action: 'advance_stage' });
+                update();
+                if (this.puzzleEngine.activePuzzle?.isSolved()) finish();
+            };
+        } else if (type === 'MusicalSequence') {
+            this.puzzleEngine.startPuzzle(puzzleId);
+            content.querySelectorAll('button[data-note]').forEach(btn => btn.addEventListener('click', () => {
+                this.puzzleEngine.handleInteraction({ note: btn.dataset.note });
+                if (this.puzzleEngine.activePuzzle?.isSolved()) finish();
+            }));
+        } else {
+            const auto = document.getElementById('auto-solve');
+            if (auto) auto.onclick = finish;
+        }
+        content.querySelector('#puzzle-close').onclick = () => { overlay.style.display = 'none'; };
+    }
+
+    /**
      * Enable meditation for current scene
      */
     enableMeditation(meditationData) {
@@ -972,7 +1071,7 @@ class CinematicUISystem {
                         isGanaChoice: true
                     }));
                     allChoices.push(...ganaChoices);
-                    console.log(`��� Added ${ganaChoices.length} gana-specific choices for ${playerGana}`);
+                    console.log(`✨ Added ${ganaChoices.length} gana-specific choices for ${playerGana}`);
                 } catch (error) {
                     console.warn('Error processing gana choices:', error);
                 }
