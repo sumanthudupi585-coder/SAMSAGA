@@ -797,31 +797,106 @@ class CinematicUISystem {
             container.appendChild(overlay);
         }
         if (!puzzle) { this.showNotification?.('Puzzle data missing. Please try again.', 'warning', 2500); return; }
-        const closeBtn = `<button id=\"puzzle-close\" class=\"action-btn\" style=\"float:right\">✖</button>`;
-        const header = `<h2 class=\"puzzle-title\">${puzzle.title || 'Puzzle'}</h2><p class=\"puzzle-philosophical-context\">${puzzle.description || ''}</p>`;
+        // Apply theme class
+        overlay.classList.remove('theme-banyan','theme-barrier','theme-crafting','theme-harmony');
+        if (puzzleId === 'BanyanTreeHarmony') overlay.classList.add('theme-banyan');
+        else if (puzzleId === 'BarrierOfNegativity') overlay.classList.add('theme-barrier');
+        else if (puzzleId === 'ShilpaShastraCrafting') overlay.classList.add('theme-crafting');
+        else if (puzzleId === 'HarmonicResonance') overlay.classList.add('theme-harmony');
+
+        const header = `
+            <div class=\"puzzle-header\">
+                <div class=\"puzzle-icon\">🧩</div>
+                <div class=\"puzzle-title-wrap\">
+                    <h3 class=\"puzzle-title\">${puzzle.title || 'Puzzle'}</h3>
+                    <div class=\"puzzle-sub\">${puzzle.description || ''}</div>
+                </div>
+                <div style=\"margin-left:auto; display:flex; gap:8px;\">
+                    <button class=\"ghost-btn\" id=\"puzzle-close\">✖</button>
+                </div>
+            </div>`;
         const type = puzzle.mechanics?.type;
         let body = '';
         if (type === 'RotationalAlignment') {
             const rings = puzzle.uiConfig?.rings || [];
-            body += '<div style="display:grid; gap:12px">';
-            rings.forEach(r => { body += `<label>${r.id}: <input type=\"range\" min=\"0\" max=\"359\" value=\"${r.initialRotation||0}\" data-ring=\"${r.id}\"></label>`; });
-            body += '</div><button id=\"puzzle-check\" class=\"action-btn\" style=\"margin-top:12px\">Check Alignment</button>';
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel rings-wrap\">
+                <div class=\"mandala-preview\" id=\"mandala-preview\">
+                    <div class=\"ring r1\"><div class=\"ring-marker\" data-marker=\"vitality\"></div></div>
+                    <div class=\"ring r2\"><div class=\"ring-marker\" data-marker=\"wisdom\"></div></div>
+                    <div class=\"ring r3\"><div class=\"ring-marker\" data-marker=\"harmony\"></div></div>
+                </div>
+                <div class=\"sliders\">
+                    ${rings.map(r => `
+                    <div class=\"slider-row\">
+                        <label>${r.id}</label>
+                        <input type=\"range\" min=\"0\" max=\"359\" value=\"${r.initialRotation||0}\" data-ring=\"${r.id}\">
+                        <span class=\"deg\" data-deg=\"${r.id}\">${r.initialRotation||0}°</span>
+                    </div>`).join('')}
+                    <div class=\"alignment-meter\"><div class=\"alignment-fill\" id=\"align-fill\"></div></div>
+                    <div style=\"display:flex; gap:10px;\">
+                        <button id=\"puzzle-check\" class=\"primary-btn\">Check Alignment</button>
+                        <button id=\"reset-rings\" class=\"ghost-btn\">Reset</button>
+                    </div>
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
         } else if (type === 'ItemApplication' || type === 'PurityAlignment') {
             const items = (puzzle.mechanics?.solution?.validItems) || [];
-            body += '<div style="display:flex; flex-wrap:wrap; gap:10px">';
-            items.forEach(it => { body += `<button class=\"action-btn\" data-item=\"${it}\">${it}</button>`; });
-            body += '</div>';
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel barrier-grid\">
+                <div class=\"barrier-zone\" id=\"drop-zone\">
+                    <div class=\"barrier-veil\"></div>
+                    <div class=\"drop-hint\">Drag a pure item here</div>
+                </div>
+                <div>
+                    <div class=\"inventory\">
+                        ${items.map(it => `<div class=\"token\" draggable=\"true\" data-item=\"${it}\">${it}</div>`).join('')}
+                    </div>
+                    <div style=\"margin-top:10px; display:flex; gap:10px;\">
+                        ${items.map(it => `<button class=\"ghost-btn\" data-item-click=\"${it}\">Use ${it}</button>`).join('')}
+                    </div>
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
         } else if (type === 'MultiStageCrafting') {
-            body += '<div id=\"craft-stage\" style=\"margin:8px 0\"></div><button id=\"advance-stage\" class=\"action-btn\">Advance Stage</button>';
+            const stages = puzzle.stages || [];
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel\">
+                <div class=\"craft-stage\">
+                  <div class=\"progress\"><span id=\"craft-progress\"></span></div>
+                  <button id=\"advance-stage\" class=\"primary-btn\">Advance Stage</button>
+                </div>
+                <div class=\"stage-list\">
+                  ${stages.map((s, i) => `<div class=\"stage-item\" data-stage-item=\"${i+1}\"><strong>${i+1}. ${s.name}</strong><span style=\"opacity:.8\">— ${s.description}</span></div>`).join('')}
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
         } else if (type === 'MusicalSequence') {
             const notes = puzzle.mechanics?.notes || ['Sa','Ga','Pa','Dha','Ni'];
-            body += '<div style="display:flex; gap:8px; flex-wrap:wrap">';
-            notes.forEach(n => { body += `<button class=\"action-btn\" data-note=\"${n}\">${n}</button>`; });
-            body += '</div>';
+            body += `
+            <div class=\"puzzle-body\">
+              <div class=\"themed-panel\">
+                <div class=\"chimes\">
+                    ${notes.map(n => `<button class=\"chime\" data-note=\"${n}\">${n}</button>`).join('')}
+                </div>
+                <div style=\"margin-top:10px; display:flex; gap:10px; align-items:center;\">
+                    <div class=\"sequence\" id=\"sequence\"></div>
+                    <button id=\"seq-reset\" class=\"ghost-btn\">Reset</button>
+                </div>
+              </div>
+              <div class=\"puzzle-hint-row\"><button class=\"hint-btn\" id=\"show-hint\">Show hint</button><div class=\"hint-text\" id=\"hint-text\">${(puzzle.hints && puzzle.hints[0]) || ''}</div></div>
+            </div>`;
         } else {
-            body += '<p>Interactive UI not available; auto-solving for demo.</p><button id=\"auto-solve\" class=\"action-btn\">Complete</button>';
+            body += `<div class=\"puzzle-body\"><p>Interactive UI not available; auto-solving for demo.</p><button id=\"auto-solve\" class=\"primary-btn\">Complete</button></div>`;
         }
-        content.innerHTML = `${closeBtn}${header}${body}`;
+        content.innerHTML = `${header}${body}`;
         overlay.style.display = 'flex';
         const finish = () => {
             overlay.style.display = 'none';
