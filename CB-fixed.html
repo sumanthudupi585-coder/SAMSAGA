@@ -236,6 +236,10 @@ function showScreen(id){
     currentQuestion = id;
     updateJournalDecor(id);
     updateProgressDots(id);
+    if (id === 'result-screen') {
+        const rc = next.querySelector('.result-content');
+        if (rc) rc.classList.add('reveal');
+    }
     window.scrollTo(0,0);
     setTimeout(()=>book.classList.remove('page-turn'),600);
 }
