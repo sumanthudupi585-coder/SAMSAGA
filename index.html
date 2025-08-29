@@ -87,7 +87,7 @@
                 </div>
                 <p class="cta-text">Begin Your Journey</p>
             </a>
-            <button class="action-button text-fade-in-delay-3" id="continue-button" style="display: none;">Continue Journey</button>
+            <button class="action-button text-fade-in-delay-3 is-hidden" id="continue-button">Continue Journey</button>
         </div>
 
         <div class="footer-links text-fade-in-delay-3">
@@ -146,6 +146,7 @@
         </div>
     </div>
 
+    <script src="EventBus.js"></script>
     <script src="GameStateManager.js"></script>
     <script src="navigation.js"></script>
     <script>
@@ -223,7 +224,7 @@
 
             const continueButton = document.getElementById('continue-button');
             if (localStorage.getItem('samsaraSagaSave')) {
-                continueButton.style.display = 'block';
+                continueButton.classList.remove('is-hidden');
             }
 
             continueButton.addEventListener('click', function() {
@@ -281,6 +282,8 @@
         .custom-cursor-active #cursor-container { display: block; }
         #cursor-container .chakra-cursor { transition: all 0.3s ease; }
         #cursor-container.active .chakra-cursor { transform: scale(1.5); stroke: var(--color-primary-glow); filter: drop-shadow(0 0 5px var(--color-primary-glow)); }
+
+        .is-hidden { display: none !important; }
 
         .page-transition { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--color-bg); z-index: 10000; display: flex; justify-content: center; align-items: center; pointer-events: none; opacity: 0; transition: opacity 0.8s ease-in-out; }
         .page-transition.active { opacity: 1; pointer-events: all; }

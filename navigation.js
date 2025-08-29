@@ -44,7 +44,7 @@ class NavigationManager {
      * Navigate to gameplay with current character
      */
     navigateToGameplay() {
-        this.navigateTo('Gameplay-fixed.html');
+        this.navigateTo('UnifiedSamsaraSaga.html');
     }
     
     /**
