@@ -693,7 +693,11 @@ class WorkingGameController {
         
         // Load choices
         this.loadChoices(scene.choices || []);
-        
+
+        // Inject scene-specific UX
+        this.injectSceneUX(this.gameState.currentScene, scene);
+        if (this.gameState.currentScene === 'WARDEN_MONOLOGUE') { this.showGlitchEffect(); }
+
         // Handle meditation
         const meditationBtn = document.getElementById('meditation-btn');
         if (meditationBtn) {
