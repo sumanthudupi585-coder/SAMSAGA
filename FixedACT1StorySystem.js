@@ -242,7 +242,7 @@ class FixedACT1StorySystem {
                 Through this practice, you learn:
                 • The Banyan tree was once the village's spiritual anchor
                 • A buried curse object may be affecting the tree
-                • The Elder and Priestess both want what's best, but approach it differently
+                ��� The Elder and Priestess both want what's best, but approach it differently
                 • The community has lost its sense of spiritual unity
                 
                 The villagers look at you with new hope. "You have given us something we forgot," Kamala says. "The gift of truly being heard."`,
@@ -559,12 +559,12 @@ class FixedACT1StorySystem {
             "FINAL_TEACHING": {
                 "title": "The Final Lesson",
                 "text": `Under the restored Banyan tree, you share the deepest wisdom you've gained in Dharmapura. The villagers, Elder, and Priestess listen with open hearts as you speak of:
-                
+
                 • The illusion of separation between sacred and mundane
                 • The power of community to heal spiritual disconnection
                 • The importance of listening deeply to one another
                 • How every action can be a spiritual practice
-                
+
                 Your words take root in their hearts like seeds in fertile soil.`,
                 "choices": [
                     {
@@ -576,6 +576,178 @@ class FixedACT1StorySystem {
                             "attributes": { "wisdom": 2, "compassion": 2 }
                         }
                     }
+                ]
+            },
+
+            // ===== Added: Missing referenced scenes to complete Act 1 flow =====
+            "ELDER_PRIESTESS_CONFLICT": {
+                "title": "A House Divided",
+                "text": `Elder Raghavan and Priestess Lakshmi disagree on how to treat the ailing Banyan. You sense both care deeply, but speak past each other.`,
+                "choices": [
+                    { "id": "mediate_now", "text": "🤝 Mediate a respectful dialogue", "nextScene": "MEDIATION_OFFER", "effects": { "attributes": { "wisdom": 1 } } },
+                    { "id": "gather_facts", "text": "🔍 Gather more facts before mediating", "nextScene": "COMMUNITY_INVESTIGATION" }
+                ]
+            },
+            "CROP_INVESTIGATION": {
+                "title": "Withering Fields",
+                "text": `The temple-side fields are stunted. The soil is fine; the energy is not. You feel a subtle resistance—like a barrier to growth.`,
+                "choices": [
+                    { "id": "trace_negativity", "text": "🌀 Trace the source of negativity", "nextScene": "CURSE_INVESTIGATION", "effects": { "attributes": { "spiritual_insight": 1 } } },
+                    { "id": "rally_help", "text": "👥 Rally villagers to cleanse the fields", "nextScene": "HEALING_CIRCLE_FORMATION" }
+                ]
+            },
+            "TEMPLE_SERVICE": {
+                "title": "Seva at the Temple",
+                "text": `You help restore the sanctum: lighting lamps, cleaning altars, and chanting softly. Service calms the mind and opens hearts.`,
+                "choices": [
+                    { "id": "teach_after_service", "text": "📿 Share unity practices with devotees", "nextScene": "VILLAGE_TEACHING", "effects": { "attributes": { "compassion": 1 } } },
+                    { "id": "return_with_insight", "text": "🧭 Carry this clarity to the village square", "nextScene": "THE_GREAT_CONVERGENCE" }
+                ]
+            },
+            "SPIRITUAL_BLESSING": {
+                "title": "Blessed for the Path",
+                "text": `Guruji blesses you with sacred ash. Your mind steadies; your purpose sharpens.`,
+                "choices": [
+                    { "id": "explore_after_blessing", "text": "🏘️ Explore with renewed focus", "nextScene": "VILLAGE_EXPLORATION", "effects": { "inventory": ["sacred_blessing"], "attributes": { "spiritual_insight": 1 } } },
+                    { "id": "converge_now", "text": "✨ Go where you are needed most", "nextScene": "THE_GREAT_CONVERGENCE" }
+                ]
+            },
+            "COMMUNITY_INVESTIGATION": {
+                "title": "Eyes and Ears Open",
+                "text": `Together with villagers, you survey the square, temple fields, and the Banyan. Threads of one story emerge.`,
+                "choices": [
+                    { "id": "check_tree", "text": "🌳 Focus on the Banyan", "nextScene": "BANYAN_INVESTIGATION" },
+                    { "id": "check_fields", "text": "🌾 Examine the fields", "nextScene": "CROP_INVESTIGATION" }
+                ]
+            },
+            "MEDIATION_OFFER": {
+                "title": "Bridging Voices",
+                "text": `You invite Elder and Priestess to share intentions, not positions. Softness returns to the space as listening deepens.`,
+                "choices": [
+                    { "id": "align_toward_unity", "text": "🕊️ Frame both views within unity", "nextScene": "LEADERSHIP_UNITY", "effects": { "attributes": { "wisdom": 1, "compassion": 1 } } },
+                    { "id": "pause_and_observe", "text": "👀 Observe a moment longer", "nextScene": "COMMUNITY_INVESTIGATION" }
+                ]
+            },
+            "AIKYA_MASTERY": {
+                "title": "Aikya Practice",
+                "text": `Breath, mantra, and attention unify. Separation loosens its hold. You feel ready to help the village remember.`,
+                "choices": [
+                    { "id": "carry_into_action", "text": "✨ Apply the realization in action", "nextScene": "THE_GREAT_CONVERGENCE", "effects": { "flags": { "learned_vicheda": true }, "attributes": { "spiritual_insight": 2 } } }
+                ]
+            },
+            "VILLAGE_TEACHING": {
+                "title": "Sharing What Heals",
+                "text": `You teach simple unity practices—listening circles, shared meals as ritual, mindful tending of spaces. Faces lighten.`,
+                "choices": [
+                    { "id": "guide_collective_solution", "text": "🏛️ Guide them to decide together", "nextScene": "COMMUNITY_SOLUTION", "effects": { "flags": { "gained_villager_trust": true } } }
+                ]
+            },
+            "BANYAN_HEALING_ATTEMPT": {
+                "title": "Hands on the Heartwood",
+                "text": `You attempt a direct healing. The blockage pushes back; intention needs form.`,
+                "choices": [
+                    { "id": "perform_purification", "text": "🔥 Channel a purification rite", "nextScene": "PURIFICATION_RITUAL" },
+                    { "id": "seek_more_guidance", "text": "🛕 Request Guruji's assistance", "nextScene": "GURUJI_ASSISTANCE" }
+                ]
+            },
+            "HEALING_CIRCLE_FORMATION": {
+                "title": "Circle of Care",
+                "text": `Villagers gather hand-in-hand. Breath synchronizes. A shared intention forms: heal the rift.`,
+                "choices": [
+                    { "id": "focus_on_tree", "text": "🌳 Direct the circle to the Banyan", "nextScene": "THE_GREAT_CONVERGENCE" }
+                ]
+            },
+            "CURSE_INVESTIGATION": {
+                "title": "What Lies Beneath",
+                "text": `A subtle trail of heaviness points back to the tree roots. Something was placed with ill intent.`,
+                "choices": [
+                    { "id": "inspect_roots", "text": "🕳️ Inspect the root base", "nextScene": "ROOT_EXAMINATION" }
+                ]
+            },
+            "LEADERSHIP_UNITY": {
+                "title": "Elder and Priestess Aligned",
+                "text": `They see: stewardship and sanctity are not opposites. The village exhales.`,
+                "choices": [
+                    { "id": "gather_everyone", "text": "📣 Call the village to the Banyan", "nextScene": "THE_GREAT_CONVERGENCE" }
+                ]
+            },
+            "UNITY_DEMONSTRATION": {
+                "title": "Unity, Embodied",
+                "text": `Through a simple act—shared work as prayer—you show how sacred suffuses the everyday.`,
+                "choices": [
+                    { "id": "integrate_forward", "text": "🔮 Seal it with a ritual", "nextScene": "INTEGRATION_RITUAL" },
+                    { "id": "conclude_with_grace", "text": "🌟 Conclude Act 1", "nextScene": "ACT1_CONCLUSION" }
+                ]
+            },
+            "TEACHER_PATH": {
+                "title": "Staying as Guide",
+                "text": `You remain to help Dharmapura root these practices. The village flourishes in balance.`,
+                "choices": [
+                    { "id": "farewell_for_now", "text": "🌅 When ready, continue", "nextScene": "ACT1_CONCLUSION" }
+                ]
+            },
+            "COMMUNITY_GOVERNANCE": {
+                "title": "Council of Harmony",
+                "text": `A council forms—farmers, artisans, devotees—deciding by listening and care.`,
+                "choices": [
+                    { "id": "graduate_act1", "text": "🎓 Close this chapter", "nextScene": "ACT1_CONCLUSION" }
+                ]
+            },
+            "ACT2_OPENING": {
+                "title": "Act II Beckons",
+                "text": `A new landscape awaits. Your newfound capacities will be tested in wider worlds.`,
+                "choices": [
+                    { "id": "return_if_not_ready", "text": "↩️ Not yet—revisit Act 1 end", "nextScene": "ACT1_CONCLUSION" }
+                ]
+            },
+            "MEDITATION_PHASE": {
+                "title": "Deepening Stillness",
+                "text": `You withdraw into silence. Insights ripen like fruit.`,
+                "choices": [
+                    { "id": "emerge_calm", "text": "🧘 Emerge and complete Act 1", "nextScene": "ACT1_CONCLUSION", "effects": { "attributes": { "detachment": 2 } } }
+                ]
+            },
+            "MAIN_MENU": {
+                "title": "Main Menu",
+                "text": `Use this as a soft return point. You can restart Act 1 anytime.`,
+                "choices": [
+                    { "id": "restart_act1", "text": "🔄 Restart Act 1", "nextScene": "AWAKENING_PROLOGUE" }
+                ]
+            },
+            "TREE_HISTORY": {
+                "title": "Roots of Tradition",
+                "text": `Stories reveal the Banyan as the village's heart—a living altar binding people and place.`,
+                "choices": [
+                    { "id": "act_on_knowledge", "text": "✨ Apply this insight", "nextScene": "THE_GREAT_CONVERGENCE", "effects": { "flags": { "learned_tree_history": true } } }
+                ]
+            },
+            "GURUJI_ASSISTANCE": {
+                "title": "Guided Purification",
+                "text": `With Guruji's guidance, the rite becomes precise and safe. Together you can attempt the cleanse.`,
+                "choices": [
+                    { "id": "perform_rite_now", "text": "🔥 Perform the purification", "nextScene": "PURIFICATION_RITUAL" }
+                ]
+            },
+            "VILLAGE_CELEBRATION": {
+                "title": "Joy Returns",
+                "text": `Music, lamps, and shared food under the Banyan. The village remembers its wholeness.`,
+                "choices": [
+                    { "id": "close_with_teaching", "text": "📿 Offer a final teaching", "nextScene": "FINAL_TEACHING" }
+                ]
+            },
+            "CURSE_PURIFIED": {
+                "title": "Curse Broken",
+                "text": `The stone's darkness dissolves. The tree breathes freely again.`,
+                "choices": [
+                    { "id": "return_triumphant", "text": "🏘️ Share the news", "nextScene": "TRIUMPHANT_RETURN" }
+                ]
+            },
+            "CURSE_RESISTANCE": {
+                "title": "The Stone Resists",
+                "text": `The curse pushes back. You need support or a different approach.`,
+                "choices": [
+                    { "id": "seek_help_now", "text": "🛕 Ask Guruji to assist", "nextScene": "GURUJI_ASSISTANCE" },
+                    { "id": "regroup_circle", "text": "👥 Form a healing circle", "nextScene": "HEALING_CIRCLE_FORMATION" }
                 ]
             }
         };
