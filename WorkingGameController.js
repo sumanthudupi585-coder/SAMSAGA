@@ -158,28 +158,35 @@ class WorkingGameController {
     
     async initializeStorySystem() {
         console.log('📚 Initializing story system...');
-        
-        // Try to use the fixed story system first
+
+        // Prefer Kashi Khanda data if present
+        if (window.ACT1_STORY_DATA && (window.ACT1_STORY_DATA['JOURNEY_START'] || window.ACT1_STORY_DATA.JOURNEY_START)) {
+            this.currentSystem = new this.BasicStorySystem(window.ACT1_STORY_DATA, 'JOURNEY_START');
+            console.log('✅ Using Kashi Khanda Act I data (JOURNEY_START)');
+            return;
+        }
+
+        // Then try fixed legacy system
         if (window.FixedACT1StorySystem) {
             this.currentSystem = new window.FixedACT1StorySystem();
             console.log('✅ Using Fixed ACT1 Story System');
             return;
         }
-        
-        // Fallback to enhanced story data
+
+        // Enhanced story data
         if (window.ENHANCED_ACT1_STORY_DATA) {
             this.currentSystem = new this.BasicStorySystem(window.ENHANCED_ACT1_STORY_DATA);
             console.log('✅ Using Enhanced ACT1 Story Data with basic system');
             return;
         }
-        
-        // Fallback to legacy story data
+
+        // Legacy story data (no explicit start)
         if (window.ACT1_STORY_DATA) {
             this.currentSystem = new this.BasicStorySystem(window.ACT1_STORY_DATA);
             console.log('✅ Using Legacy ACT1 Story Data with basic system');
             return;
         }
-        
+
         // Final fallback - create minimal story system
         this.currentSystem = new this.MinimalStorySystem();
         console.log('ℹ️ Using minimal fallback story system');
@@ -726,10 +733,15 @@ class WorkingGameController {
         // Navigate to next scene
         if (choice.nextScene) {
             this.gameState.currentScene = choice.nextScene;
-            
+
             // Update story system if possible
             if (this.currentSystem && this.currentSystem.currentScene !== undefined) {
                 this.currentSystem.currentScene = choice.nextScene;
+            }
+
+            // Persist world flags if provided
+            if (choice.worldStateTriggers) {
+                this.gameState.worldState = { ...this.gameState.worldState, ...choice.worldStateTriggers };
             }
             
             // Load new scene
@@ -1016,9 +1028,9 @@ class WorkingGameController {
     // ===== FALLBACK STORY SYSTEMS =====
     
     BasicStorySystem = class {
-        constructor(storyData) {
+        constructor(storyData, startScene) {
             this.storyData = storyData;
-            this.currentScene = 'AWAKENING_PROLOGUE';
+            this.currentScene = startScene || (storyData && (storyData['JOURNEY_START'] || storyData.JOURNEY_START) ? 'JOURNEY_START' : 'AWAKENING_PROLOGUE');
         }
         
         getCurrentScene() {
