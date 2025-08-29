@@ -264,7 +264,7 @@
                     console.error('Unable to resolve nakshatra number:', n);
                     alert('Error: Invalid Nakshatra. Please restart the oracle.');
                     return;
-                }const e=document.querySelector('.page-transition');e.classList.add('active');const t=new URLSearchParams({nakshatra:userAnswers.nakshatraNum,guna1:userAnswers.guna1,pada:userAnswers.pada,guna3:userAnswers.guna3}).toString();setTimeout(()=>{window.location.href=`UnifiedSamsaraSaga.html?${t}`},1500)}),window.matchMedia('(pointer: fine)').matches&&(document.body.classList.add('custom-cursor-active'),document.addEventListener('mousemove',e=>{document.getElementById('cursor-container').style.transform=`translate3d(${e.clientX}px, ${e.clientY}px, 0)`}),document.addEventListener('mouseover',e=>{(e.target.matches('a, button, .option')||e.target.closest('.option'))&&document.getElementById('cursor-container').classList.add('active')}),document.addEventListener('mouseout',e=>{(e.target.matches('a, button, .option')||e.target.closest('.option'))&&document.getElementById('cursor-container').classList.remove('active')}))});
+                }const e=document.querySelector('.page-transition');e.classList.add('active');const t=new URLSearchParams({nakshatra:userAnswers.nakshatraNum,guna1:userAnswers.guna1,pada:userAnswers.pada,guna3:userAnswers.guna3}).toString();setTimeout(()=>{window.location.href=`FixedGameEntry.html?${t}`},1500)}),window.matchMedia('(pointer: fine)').matches&&(document.body.classList.add('custom-cursor-active'),document.addEventListener('mousemove',e=>{document.getElementById('cursor-container').style.transform=`translate3d(${e.clientX}px, ${e.clientY}px, 0)`}),document.addEventListener('mouseover',e=>{(e.target.matches('a, button, .option')||e.target.closest('.option'))&&document.getElementById('cursor-container').classList.add('active')}),document.addEventListener('mouseout',e=>{(e.target.matches('a, button, .option')||e.target.closest('.option'))&&document.getElementById('cursor-container').classList.remove('active')}))});
         function finalizeCharacter() {
             // Get selected character attributes
             const characterData = {
@@ -285,7 +285,7 @@
             if (window.navigationManager) {
                 window.navigationManager.navigateToGameplay();
             } else {
-                window.location.href = 'UnifiedSamsaraSaga.html';
+                window.location.href = 'FixedGameEntry.html';
             }
         }
     </script>
