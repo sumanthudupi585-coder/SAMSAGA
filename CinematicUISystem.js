@@ -713,10 +713,22 @@ class CinematicUISystem {
                 this.puzzleEngine = new window.PuzzleEngine(gsm, null);
             } catch (e) { console.warn('PuzzleEngine init failed', e); this.showNotification?.('Unable to initialize puzzle system.', 'error', 3000); return; }
         }
-        const overlay = document.getElementById('puzzle-overlay');
-        const content = document.getElementById('puzzle-content');
-        const puzzle = window.PUZZLES[puzzleId];
-        if (!overlay || !content || !puzzle) return;
+        let overlay = document.getElementById('puzzle-overlay');
+        let content = document.getElementById('puzzle-content');
+        const puzzle = (window.PUZZLES && window.PUZZLES[puzzleId]) ? window.PUZZLES[puzzleId] : null;
+        if (!overlay || !content) {
+            const container = this.uiElements?.container || document.body;
+            overlay = document.createElement('div');
+            overlay.id = 'puzzle-overlay';
+            overlay.className = 'puzzle-overlay';
+            overlay.style.cssText = 'display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 20000; align-items: center; justify-content: center;';
+            content = document.createElement('div');
+            content.id = 'puzzle-content';
+            content.style.cssText = 'background: var(--color-surface, #1a1817); border: 1px solid var(--color-primary, #e09658); border-radius: 12px; padding: 20px; width: min(700px, 92vw); max-height: 85vh; overflow: auto;';
+            overlay.appendChild(content);
+            container.appendChild(overlay);
+        }
+        if (!puzzle) { this.showNotification?.('Puzzle data missing. Please try again.', 'warning', 2500); return; }
         const closeBtn = `<button id=\"puzzle-close\" class=\"action-btn\" style=\"float:right\">✖</button>`;
         const header = `<h2 class=\"puzzle-title\">${puzzle.title || 'Puzzle'}</h2><p class=\"puzzle-philosophical-context\">${puzzle.description || ''}</p>`;
         const type = puzzle.mechanics?.type;
