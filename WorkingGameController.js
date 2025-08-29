@@ -795,11 +795,23 @@ class WorkingGameController {
         // Apply inventory changes
         if (effects.inventory) {
             if (!this.gameState.inventory) this.gameState.inventory = [];
-            this.gameState.inventory.push(...effects.inventory);
-            
-            effects.inventory.forEach(item => {
-                this.showNotification(`Received: ${item}`, 'success');
-            });
+            if (Array.isArray(effects.inventory)) {
+                this.gameState.inventory.push(...effects.inventory);
+                effects.inventory.forEach(item => this.showNotification(`Received: ${item}`, 'success'));
+            } else {
+                const { add = [], remove = [] } = effects.inventory;
+                if (add.length) {
+                    this.gameState.inventory.push(...add);
+                    add.forEach(item => this.showNotification(`Received: ${item}`, 'success'));
+                }
+                if (remove.length) {
+                    remove.forEach(item => {
+                        const idx = this.gameState.inventory.indexOf(item);
+                        if (idx !== -1) this.gameState.inventory.splice(idx, 1);
+                        this.showNotification(`Used: ${item}`, 'warning');
+                    });
+                }
+            }
         }
         
         // Apply progression changes
