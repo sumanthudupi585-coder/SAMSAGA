@@ -169,6 +169,34 @@ class ItemApplicationStrategy extends BasePuzzleStrategy {
     }
 }
 
+// Additional strategies
+class MultiStageCraftingStrategy extends BasePuzzleStrategy {
+    initializeActiveState() { return { currentStage: 1, attempts: 0 }; }
+    handleInteraction(interactionData) {
+        const { action } = interactionData || {};
+        if (action === 'advance_stage') { this.activeState.currentStage++; return { stateUpdated: true }; }
+        return { stateUpdated: false };
+    }
+    isSolved() {
+        const totalStages = Array.isArray(this.puzzleData.stages) ? this.puzzleData.stages.length : 1;
+        return this.activeState.currentStage > totalStages;
+    }
+}
+class MusicalSequenceStrategy extends BasePuzzleStrategy {
+    initializeActiveState() { return { sequence: [], attempts: 0 }; }
+    handleInteraction(interactionData) {
+        const { note } = interactionData || {};
+        if (!note) return { stateUpdated: false };
+        this.activeState.sequence.push(note);
+        return { stateUpdated: true };
+    }
+    isSolved() {
+        const target = this.puzzleData.mechanics?.correctSequence || [];
+        if (this.activeState.sequence.length !== target.length) return false;
+        return this.activeState.sequence.every((n, i) => n === target[i]);
+    }
+}
+
 // =================================================================
 // SECTION 3: THE PUZZLE ENGINE (Main Class)
 // =================================================================
@@ -187,8 +215,9 @@ class PuzzleEngine {
             'EnergyBalancing': EnergyBalancingStrategy,
             'RotationalAlignment': RotationalAlignmentStrategy,
             'ItemApplication': ItemApplicationStrategy,
-            'PurityAlignment': ItemApplicationStrategy // Re-using strategy for similar mechanics
-            // Add other strategies here as they are created
+            'PurityAlignment': ItemApplicationStrategy,
+            'MultiStageCrafting': MultiStageCraftingStrategy,
+            'MusicalSequence': MusicalSequenceStrategy
         };
     }
 
@@ -301,7 +330,7 @@ class PuzzleEngine {
 
         // Determine success scene
         let nextSceneId = null;
-        const currentScene = this.storyEngine.getCurrentScene();
+        const currentScene = this.storyEngine && typeof this.storyEngine.getCurrentScene === 'function' ? this.storyEngine.getCurrentScene() : null;
         if (currentScene && currentScene.puzzle && Array.isArray(currentScene.puzzle.solutions)) {
             const sol = currentScene.puzzle.solutions.find(s => s.successScene);
             if (sol && sol.successScene) nextSceneId = sol.successScene;
@@ -326,7 +355,7 @@ class PuzzleEngine {
         console.log(`Puzzle ${puzzleData.id} failed.`);
 
         // Apply failure effects
-        const scene = this.storyEngine.getCurrentScene();
+        const scene = this.storyEngine && typeof this.storyEngine.getCurrentScene === 'function' ? this.storyEngine.getCurrentScene() : null;
         const failureInfo = scene && scene.puzzle ? scene.puzzle.defaultFailure : null;
         if (failureInfo) {
             if (failureInfo.effects) this.storyEngine.processEffects(failureInfo.effects);
