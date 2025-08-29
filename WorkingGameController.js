@@ -680,25 +680,35 @@ class WorkingGameController {
     
     checkChoiceRequirements(choice) {
         if (!choice.requirements) return true;
-        
-        // Check if we have the required attributes
-        if (choice.requirements.attributes) {
-            for (const [attr, minValue] of Object.entries(choice.requirements.attributes)) {
+        const req = choice.requirements;
+
+        // Check nested attribute requirements
+        if (req.attributes) {
+            for (const [attr, minValue] of Object.entries(req.attributes)) {
                 if ((this.gameState.playerProfile?.attributes?.[attr] || 0) < minValue) {
                     return false;
                 }
             }
         }
-        
-        // Check flags
-        if (choice.requirements.flags) {
-            for (const flag of choice.requirements.flags) {
-                if (!this.gameState.worldState[flag]) {
+
+        // Check flag requirements
+        if (req.flags) {
+            for (const flag of req.flags) {
+                if (!this.gameState.worldState?.[flag]) {
                     return false;
                 }
             }
         }
-        
+
+        // Check top-level numeric requirements (e.g., spiritual_insight: 3)
+        for (const [key, value] of Object.entries(req)) {
+            if (key !== 'attributes' && key !== 'flags') {
+                if ((this.gameState.playerProfile?.attributes?.[key] || 0) < value) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
     
