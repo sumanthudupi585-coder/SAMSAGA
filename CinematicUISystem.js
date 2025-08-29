@@ -647,6 +647,9 @@ class CinematicUISystem {
     handleSpecialFeatures(sceneData) {
         if (!sceneData) return;
 
+        // Puzzle integration
+        this.handlePuzzleIntegration?.(sceneData);
+
         // Handle meditation availability
         if (sceneData.meditation && sceneData.meditation.available) {
             this.enableMeditation(sceneData.meditation);
@@ -969,7 +972,7 @@ class CinematicUISystem {
                         isGanaChoice: true
                     }));
                     allChoices.push(...ganaChoices);
-                    console.log(`✨ Added ${ganaChoices.length} gana-specific choices for ${playerGana}`);
+                    console.log(`��� Added ${ganaChoices.length} gana-specific choices for ${playerGana}`);
                 } catch (error) {
                     console.warn('Error processing gana choices:', error);
                 }
