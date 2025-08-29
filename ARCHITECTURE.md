@@ -240,6 +240,19 @@ Each act's story data follows this structure:
 
 ---
 
+## Repository Structure (key folders)
+
+- puzzles/
+  - banyan/
+    - BanyanPuzzleFactory.js
+    - fixed-banyan-puzzle.js
+    - enhanced-banyan-puzzle.js
+    - ultra-enhanced-banyan-puzzle.js
+    - css/
+      - fixed-banyan-puzzle.css
+      - enhanced-banyan-puzzle.css
+      - enhanced-banyan-integration.css
+
 ## System Audit Summary (2025-08)
 
 - Multiple variant files (fixed/enhanced/ultra-enhanced) duplicate puzzle and system logic, increasing maintenance cost.
