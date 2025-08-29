@@ -585,8 +585,40 @@ class WorkingGameController {
                 .game-actions { flex-direction: column; align-items: center; }
             }
         `;
+        let extra = document.getElementById('working-game-styles-ux');
+        if (!extra) { extra = document.createElement('style'); extra.id = 'working-game-styles-ux'; document.head.appendChild(extra); }
+        extra.textContent = `
+            .journal-open-btn { margin-left: 1rem; }
+            #journal-modal .journal-content { max-width: 800px; width: 95%; }
+            .journal-header { display:flex; justify-content: space-between; align-items:center; margin-bottom: .5rem; }
+            .journal-tabs { display:flex; gap:.5rem; margin-bottom:.5rem; }
+            .journal-tab { background: rgba(224,150,88,.15); border:1px solid rgba(224,150,88,.4); color:#e09658; padding:.4rem .8rem; border-radius:6px; cursor:pointer; }
+            .journal-tab.active { background: rgba(224,150,88,.35); }
+            .journal-panels { background: rgba(26,24,23,.6); border:1px solid rgba(224,150,88,.25); border-radius:8px; padding:1rem; max-height:60vh; overflow:auto; }
+            .journal-panel { display:none; }
+            .journal-panel.active { display:block; }
+            .ritual-cipher { background: radial-gradient(circle at 50% 50%, rgba(99,180,209,0.15), transparent 60%); border:1px solid rgba(224,150,88,.3); border-radius:12px; padding:1rem; margin-bottom:1rem; position:relative; min-height:220px; }
+            .bowl { width:260px; height:160px; border-radius:50%/60% 60% 40% 40%; background: radial-gradient(ellipse at center, rgba(224,150,88,.15), rgba(26,24,23,.6)); border:1px solid rgba(224,150,88,.4); margin:0 auto; position:relative; overflow:hidden; }
+            .petal { width:24px; height:24px; border-radius:50% 50% 0 50%; transform: rotate(45deg); background:#ffc58f; position:absolute; left:50%; top:15%; cursor:grab; box-shadow:0 0 8px rgba(224,150,88,.6); }
+            .rc-instructions { text-align:center; color:#a97142; margin-top:.5rem; }
+            .torch-area { position:relative; height:220px; border:1px solid rgba(224,150,88,.3); border-radius:10px; overflow:hidden; background:#0d0b08; margin-bottom:1rem; }
+            .torch-reveal { position:absolute; inset:0; background: radial-gradient(120px 120px at var(--x,50%) var(--y,50%), transparent 0%, rgba(0,0,0,.92) 60%); pointer-events:none; }
+            .torch-etch { position:absolute; inset:0; background: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%2280%22 stroke=%22%23e09658%22 stroke-width=%221%22 fill=%22none%22/%3E%3C/svg%3E') center/contain no-repeat; opacity:.0; transition: opacity .3s; }
+            .torch-etch.visible { opacity:.35; }
+            .rings { display:flex; justify-content:center; gap:.5rem; margin:.5rem 0; }
+            .ring { width:90px; height:90px; border:2px dashed rgba(224,150,88,.5); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#e09658; cursor:pointer; transition: transform .2s; }
+            .heads { display:flex; gap:.5rem; justify-content:center; margin:.5rem 0; }
+            .head { padding:.6rem 1rem; border:1px solid rgba(224,150,88,.4); border-radius:8px; cursor:pointer; color:#e09658; }
+            .head.active { background: rgba(224,150,88,.2); }
+            .dravya-checklist { background: rgba(26,24,23,.6); border:1px solid rgba(224,150,88,.25); border-radius:10px; padding: .75rem 1rem; margin-bottom:1rem; }
+            .dravya-list { display:grid; grid-template-columns: repeat(3,1fr); gap:.4rem .8rem; }
+            .dravya-item { color:#c5c1b9; }
+            .dravya-item.done { color:#81c784; }
+            .glitch-overlay { position:fixed; inset:0; background:rgba(0,20,0,.95); color:#00ff88; font-family: monospace; z-index:5000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity .1s; }
+            .glitch-overlay.active { opacity:1; }
+        `;
     }
-    
+
     getAttributeIcon(attribute) {
         const icons = {
             wisdom: '🧠',
