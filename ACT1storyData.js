@@ -11,7 +11,7 @@ window.ACT1_STORY_DATA = {
     "text": "You materialize with a gasp into dusk at Dashashwamedh Ghat. Incense and marigold drift over the Ganga as saffron-robed priests sweep great lamps through the smoky air. Dr. Thorne's journal is open to a sketch of a seven‑flame diya. Three flames are circled: 2, 5, 7. The note reads: ‘The ritual is the key.’",
     "choices": [
       { "id": "focus_ritual", "text": "Focus on the ritual", "nextScene": "GHAT_RITUAL_FOCUS", "effects": { "attributes": { "spiritual_insight": 1 } } },
-      { "id": "focus_crowd", "text": "Focus on the crowd", "nextScene": "GHAT_CROWD_FOCUS", "effects": { "attributes": { "compassion": 1 }, "flags": { "heard_grey_suits": true } } },
+      { "id": "focus_crowd", "text": "Focus on the crowd", "nextScene": "GHAT_CROWD_FOCUS", "effects": { "attributes": { "compassion": 1 } }, "worldStateTriggers": { "heard_grey_suits": true } },
       { "id": "focus_river", "text": "Focus on the river", "nextScene": "GHAT_RIVER_FOCUS", "effects": { "attributes": { "wisdom": 1 } } }
     ]
   },
@@ -39,7 +39,7 @@ window.ACT1_STORY_DATA = {
     "title": "Puzzle: The Ritual Cipher",
     "text": "You guide a marigold petal across the bowl: down toward self, forward toward the crowd, then a tap at center. The signal is sent.",
     "choices": [
-      { "id": "send_signal", "text": "Trace Lower → Crowd → Center", "nextScene": "BOATMAN_DELIVERS", "effects": { "flags": { "ritual_signal_sent": true } } }
+      { "id": "send_signal", "text": "Trace Lower → Crowd → Center", "nextScene": "BOATMAN_DELIVERS", "worldStateTriggers": { "ritual_signal_sent": true } }
     ]
   },
 
@@ -47,7 +47,7 @@ window.ACT1_STORY_DATA = {
     "title": "The Silent Boatman",
     "text": "A wooden boat ghosts to the steps. The boatman offers a sealed clay pot and nods downriver toward smoke‑shrouded Manikarnika.",
     "choices": [
-      { "text": "Take the clay pot and head into the alleys", "nextScene": "LABYRINTH_ENTRANCE", "effects": { "inventory": { "add": ["Pearl Earring (sealed in clay)"] }, "flags": { "has_clay_pot": true, "has_pearl": true } } }
+      { "text": "Take the clay pot and head into the alleys", "nextScene": "LABYRINTH_ENTRANCE", "effects": { "inventory": { "add": ["Pearl Earring (sealed in clay)"] } }, "worldStateTriggers": { "has_clay_pot": true, "has_pearl": true } }
     ]
   },
 
@@ -65,7 +65,7 @@ window.ACT1_STORY_DATA = {
   "WHISPER_EXCHANGE": {
     "title": "Shadows Speak English",
     "text": "Two men trade a device for coins. ‘Axiom… the subject proceeds as predicted.’ You retreat unseen.",
-    "choices": [ { "text": "Back to the fork", "nextScene": "LABYRINTH_ENTRANCE", "effects": { "flags": { "axiom_confirmed": true } } } ]
+    "choices": [ { "text": "Back to the fork", "nextScene": "LABYRINTH_ENTRANCE", "worldStateTriggers": { "axiom_confirmed": true } } ]
   },
 
   "CARVING_LESSONS": {
@@ -84,7 +84,7 @@ window.ACT1_STORY_DATA = {
     "title": "Puzzle: The Offering",
     "text": "Attachment must pass through fire. Place the earring upon the sacred flame to open the way.",
     "choices": [
-      { "id": "offer_pearl", "text": "Place Pearl Earring on the pyre", "nextScene": "ASCETIC_NOD", "condition": "gameState.playerState.inventory && gameState.playerState.inventory.some(i=>String(i).includes('Pearl Earring'))", "effects": { "inventory": { "remove": ["Pearl Earring (sealed in clay)"] }, "flags": { "attachment_transmuted": true } } }
+      { "id": "offer_pearl", "text": "Place Pearl Earring on the pyre", "nextScene": "ASCETIC_NOD", "condition": "gameState.playerState.inventory && gameState.playerState.inventory.some(i=>String(i).includes('Pearl Earring'))", "effects": { "inventory": { "remove": ["Pearl Earring (sealed in clay)"] } }, "worldStateTriggers": { "attachment_transmuted": true } }
     ]
   },
 
@@ -105,10 +105,10 @@ window.ACT1_STORY_DATA = {
     "title": "The Four Pramāṇas",
     "text": "A perfect black circle with four equidistant alcoves surrounds a sealed iris door. Master the means of knowledge to open it.",
     "choices": [
-      { "text": "Pratyakṣa: cast torchlight low", "nextScene": "NYAYA_PERCEPTION", "effects": { "flags": { "nyaya_pratyaksha": true } } },
-      { "text": "Anumāṇa: complete the syllogism", "nextScene": "NYAYA_INFERENCE", "effects": { "flags": { "nyaya_anumana": true } } },
-      { "text": "Upamāna: assemble the Yali", "nextScene": "NYAYA_UPAMANA", "effects": { "flags": { "nyaya_upamana": true } } },
-      { "text": "Śabda: trust Thorne’s code", "nextScene": "NYAYA_SABDA", "effects": { "flags": { "nyaya_shabda": true } } }
+      { "text": "Pratyakṣa: cast torchlight low", "nextScene": "NYAYA_PERCEPTION", "worldStateTriggers": { "nyaya_pratyaksha": true } },
+      { "text": "Anumāṇa: complete the syllogism", "nextScene": "NYAYA_INFERENCE", "worldStateTriggers": { "nyaya_anumana": true } },
+      { "text": "Upamāna: assemble the Yali", "nextScene": "NYAYA_UPAMANA", "worldStateTriggers": { "nyaya_upamana": true } },
+      { "text": "Śabda: trust Thorne’s code", "nextScene": "NYAYA_SABDA", "worldStateTriggers": { "nyaya_shabda": true } }
     ]
   },
 
@@ -131,15 +131,15 @@ window.ACT1_STORY_DATA = {
     "title": "The Nine Dravyas",
     "text": "A colossal brass‑stone orrery sleeps amid nine empty pedestals. Place the substances of reality to wake it.",
     "choices": [
-      { "text": "Pṛthvī: take a lodestone", "nextScene": "DRAVYA_EARTH", "effects": { "flags": { "dravya_prithvi": true } } },
-      { "text": "Ap: collect perennial water", "nextScene": "DRAVYA_WATER", "effects": { "flags": { "dravya_ap": true } } },
-      { "text": "Tejas: focus light to ignite", "nextScene": "DRAVYA_FIRE", "effects": { "flags": { "dravya_tejas": true } } },
-      { "text": "Vāyu: tune the chimes", "nextScene": "DRAVYA_AIR", "effects": { "flags": { "dravya_vayu": true } } },
-      { "text": "Ākāśa: leave the space empty", "nextScene": "DRAVYA_ETHer", "effects": { "flags": { "dravya_akasha": true } } },
-      { "text": "Kāla: align the sundial to dusk", "nextScene": "DRAVYA_TIME", "effects": { "flags": { "dravya_kala": true } } },
-      { "text": "Dik: mirror a single beam across cavern", "nextScene": "DRAVYA_DIRECTION", "effects": { "flags": { "dravya_dik": true } } },
-      { "text": "Ātman: stand upon the plate", "nextScene": "DRAVYA_ATMAN", "effects": { "flags": { "dravya_atman": true } } },
-      { "text": "Manas: place Thorne’s journal", "nextScene": "DRAVYA_MANAS", "effects": { "flags": { "dravya_manas": true } } }
+      { "text": "Pṛthvī: take a lodestone", "nextScene": "DRAVYA_EARTH", "worldStateTriggers": { "dravya_prithvi": true } },
+      { "text": "Ap: collect perennial water", "nextScene": "DRAVYA_WATER", "worldStateTriggers": { "dravya_ap": true } },
+      { "text": "Tejas: focus light to ignite", "nextScene": "DRAVYA_FIRE", "worldStateTriggers": { "dravya_tejas": true } },
+      { "text": "Vāyu: tune the chimes", "nextScene": "DRAVYA_AIR", "worldStateTriggers": { "dravya_vayu": true } },
+      { "text": "Ākāśa: leave the space empty", "nextScene": "DRAVYA_ETHer", "worldStateTriggers": { "dravya_akasha": true } },
+      { "text": "Kāla: align the sundial to dusk", "nextScene": "DRAVYA_TIME", "worldStateTriggers": { "dravya_kala": true } },
+      { "text": "Dik: mirror a single beam across cavern", "nextScene": "DRAVYA_DIRECTION", "worldStateTriggers": { "dravya_dik": true } },
+      { "text": "Ātman: stand upon the plate", "nextScene": "DRAVYA_ATMAN", "worldStateTriggers": { "dravya_atman": true } },
+      { "text": "Manas: place Thorne’s journal", "nextScene": "DRAVYA_MANAS", "worldStateTriggers": { "dravya_manas": true } }
     ]
   },
 
