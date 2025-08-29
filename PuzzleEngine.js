@@ -197,6 +197,101 @@ class MusicalSequenceStrategy extends BasePuzzleStrategy {
     }
 }
 
+/**
+ * Strategy: Orrery (Navagraha) harmonic alignment
+ * - activeState.angles: { bodyId: degrees }
+ * - mechanics.friendPairs: [[a,b], ...] must be within friendTolerance
+ * - mechanics.enemyPairs: [[a,b], ...] must be separated by >= enemySeparation
+ * - mechanics.targetConjunctions: [[a,b], ...] must be within conjunctionTolerance
+ */
+class OrreryMechanicStrategy extends BasePuzzleStrategy {
+    initializeActiveState() {
+        const initialAngles = this.puzzleData.uiConfig?.initialAngles || {};
+        return { angles: { ...initialAngles } };
+    }
+    handleInteraction(interactionData) {
+        const { angles, bodyId, angle } = interactionData || {};
+        if (angles && typeof angles === 'object') {
+            this.activeState.angles = { ...this.activeState.angles, ...angles };
+            return { stateUpdated: true };
+        }
+        if (bodyId && typeof angle === 'number') {
+            this.activeState.angles[bodyId] = ((angle % 360) + 360) % 360;
+            return { stateUpdated: true };
+        }
+        return { stateUpdated: false };
+    }
+    isSolved() {
+        const degDiff = (a, b) => {
+            const d = Math.abs(a - b) % 360;
+            return Math.min(d, 360 - d);
+        };
+        const { friendPairs = [], enemyPairs = [], targetConjunctions = [] } = this.puzzleData.mechanics || {};
+        const friendTolerance = this.puzzleData.mechanics?.friendTolerance ?? 10;
+        const enemySeparation = this.puzzleData.mechanics?.enemySeparation ?? 120;
+        const conjunctionTolerance = this.puzzleData.mechanics?.conjunctionTolerance ?? 8;
+        // Check friend pairs near
+        for (const [a, b] of friendPairs) {
+            if (degDiff(this.activeState.angles[a], this.activeState.angles[b]) > friendTolerance) return false;
+        }
+        // Check enemy pairs far
+        for (const [a, b] of enemyPairs) {
+            if (degDiff(this.activeState.angles[a], this.activeState.angles[b]) < enemySeparation) return false;
+        }
+        // Check required conjunctions
+        for (const [a, b] of targetConjunctions) {
+            if (degDiff(this.activeState.angles[a], this.activeState.angles[b]) > conjunctionTolerance) return false;
+        }
+        return true;
+    }
+}
+
+/**
+ * Strategy: Klesha trials (five inner obstacles). Solved when all stages resolved.
+ * interactionData: { stageId, action: 'resolve' }
+ */
+class KleshaResolutionStrategy extends BasePuzzleStrategy {
+    initializeActiveState() {
+        const stages = (this.puzzleData.mechanics?.stages || []).map(s => s.id);
+        const completed = {};
+        stages.forEach(id => completed[id] = false);
+        return { completed };
+    }
+    handleInteraction(interactionData) {
+        const { stageId, action } = interactionData || {};
+        if (action === 'resolve' && stageId && this.activeState.completed.hasOwnProperty(stageId)) {
+            this.activeState.completed[stageId] = true;
+            return { stateUpdated: true };
+        }
+        return { stateUpdated: false };
+    }
+    isSolved() {
+        return Object.values(this.activeState.completed).every(Boolean);
+    }
+}
+
+/**
+ * Strategy: Dharma scales (balance choices). Sum weights; solved if within tolerance after all scenarios answered.
+ * interactionData: { choiceWeight }
+ */
+class BalanceScaleChoiceStrategy extends BasePuzzleStrategy {
+    initializeActiveState() {
+        return { totalBias: 0, answered: 0 };
+    }
+    handleInteraction(interactionData) {
+        const { choiceWeight } = interactionData || {};
+        if (typeof choiceWeight !== 'number') return { stateUpdated: false };
+        this.activeState.totalBias += choiceWeight;
+        this.activeState.answered += 1;
+        return { stateUpdated: true };
+    }
+    isSolved() {
+        const required = (this.puzzleData.mechanics?.scenarios || []).length || 0;
+        const tolerance = this.puzzleData.mechanics?.balanceTolerance ?? 1;
+        return this.activeState.answered >= required && Math.abs(this.activeState.totalBias) <= tolerance;
+    }
+}
+
 // =================================================================
 // SECTION 3: THE PUZZLE ENGINE (Main Class)
 // =================================================================
@@ -217,7 +312,10 @@ class PuzzleEngine {
             'ItemApplication': ItemApplicationStrategy,
             'PurityAlignment': ItemApplicationStrategy,
             'MultiStageCrafting': MultiStageCraftingStrategy,
-            'MusicalSequence': MusicalSequenceStrategy
+            'MusicalSequence': MusicalSequenceStrategy,
+            'OrreryMechanic': OrreryMechanicStrategy,
+            'KleshaResolution': KleshaResolutionStrategy,
+            'BalanceScaleChoice': BalanceScaleChoiceStrategy
         };
     }
 
