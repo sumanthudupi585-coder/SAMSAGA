@@ -383,3 +383,8 @@ class PuzzleEngine {
         return this.puzzleData[puzzleId];
     }
 }
+
+// Expose globally
+if (typeof window !== 'undefined') {
+    window.PuzzleEngine = PuzzleEngine;
+}
