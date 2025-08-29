@@ -1,0 +1,243 @@
+/**
+ * Fixed BanyanTreeHarmony Puzzle Styles
+ * Focuses on clear visual communication, obvious affordances, and intuitive interactions
+ */
+
+/* === Main Container === */
+.fixed-banyan-puzzle {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(224, 150, 88, 0.05) 0%, rgba(26, 24, 23, 0.8) 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(224, 150, 88, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* === Instructions Panel === */
+.puzzle-instructions {
+    background: linear-gradient(135deg, rgba(224, 150, 88, 0.15), rgba(224, 150, 88, 0.05));
+    border: 2px solid rgba(224, 150, 88, 0.4);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.instruction-text {
+    font-size: 1.1rem;
+    color: var(--color-primary-glow, #ffc58f);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.instruction-icon {
+    font-size: 1.3rem;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.instruction-hint {
+    font-size: 0.9rem;
+    color: var(--color-text-muted, #7a7670);
+    opacity: 0.8;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+/* === Main Puzzle Area === */
+.puzzle-mandala {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto 2rem;
+    background: radial-gradient(circle at center, rgba(224, 150, 88, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    border: 1px solid rgba(224, 150, 88, 0.2);
+}
+
+/* === Central Tree === */
+.puzzle-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(224, 150, 88, 0.2), rgba(224, 150, 88, 0.1));
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(224, 150, 88, 0.4);
+    z-index: 10;
+}
+
+.center-symbol {
+    font-size: 2rem;
+    margin-bottom: 0.2rem;
+}
+
+.center-text {
+    font-size: 0.7rem;
+    text-align: center;
+    color: var(--color-primary, #e09658);
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* === Alignment Target Line === */
+.alignment-target {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 4px;
+    height: 30px;
+    background: linear-gradient(to bottom, #ffc58f, rgba(255, 197, 143, 0.5));
+    transform: translateX(-50%);
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(255, 197, 143, 0.6);
+    z-index: 5;
+}
+
+.alignment-target::before {
+    content: "TARGET";
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #ffc58f;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* === Energy Rings === */
+.energy-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    background: transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.energy-ring.selected {
+    border-color: rgba(255, 197, 143, 0.6);
+    box-shadow: 0 0 20px rgba(255, 197, 143, 0.4);
+}
+
+.energy-ring.active {
+    border-color: rgba(255, 197, 143, 0.8);
+    box-shadow: 0 0 30px rgba(255, 197, 143, 0.6);
+}
+
+/* === Ring Tracks === */
+.ring-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px dashed rgba(224, 150, 88, 0.3);
+    transition: border-color 0.3s ease;
+}
+
+.energy-ring:hover .ring-track,
+.energy-ring.selected .ring-track {
+    border-color: rgba(224, 150, 88, 0.6);
+}
+
+/* === Ring Handles (The Key Interaction Points) === */
+.ring-handle {
+    position: absolute;
+    top: -25px; /* Position at top of ring */
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 50% calc(100% + 25px); /* Rotate around ring center */
+    z-index: 20;
+    cursor: grab;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ring-handle:hover {
+    transform: translateX(-50%) scale(1.1);
+}
+
+.ring-handle.dragging {
+    cursor: grabbing;
+    transform: translateX(-50%) scale(1.2);
+    z-index: 30;
+}
+
+/* === Handle Grips (The Visual Affordance) === */
+.handle-grip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border: 2px solid var(--ring-color, #e09658);
+    border-radius: 12px;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    min-width: 50px;
+    transition: all 0.2s ease;
+}
+
+.handle-grip:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+    box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 20px var(--ring-color, #e09658);
+}
+
+.ring-handle.dragging .handle-grip {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2));
+    box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 0 30px var(--ring-color, #e09658);
+}
+
+.handle-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.handle-label {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--color-text, #c5c1b9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+/* === Ring-Specific Colors === */
+.energy-ring[data-ring="vitality"] {
+    --ring-color: #d96c47;
+}
+
+.energy-ring[data-ring="wisdom"] {
+    --ring-color: #63b4d1;
+}
+
+.energy-ring[data-ring="harmony"] {
+    --ring-color: #5c527f;
+}
+
+/* (...) shortened because styles combined here for organized folder copy */
