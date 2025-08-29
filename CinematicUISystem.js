@@ -702,7 +702,7 @@ class CinematicUISystem {
         entry.className = 'choice-option';
         entry.dataset.puzzleEntry = 'true';
         entry.innerHTML = `<div class="choice-content"><div class="choice-text">🧩 Begin Puzzle: ${window.PUZZLES[puzzleId].title || puzzleId}</div></div>`;
-        entry.addEventListener('click', () => this.launchPuzzle(puzzleId, sceneData));
+        entry.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); this.launchPuzzle(puzzleId, sceneData); });
         this.uiElements.choicesList.prepend(entry);
     }
 
