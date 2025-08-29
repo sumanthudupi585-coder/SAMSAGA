@@ -216,13 +216,9 @@ Each act's story data follows this structure:
 ## Design Patterns Used
 
 1. **Singleton Pattern:** `GameStateManager` is implemented as a singleton to ensure there's only one source of truth for game state.
-
 2. **Observer Pattern:** `UIController` observes changes in the game state and updates the UI accordingly.
-
 3. **Command Pattern:** Player choices are processed as commands that modify the game state.
-
 4. **Factory Pattern:** `StoryEngine` creates scene objects based on the current game state.
-
 5. **Strategy Pattern:** `PuzzleEngine` uses different strategies to evaluate different types of puzzles.
 
 ## Extending the Game
@@ -241,3 +237,53 @@ Each act's story data follows this structure:
 1. Add new state properties to `GameStateManager`
 2. Add processing logic in `StoryEngine` or `PuzzleEngine`
 3. Add UI elements in `UIController`
+
+---
+
+## System Audit Summary (2025-08)
+
+- Multiple variant files (fixed/enhanced/ultra-enhanced) duplicate puzzle and system logic, increasing maintenance cost.
+- Global scripts/IIFE pattern across the codebase; no ES modules; ad-hoc DOM events used as a bus.
+- Persistence relies on many localStorage keys across pages. GameStateManager now consolidates on `samsaraSagaSave` with versioned schema and debounced save support.
+- Heavy use of RAF plus scattered setInterval/setTimeout; potential duplication of autosave timers.
+- Large monolithic files (UnifiedGameFlow, WorkingGameController, enhanced-puzzle-systems) mix concerns and UI logic.
+
+## Top 10 Actions (Priority, Risk, Effort)
+
+1. Consolidate puzzle variants into a single configurable module (P1, M, L)
+2. Centralize autosave in GameStateManager (done for manager) and remove duplicate intervals elsewhere (P1, L, M)
+3. Introduce EventBus for decoupled events (added lightweight EventBus; adopt incrementally) (P1, L, S/M)
+4. Migrate core systems to ES modules progressively (P2, M, M)
+5. Move heavy DOM animations to Canvas/GSAP where appropriate (P2, M, M/L)
+6. Remove inline styles/handlers in HTML and unify styles (P2, L, S/M)
+7. Implement versioned save schema and migration helper (in manager) (P2, L, S/M)
+8. Reduce global listeners; standardize delegated handlers (P2, L, S)
+9. Split large files into focused modules (P3, M, M/L)
+10. Add preload/lazy-loading for assets; baseline performance metrics (P3, L, M)
+
+## Strategic Migration Plan
+
+Phase 1 (now):
+- Add EventBus.js and emit load/save events from GameStateManager.
+- Unify GameStateManager API, add debounced save and versioned schema.
+- Small UX cleanup: convert inline display toggles to CSS class.
+
+Phase 2:
+- Introduce ES modules starting with GameStateManager, StoryEngine, PuzzleEngine.
+- Create a central Autosave service and remove duplicate setIntervals in other controllers.
+- Consolidate localStorage keys via adapter (read legacy keys, write unified key).
+
+Phase 3:
+- Consolidate puzzle variants behind configuration.
+- Extract RAF loops and VFX into dedicated modules/canvas-based systems.
+- Split large controllers (UnifiedGameFlow, WorkingGameController) into orchestration + UI + data adapters.
+
+Phase 4:
+- Optional: remote persistence and auth; error monitoring and performance tracing.
+- Asset pipeline: preload manager and lazy-load non-critical assets.
+
+## QA & Benchmarking
+
+- Add lightweight metrics (load time, first interaction, average RAF frame budget, save latency).
+- Before/after benchmarks for each phase; ensure 60fps under typical scenes.
+- Cross-browser checks and mobile touch interactions validation.
