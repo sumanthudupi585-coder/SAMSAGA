@@ -1,739 +1,245 @@
 /**
  * GameStateManager.js
- * * This module is the game's memory. It holds all player and world data
- * but does not know about the story itself. Its logic is focused on
- * state manipulation and persistence.
+ * Centralized game state and persistence manager
  */
 
-class GameStateManager {
-    constructor() {
-        // Immutable data set at character creation
-        this.playerProfile = {
-            nakshatra: null,
-            gana: null,
-            shakti: null,
-            gunas: {
-                sattva: 0,
-                rajas: 0,
-                tamas: 0
-            },
-            avatar: null // New: Character avatar path
-        };
+(function(){
+  const STORAGE_KEY = 'samsaraSagaSave';
+  const SAVE_VERSION = '2.0.0';
 
-        // Dynamic data that changes during play
-        this.playerState = {
-            currentAct: 1,
-            currentSceneId: "JOURNEY_START",
-            karma: 0,
-            dharmicProfile: {
-                dharma: 0,
-                artha: 0,
-                kama: 0,
-                moksha: 0
-            },
-            inventory: [],
-            specialItems: [], // New: Special items with powers
-            // New progression system data
-            progression: {
-                xp: 0,
-                level: 1,
-                abilities: [],
-                achievements: [],
-                questsCompleted: 0,
-                puzzlesSolved: 0,
-                choicesMade: 0,
-                specialItemsFound: 0,
-                meditationPerformed: 0,
-                lastMeditationScene: null,
-                karmaGained: 0,
-                karmaLost: 0
-            },
-            // New quest system data
-            quests: {
-                active: [],
-                completed: [],
-                failed: []
-            },
-            // New game settings
-            settings: {
-                musicVolume: 0.5,
-                effectsVolume: 0.8,
-                masterVolume: 0.7,
-                muted: false,
-                showTutorials: true,
-                enableAnimations: true
-            }
-        };
+  function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
 
-        // Story flags and keys
-        this.worldState = {};
-        
-        // Game statistics for achievements and tracking
-        this.gameStats = {
-            totalPlayTime: 0,
-            startTime: Date.now(),
-            scenesVisited: {},
-            choicesMade: 0,
-            karmaGained: 0,
-            karmaLost: 0,
-            itemsCollected: 0,
-            puzzlesSolved: 0,
-            puzzlesFailed: 0,
-            questsCompleted: 0,
-            questsFailed: 0,
-            achievementsUnlocked: 0,
-            levelsGained: 0,
-            meditationsPerformed: 0
-        };
-        
-        // Session data (not saved)
-        this.sessionData = {
-            lastUpdateTime: Date.now(),
-            currentMusic: null,
-            activeEffects: [],
-            pendingNotifications: []
-        };
-    }
+  class GameStateManager {
+    constructor(){
+      this.playerProfile = {
+        nakshatra: null,
+        gana: null,
+        shakti: null,
+        gunas: { sattva: 0, rajas: 0, tamas: 0 },
+        avatar: null
+      };
 
-    /**
-     * Initialize a new game with default values
-     */
-    init(nakshatraChoice = null) {
-        this.playerState.currentAct = 1;
-        this.playerState.currentSceneId = "JOURNEY_START";
-        this.playerState.karma = 0;
-        this.playerState.inventory = [];
-        this.playerState.specialItems = [];
-        this.worldState = {};
-        
-        // Initialize progression system
-        this.playerState.progression = {
-            xp: 0,
-            level: 1,
-            abilities: [],
-            achievements: [],
-            questsCompleted: 0,
-            puzzlesSolved: 0,
-            choicesMade: 0,
-            specialItemsFound: 0,
-            meditationPerformed: 0,
-            lastMeditationScene: null,
-            karmaGained: 0,
-            karmaLost: 0
-        };
-        
-        // Initialize quest system
-        this.playerState.quests = {
-            active: [],
-            completed: [],
-            failed: []
-        };
-        
-        // Reset game stats
-        this.gameStats = {
-            totalPlayTime: 0,
-            startTime: Date.now(),
-            scenesVisited: {},
-            choicesMade: 0,
-            karmaGained: 0,
-            karmaLost: 0,
-            itemsCollected: 0,
-            puzzlesSolved: 0,
-            puzzlesFailed: 0,
-            questsCompleted: 0,
-            questsFailed: 0,
-            achievementsUnlocked: 0,
-            levelsGained: 0,
-            meditationsPerformed: 0
-        };
-
-        // If nakshatra is provided, set up the player profile
-        if (nakshatraChoice) {
-            this.setupPlayerProfile(nakshatraChoice);
+      this.playerState = {
+        currentAct: 1,
+        currentSceneId: 'JOURNEY_START',
+        karma: 0,
+        dharmicProfile: { dharma: 0, artha: 0, kama: 0, moksha: 0 },
+        inventory: [],
+        specialItems: [],
+        progression: {
+          xp: 0,
+          level: 1,
+          abilities: [],
+          achievements: [],
+          questsCompleted: 0,
+          puzzlesSolved: 0,
+          choicesMade: 0,
+          specialItemsFound: 0,
+          meditationPerformed: 0,
+          lastMeditationScene: null,
+          karmaGained: 0,
+          karmaLost: 0
+        },
+        quests: { active: [], completed: [], failed: [] },
+        settings: {
+          musicVolume: 0.5,
+          effectsVolume: 0.8,
+          masterVolume: 0.7,
+          muted: false,
+          showTutorials: true,
+          enableAnimations: true
         }
+      };
+
+      this.worldState = {};
+
+      this.gameStats = {
+        totalPlayTime: 0,
+        startTime: Date.now(),
+        scenesVisited: {},
+        choicesMade: 0,
+        karmaGained: 0,
+        karmaLost: 0,
+        itemsCollected: 0,
+        puzzlesSolved: 0,
+        puzzlesFailed: 0,
+        questsCompleted: 0,
+        questsFailed: 0,
+        achievementsUnlocked: 0,
+        levelsGained: 0,
+        meditationsPerformed: 0
+      };
+
+      this.sessionData = {
+        lastUpdateTime: Date.now(),
+        currentMusic: null,
+        activeEffects: [],
+        pendingNotifications: []
+      };
+
+      this._autoSaveTimer = null;
+      this._debounceTimer = null;
+      this._debounceMs = 1500;
     }
 
-    /**
-     * Set up the player profile based on nakshatra choice
-     */
-    setupPlayerProfile(nakshatraChoice) {
-        // This would typically load from NakshatraAttribute.json
-        const nakshatraData = window.NAKSHATRA_ATTRIBUTES.find(
-            n => n.name.toLowerCase() === nakshatraChoice.toLowerCase()
-        );
+    init(nakshatraChoice = null){
+      this.playerState.currentAct = 1;
+      this.playerState.currentSceneId = 'JOURNEY_START';
+      this.playerState.karma = 0;
+      this.playerState.inventory = [];
+      this.playerState.specialItems = [];
+      this.worldState = {};
 
-        if (nakshatraData) {
-            this.playerProfile.nakshatra = nakshatraData.name;
-            this.playerProfile.gana = nakshatraData.gana;
-            this.playerProfile.shakti = nakshatraData.shakti;
-            this.playerProfile.gunas = {
-                sattva: nakshatraData.gunas.sattva,
-                rajas: nakshatraData.gunas.rajas,
-                tamas: nakshatraData.gunas.tamas
-            };
-            
-            // Set avatar based on nakshatra
-            this.playerProfile.avatar = this.getAvatarForNakshatra(nakshatraData.name);
-            
-            // Add nakshatra-specific ability if available
-            if (nakshatraData.ability) {
-                this.playerState.progression.abilities.push(nakshatraData.ability);
-            }
-        } else {
-            console.error(`Nakshatra "${nakshatraChoice}" not found in data.`);
-        }
+      this.playerState.progression = {
+        xp: 0,
+        level: 1,
+        abilities: [],
+        achievements: [],
+        questsCompleted: 0,
+        puzzlesSolved: 0,
+        choicesMade: 0,
+        specialItemsFound: 0,
+        meditationPerformed: 0,
+        lastMeditationScene: null,
+        karmaGained: 0,
+        karmaLost: 0
+      };
+
+      this.playerState.quests = { active: [], completed: [], failed: [] };
+
+      this.gameStats = {
+        totalPlayTime: 0,
+        startTime: Date.now(),
+        scenesVisited: {},
+        choicesMade: 0,
+        karmaGained: 0,
+        karmaLost: 0,
+        itemsCollected: 0,
+        puzzlesSolved: 0,
+        puzzlesFailed: 0,
+        questsCompleted: 0,
+        questsFailed: 0,
+        achievementsUnlocked: 0,
+        levelsGained: 0,
+        meditationsPerformed: 0
+      };
+
+      if (nakshatraChoice) this.setupPlayerProfile(nakshatraChoice);
     }
 
-    /**
-     * Get avatar image path based on nakshatra
-     */
-    getAvatarForNakshatra(nakshatra) {
-        // Default avatar path
-        let avatarPath = 'images/avatars/default.png';
-        
-        // In a real implementation, this would map each nakshatra to a specific avatar
-        // For now, we'll use placeholder logic
-        const nakshatraToGana = {
-            'Ashwini': 'deva',
-            'Bharani': 'manushya',
-            'Krittika': 'rakshasa',
-            // Add mappings for all 27 nakshatras
-        };
-        
-        const gana = nakshatraToGana[nakshatra] || 'deva';
-        
-        // Return avatar based on gana type
-        switch (gana) {
-            case 'deva':
-                avatarPath = 'images/avatars/deva.png';
-                break;
-            case 'manushya':
-                avatarPath = 'images/avatars/manushya.png';
-                break;
-            case 'rakshasa':
-                avatarPath = 'images/avatars/rakshasa.png';
-                break;
-            default:
-                avatarPath = 'images/avatars/default.png';
-        }
-        
-        return avatarPath;
+    setupPlayerProfile(nakshatraChoice){
+      const data = (window.NAKSHATRA_ATTRIBUTES || []).find(n => (n.name||'').toLowerCase() === String(nakshatraChoice).toLowerCase());
+      if (data){
+        this.playerProfile.nakshatra = data.name;
+        this.playerProfile.gana = data.gana;
+        this.playerProfile.shakti = data.shakti;
+        this.playerProfile.gunas = { sattva: data.gunas?.sattva||0, rajas: data.gunas?.rajas||0, tamas: data.gunas?.tamas||0 };
+        this.playerProfile.avatar = this.getAvatarForNakshatra(data.name);
+        if (data.ability) this.playerState.progression.abilities.push(data.ability);
+      }
     }
 
-    /**
- * Save game to localStorage
- */
-saveGame() {
-    const saveData = {
+    getAvatarForNakshatra(nakshatra){
+      const byNameToGana = {
+        'Ashwini': 'Deva','Bharani': 'Manushya','Krittika': 'Rakshasa','Rohini': 'Manushya','Mrigashira': 'Deva','Ardra': 'Manushya','Punarvasu': 'Deva','Pushya': 'Deva','Ashlesha': 'Rakshasa','Magha': 'Rakshasa','Purva Phalguni': 'Manushya','Uttara Phalguni': 'Manushya','Hasta': 'Manushya','Chitra': 'Rakshasa','Swati': 'Deva','Vishakha': 'Rakshasa','Anuradha': 'Deva','Jyeshtha': 'Rakshasa','Mula': 'Rakshasa','Purva Ashadha': 'Manushya','Uttara Ashadha': 'Manushya','Shravana': 'Deva','Dhanishta': 'Rakshasa','Shatabhisha': 'Rakshasa','Purva Bhadrapada': 'Manushya','Uttara Bhadrapada': 'Manushya','Revati': 'Deva'
+      };
+      const gana = byNameToGana[nakshatra] || 'Deva';
+      switch (gana){
+        case 'Deva': return 'images/avatars/deva.png';
+        case 'Manushya': return 'images/avatars/manushya.png';
+        case 'Rakshasa': return 'images/avatars/rakshasa.png';
+        default: return 'images/avatars/default.png';
+      }
+    }
+
+    // ----- Persistence -----
+    _safeSet(key, value){ try{ localStorage.setItem(key, value); return true; }catch(e){ console.error('Save failed', e); return false; } }
+    _safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ console.warn('Load failed', e); return null; } }
+
+    saveGame(){
+      const saveData = {
+        __version: SAVE_VERSION,
+        timestamp: Date.now(),
         playerProfile: this.playerProfile,
         playerState: this.playerState,
         worldState: this.worldState,
-        timestamp: new Date().toISOString()
-    };
-    
-    try {
-        localStorage.setItem('samsagaSaveGame', JSON.stringify(saveData));
-        console.log("Game saved successfully");
+        gameStats: this.gameStats
+      };
+      const ok = this._safeSet(STORAGE_KEY, JSON.stringify(saveData));
+      if (ok && window.EventBus){ window.EventBus.emit('state:saved', { key: STORAGE_KEY, timestamp: saveData.timestamp }); }
+      return ok;
+    }
+
+    saveGameDebounced(){
+      clearTimeout(this._debounceTimer);
+      this._debounceTimer = setTimeout(()=> this.saveGame(), this._debounceMs);
+    }
+
+    loadGame(){
+      const raw = this._safeGet(STORAGE_KEY);
+      if(!raw) return false;
+      try{
+        const data = JSON.parse(raw);
+        if (data.playerProfile) this.playerProfile = data.playerProfile;
+        if (data.playerState) this.playerState = data.playerState;
+        if (data.worldState) this.worldState = data.worldState;
+        if (data.gameStats) this.gameStats = { ...data.gameStats, startTime: Date.now() };
+        this.sessionData = { lastUpdateTime: Date.now(), currentMusic: null, activeEffects: [], pendingNotifications: [] };
+        if (window.EventBus){ window.EventBus.emit('state:loaded', { key: STORAGE_KEY, version: data.__version||'1.x' }); }
         return true;
-    } catch (error) {
-        console.error("Error saving game:", error);
-        return false;
-    }
-}
-
-/**
- * Load game from localStorage
- */
-loadGame() {
-    try {
-        const saveData = localStorage.getItem('samsagaSaveGame');
-        if (!saveData) {
-            console.error("No saved game found");
-            return false;
-        }
-        
-        const parsedData = JSON.parse(saveData);
-        
-        // Restore player profile
-        this.playerProfile = parsedData.playerProfile;
-        
-        // Restore player state
-        this.playerState = parsedData.playerState;
-        
-        // Restore world state
-        this.worldState = parsedData.worldState;
-        
-        console.log("Game loaded successfully");
-        return true;
-    } catch (error) {
-        console.error("Error loading saved game:", error);
-        return false;
-    }
-}
-
-/**
- * Check if a saved game exists
- */
-hasSavedGame() {
-    return localStorage.getItem('samsagaSaveGame') !== null;
-}
-
-/**
- * Delete saved game
- */
-deleteSavedGame() {
-    try {
-        localStorage.removeItem('samsagaSaveGame');
-        return true;
-    } catch (error) {
-        console.error("Error deleting saved game:", error);
-        return false;
-    }
-}
-
-    /**
-     * Load a saved game from localStorage
-     */
-    loadGame() {
-        try {
-            const saveData = localStorage.getItem('samsaraSagaSave');
-            
-            if (!saveData) {
-                return false;
-            }
-
-            const parsedData = JSON.parse(saveData);
-            
-            // Restore player profile
-            if (parsedData.playerProfile) {
-                this.playerProfile = parsedData.playerProfile;
-            }
-            
-            // Restore player state
-            if (parsedData.playerState) {
-                this.playerState = parsedData.playerState;
-            }
-            
-            // Restore world state
-            if (parsedData.worldState) {
-                this.worldState = parsedData.worldState;
-            }
-            
-            // Restore game stats
-            if (parsedData.gameStats) {
-                this.gameStats = parsedData.gameStats;
-                // Update start time to current time
-                this.gameStats.startTime = Date.now();
-            }
-            
-            // Reset session data
-            this.sessionData = {
-                lastUpdateTime: Date.now(),
-                currentMusic: null,
-                activeEffects: [],
-                pendingNotifications: []
-            };
-            
-            return true;
-        } catch (error) {
-            console.error("Failed to load game:", error);
-            return false;
-        }
-    }
-    
-    /**
-     * Save temporary character data (for page transitions)
-     */
-    saveTemporaryCharacter() {
-        try {
-            localStorage.setItem('samsagaTemporaryCharacter', JSON.stringify(this.playerProfile));
-            return true;
-        } catch (error) {
-            console.error("Error saving temporary character:", error);
-            return false;
-        }
+      } catch(e){ console.error('Error parsing save data', e); return false; }
     }
 
-    /**
-     * Load temporary character data (for page transitions)
-     */
-    loadTemporaryCharacter() {
-        try {
-            const tempData = localStorage.getItem('samsagaTemporaryCharacter');
-            if (tempData) {
-                this.playerProfile = JSON.parse(tempData);
-                // Clear temporary data after loading
-                localStorage.removeItem('samsagaTemporaryCharacter');
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error("Error loading temporary character:", error);
-            return false;
-        }
+    hasSavedGame(){ return this._safeGet(STORAGE_KEY) !== null; }
+    deleteSavedGame(){ try{ localStorage.removeItem(STORAGE_KEY); return true; }catch(e){ console.error('Delete failed', e); return false; } }
+
+    setupAutoSave(intervalMs){
+      if (this._autoSaveTimer){ clearInterval(this._autoSaveTimer); this._autoSaveTimer = null; }
+      if (intervalMs && intervalMs > 0){
+        this._autoSaveTimer = setInterval(()=> this.saveGame(), intervalMs);
+      }
     }
 
-    /**
-     * Update a state value in either playerState or worldState
-     */
-    updateState(key, value) {
-        // Check if the key exists in playerState
-        if (key in this.playerState) {
-            this.playerState[key] = value;
-        } 
-        // Check if it's a nested property in playerState (e.g., dharmicProfile.dharma)
-        else if (key.includes('.')) {
-            const [parentKey, childKey] = key.split('.');
-            if (parentKey in this.playerState && typeof this.playerState[parentKey] === 'object') {
-                this.playerState[parentKey][childKey] = value;
-            } else {
-                // If not in playerState, add it to worldState
-                this.worldState[key] = value;
-            }
-        } 
-        // If not in playerState, add it to worldState
-        else {
-            this.worldState[key] = value;
-        }
+    // ----- State mutation helpers -----
+    updateState(key, value){
+      if (key in this.playerState){ this.playerState[key] = value; return; }
+      if (key.includes('.')){
+        const [p, c] = key.split('.');
+        if (p in this.playerState && typeof this.playerState[p] === 'object'){ this.playerState[p][c] = value; return; }
+      }
+      this.worldState[key] = value;
     }
 
-    /**
-     * Add an item to the player's inventory
-     */
-    addToInventory(item) {
-        if (!this.playerState.inventory.includes(item)) {
-            this.playerState.inventory.push(item);
-            this.gameStats.itemsCollected++;
-            return true;
-        }
-        return false;
-    }
+    addToInventory(item){ if (!this.playerState.inventory.includes(item)){ this.playerState.inventory.push(item); this.gameStats.itemsCollected++; } }
+    removeFromInventory(item){ const i = this.playerState.inventory.indexOf(item); if (i!==-1){ this.playerState.inventory.splice(i,1); } }
+    hasItem(item){ return this.playerState.inventory.includes(item); }
 
-    /**
-     * Add a special item with powers
-     */
-    addSpecialItem(item) {
-        if (!this.playerState.specialItems.some(i => i.id === item.id)) {
-            this.playerState.specialItems.push(item);
-            this.playerState.progression.specialItemsFound++;
-            this.gameStats.itemsCollected++;
-            return true;
-        }
-        return false;
-    }
+    addSpecialItem(item){ if (!this.playerState.specialItems.some(i=> i.id===item.id)){ this.playerState.specialItems.push(item); this.playerState.progression.specialItemsFound++; this.gameStats.itemsCollected++; } }
+    removeSpecialItem(itemId){ const i = this.playerState.specialItems.findIndex(i=> i.id===itemId); if (i!==-1){ this.playerState.specialItems.splice(i,1); } }
+    hasSpecialItem(itemId){ return this.playerState.specialItems.some(i=> i.id===itemId); }
 
-    /**
-     * Remove an item from the player's inventory
-     */
-    removeFromInventory(item) {
-        const index = this.playerState.inventory.indexOf(item);
-        if (index !== -1) {
-            this.playerState.inventory.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
+    updateKarma(amount){ this.playerState.karma += amount; return this.playerState.karma; }
+    updateDharmicProfile(aspect, value){ if (aspect in this.playerState.dharmicProfile){ this.playerState.dharmicProfile[aspect] += value; return true; } return false; }
 
-    /**
-     * Remove a special item
-     */
-    removeSpecialItem(itemId) {
-        const index = this.playerState.specialItems.findIndex(i => i.id === itemId);
-        if (index !== -1) {
-            this.playerState.specialItems.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
+    trackSceneVisit(sceneId){ this.gameStats.scenesVisited[sceneId] = (this.gameStats.scenesVisited[sceneId]||0)+1; }
+    trackChoiceMade(){ this.gameStats.choicesMade++; this.playerState.progression.choicesMade++; }
+    trackPuzzleSolved(){ this.gameStats.puzzlesSolved++; this.playerState.progression.puzzlesSolved++; }
+    trackPuzzleFailed(){ this.gameStats.puzzlesFailed++; }
+    trackQuestCompleted(){ this.gameStats.questsCompleted++; this.playerState.progression.questsCompleted++; }
+    trackQuestFailed(){ this.gameStats.questsFailed++; }
+    trackAchievementUnlocked(){ this.gameStats.achievementsUnlocked++; }
+    trackLevelGained(){ this.gameStats.levelsGained++; }
+    trackMeditationPerformed(){ this.gameStats.meditationsPerformed++; this.playerState.progression.meditationPerformed++; }
 
-    /**
-     * Check if the player has a specific item in their inventory
-     */
-    hasItem(item) {
-        return this.playerState.inventory.includes(item);
-    }
+    updatePlayTime(){ const now = Date.now(); const dt = (now - this.sessionData.lastUpdateTime)/1000; this.gameStats.totalPlayTime += dt; this.sessionData.lastUpdateTime = now; }
+    getFormattedPlayTime(){ this.updatePlayTime(); let s = Math.floor(this.gameStats.totalPlayTime); const h = Math.floor(s/3600); s%=3600; const m = Math.floor(s/60); s%=60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
 
-    /**
-     * Check if the player has a specific special item
-     */
-    hasSpecialItem(itemId) {
-        return this.playerState.specialItems.some(i => i.id === itemId);
-    }
+    addNotification(n){ this.sessionData.pendingNotifications.push(n); }
+    getPendingNotifications(){ const n=[...this.sessionData.pendingNotifications]; this.sessionData.pendingNotifications=[]; return n; }
+    updateSettings(settings){ this.playerState.settings = { ...this.playerState.settings, ...settings }; }
 
-   /**
- * Update karma value
- */
-updateKarma(amount) {
-    this.playerState.karma += amount;
-    return this.playerState.karma;
-}
+    getState(){ this.updatePlayTime(); return { playerProfile: deepClone(this.playerProfile), playerState: deepClone(this.playerState), worldState: deepClone(this.worldState), gameStats: deepClone(this.gameStats) }; }
+  }
 
-/**
- * Update dharmic profile
- */
-updateDharmicProfile(aspect, value) {
-    if (aspect in this.playerState.dharmicProfile) {
-        this.playerState.dharmicProfile[aspect] += value;
-        return true;
-    }
-    return false;
-}
-
-/**
- * Add item to inventory
- */
-addToInventory(item) {
-    if (!this.playerState.inventory.includes(item)) {
-        this.playerState.inventory.push(item);
-        return true;
-    }
-    return false;
-}
-
-/**
- * Remove item from inventory
- */
-removeFromInventory(item) {
-    const index = this.playerState.inventory.indexOf(item);
-    if (index !== -1) {
-        this.playerState.inventory.splice(index, 1);
-        return true;
-    }
-    return false;
-}
-
-/**
- * Check if player has an item
- */
-hasItem(item) {
-    return this.playerState.inventory.includes(item);
-}
-
-/**
- * Update state value
- */
-updateState(key, value) {
-    // Check if key is in playerState
-    if (key in this.playerState) {
-        this.playerState[key] = value;
-        return true;
-    }
-    
-    // Otherwise, update worldState
-    this.worldState[key] = value;
-    return true;
-}
-
-    /**
-     * Track a scene visit
-     */
-    trackSceneVisit(sceneId) {
-        if (!this.gameStats.scenesVisited[sceneId]) {
-            this.gameStats.scenesVisited[sceneId] = 0;
-        }
-        this.gameStats.scenesVisited[sceneId]++;
-    }
-
-    /**
-     * Track a choice made
-     */
-    trackChoiceMade() {
-        this.gameStats.choicesMade++;
-        this.playerState.progression.choicesMade++;
-    }
-
-    /**
-     * Track a puzzle solved
-     */
-    trackPuzzleSolved() {
-        this.gameStats.puzzlesSolved++;
-        this.playerState.progression.puzzlesSolved++;
-    }
-
-    /**
-     * Track a puzzle failed
-     */
-    trackPuzzleFailed() {
-        this.gameStats.puzzlesFailed++;
-    }
-
-    /**
-     * Track a quest completed
-     */
-    trackQuestCompleted() {
-        this.gameStats.questsCompleted++;
-        this.playerState.progression.questsCompleted++;
-    }
-
-    /**
-     * Track a quest failed
-     */
-    trackQuestFailed() {
-        this.gameStats.questsFailed++;
-    }
-
-    /**
-     * Track an achievement unlocked
-     */
-    trackAchievementUnlocked() {
-        this.gameStats.achievementsUnlocked++;
-    }
-
-    /**
-     * Track a level gained
-     */
-    trackLevelGained() {
-        this.gameStats.levelsGained++;
-    }
-
-    /**
-     * Track a meditation performed
-     */
-    trackMeditationPerformed() {
-        this.gameStats.meditationsPerformed++;
-        this.playerState.progression.meditationPerformed++;
-    }
-
-    /**
-     * Update play time
-     */
-    updatePlayTime() {
-        const now = Date.now();
-        const sessionTime = (now - this.sessionData.lastUpdateTime) / 1000; // in seconds
-        this.gameStats.totalPlayTime += sessionTime;
-        this.sessionData.lastUpdateTime = now;
-    }
-
-    /**
-     * Get formatted play time
-     */
-    getFormattedPlayTime() {
-        // Update play time first
-        this.updatePlayTime();
-        
-        // Convert total seconds to hours, minutes, seconds
-        let totalSeconds = Math.floor(this.gameStats.totalPlayTime);
-        const hours = Math.floor(totalSeconds / 3600);
-        totalSeconds %= 3600;
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        
-        // Format as HH:MM:SS
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    /**
-     * Add a notification to the queue
-     */
-    addNotification(notification) {
-        this.sessionData.pendingNotifications.push(notification);
-    }
-
-    /**
-     * Get and clear pending notifications
-     */
-    getPendingNotifications() {
-        const notifications = [...this.sessionData.pendingNotifications];
-        this.sessionData.pendingNotifications = [];
-        return notifications;
-    }
-
-    /**
-     * Update game settings
-     */
-    updateSettings(settings) {
-        this.playerState.settings = {
-            ...this.playerState.settings,
-            ...settings
-        };
-    }
-
-    /**
-     * Get the complete game state
-     */
-    getState() {
-        // Update play time before returning state
-        this.updatePlayTime();
-        
-        return {
-            playerProfile: { ...this.playerProfile },
-            playerState: { ...this.playerState },
-            worldState: { ...this.worldState },
-            gameStats: { ...this.gameStats }
-        };
-    }
-}
-
-// Export as a singleton
-// Initialize singleton and expose globally
-window.gameStateManager = window.gameStateManager || new GameStateManager();
-
-// Auto-save support
-GameStateManager.prototype.setupAutoSave = function(intervalMs) {
-    if (this._autoSaveTimer) {
-        clearInterval(this._autoSaveTimer);
-        this._autoSaveTimer = null;
-    }
-    if (intervalMs && intervalMs > 0) {
-        this._autoSaveTimer = setInterval(() => {
-            try { this.saveGame(); } catch (e) { /* ignore */ }
-        }, intervalMs);
-    }
-};
-
-// Use a single, consistent storage key across the app
-GameStateManager.prototype._storageKey = 'samsaraSagaSave';
-
-GameStateManager.prototype.saveGame = function() {
-    const saveData = {
-        playerProfile: this.playerProfile,
-        playerState: this.playerState,
-        worldState: this.worldState,
-        gameStats: this.gameStats,
-        timestamp: new Date().toISOString()
-    };
-    try {
-        localStorage.setItem(this._storageKey, JSON.stringify(saveData));
-        return true;
-    } catch (err) {
-        console.error('Error saving game:', err);
-        return false;
-    }
-};
-
-GameStateManager.prototype.loadGame = function() {
-    try {
-        const saveData = localStorage.getItem(this._storageKey);
-        if (!saveData) return false;
-        const parsed = JSON.parse(saveData);
-        if (parsed.playerProfile) this.playerProfile = parsed.playerProfile;
-        if (parsed.playerState) this.playerState = parsed.playerState;
-        if (parsed.worldState) this.worldState = parsed.worldState;
-        if (parsed.gameStats) this.gameStats = { ...parsed.gameStats, startTime: Date.now() };
-        // Reset session data
-        this.sessionData = {
-            lastUpdateTime: Date.now(),
-            currentMusic: null,
-            activeEffects: [],
-            pendingNotifications: []
-        };
-        return true;
-    } catch (err) {
-        console.error('Error loading saved game:', err);
-        return false;
-    }
-};
-
-GameStateManager.prototype.hasSavedGame = function() {
-    return localStorage.getItem(this._storageKey) !== null;
-};
-
-GameStateManager.prototype.deleteSavedGame = function() {
-    try {
-        localStorage.removeItem(this._storageKey);
-        return true;
-    } catch (err) {
-        console.error('Error deleting saved game:', err);
-        return false;
-    }
-};
+  window.gameStateManager = window.gameStateManager || new GameStateManager();
+})();
