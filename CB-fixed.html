@@ -221,9 +221,70 @@
             if (userAnswers.nakshatraNum && userAnswers.pada && userAnswers.guna1 && userAnswers.guna3) {
                 showResult();
             }
-        }function showScreen(e){const t=document.querySelector('.screen.active'),n=document.getElementById(e);if(!n)return void console.error(`Screen with ID '${e}' not found!`);t?(t.classList.add('exiting'),setTimeout(()=>{t.classList.remove('active','exiting'),n.classList.add('active'),window.scrollTo(0,0)},800)):n.classList.add('active'),currentQuestion=e,updateProgressDots(e)}
+        }
+function showScreen(id){
+    const screenHost = document.getElementById('screen-host');
+    const book = document.getElementById('journal-book');
+    const next = document.getElementById(id);
+    if (!next || !screenHost || !book) { console.error("Screen or journal elements missing", { id, next, screenHost, book }); return; }
+    book.classList.add('page-turn');
+    playPageTurn();
+    const prev = screenHost.querySelector('.screen');
+    if (prev) { prev.classList.remove('active'); }
+    screenHost.appendChild(next);
+    requestAnimationFrame(()=>{ next.classList.add('active'); });
+    currentQuestion = id;
+    updateJournalDecor(id);
+    updateProgressDots(id);
+    window.scrollTo(0,0);
+    setTimeout(()=>book.classList.remove('page-turn'),600);
+}
         function buildProgressDots(total){const c=document.getElementById('progress-dots');if(!c)return;const dots=Array.from({length:total},(_,i)=>`<span class="progress-dot${i===0?' active':''}" data-step="${i+1}"></span>`).join('');c.innerHTML=dots;}
         function updateProgressDots(id){const step=id==='result-screen'?11:parseInt(id.replace('q',''))||0;const dots=document.querySelectorAll('.progress-dot');dots.forEach((el,i)=>{if(i+1<step){el.classList.add('completed');el.classList.remove('active');}else if(i+1===step){el.classList.add('active');el.classList.remove('completed');}else{el.classList.remove('active','completed')}});if(step>dots.length)dots.forEach(el=>el.classList.add('completed'));}
+
+// Living Manuscript helpers
+const pageTurnAudio = (()=>{ const a=new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_4e9d5de9a8.mp3?filename=page-flip-110483.mp3'); a.preload='auto'; return a; })();
+function playPageTurn(){ try{ pageTurnAudio.currentTime=0; pageTurnAudio.play().catch(()=>{}); }catch(e){} }
+
+const marginNotes = {
+  q1: 'Gaṇa shapes instinct: Deva aligns, Manushya mediates, Rakshasa transforms.',
+  q2: 'Guṇa tilts the lens. Rajas moves, Tamas settles, Sattva clarifies.',
+  q3: 'Shakti expresses as precise power. Attend to what arises easily.',
+  q4: 'Purusharthas are four doors. Which one opens for you first?',
+  q5: 'Habit reveals nature; nature reveals path.',
+  q6: 'Two paths often share the same destination; only the cost differs.',
+  q7: 'Force is crude truth. Design is refined truth.',
+  q8: 'A guardian is a riddle that remembers your fear.',
+  q9: 'Temptation of righteousness: to be right rather than true.',
+  q10: 'Justice, like water, seeks a level through many channels.',
+  q11: 'Correction without humiliation is rare and sacred.',
+  q12: 'Truth and timing share a secret pact.',
+  q13: 'Power harvested carelessly poisons the field.',
+  q14: 'Law is a tool; Dharma is the hand that wields it.',
+  q15: 'Pearls form around wounds. Choose which wound to honor.'
+};
+
+function updateJournalDecor(id){
+  const ill = document.getElementById('left-illustration');
+  const noteEl = document.getElementById('margin-notes');
+  if (ill) {
+    ill.className = 'left-illustration ill-' + id;
+  }
+  if (noteEl) {
+    noteEl.textContent = marginNotes[id] || 'Thorne: The page remembers what the mind forgets.';
+  }
+}
+
+function triggerInkBleed(done){
+  const container = document.querySelector('.oracle-container');
+  const overlay = document.createElement('div');
+  overlay.className = 'ink-bleed-overlay';
+  container.appendChild(overlay);
+  overlay.addEventListener('animationend', ()=>{
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    if (typeof done === 'function') done();
+  });
+}
         function populateShaktiQuestion(){const e=`${userAnswers.gana}-${userAnswers.guna1}`,t=shaktiQuestions[e],n=document.getElementById('q3-options');if(n.innerHTML='',t)for(const e of t){const t=document.createElement('button');t.className='option',t.dataset.value=e.result,t.innerHTML=`<div class="option-icon"><i class="fas fa-star-of-life"></i></div><div class="option-content"><div class="option-description">${e.text}</div></div>`,n.appendChild(t)}}
         function computeProfileAndShow(){
             // Determine primaries from accumulated scores
@@ -313,7 +374,7 @@
                 o.className=`gana-indicator gana-${t.gana.toLowerCase()}`,
                 document.querySelectorAll('.element').forEach(e=>e.classList.remove('active')),
                 document.getElementById(`element-${t.element}`).classList.add('active'),
-                showScreen('result-screen')
+                triggerInkBleed(()=>showScreen('result-screen'))
             }catch(e){console.error('Error in showResult():',e)}
         }
         function getGanaIcon(e){return{Deva:'fas fa-sun',Manushya:'fas fa-handshake',Rakshasa:'fas fa-fire'}[e]||'fas fa-star'}
@@ -324,9 +385,18 @@
             initializeFromURL();
 
             // Dynamically create extra survey screens q6..q15
-            const container=document.querySelector('.oracle-container');
+            const container=document.querySelector('.screen-stack');
             for(const q of surveyQuestions){
               const scr=document.createElement('div');scr.className='screen';scr.id=q.id;scr.innerHTML=`<h2 class="screen-title">The Oracle Within</h2><p class="screen-subtitle">${q.subtitle}</p><div class="options-grid">${q.options.map((o,i)=>`<button class="option" data-value="${i}"><div class="option-icon"><i class="fas fa-star-of-life"></i></div><div class="option-content"><div class="option-description">${o.label}</div></div></button>`).join('')}</div>`;container.appendChild(scr);
+            }
+
+            // Initialize journal view with first screen
+            const screenHost = document.getElementById('screen-host');
+            const firstScreen = document.getElementById('q1');
+            if (firstScreen && screenHost) {
+                screenHost.appendChild(firstScreen);
+                firstScreen.classList.add('active');
+                updateJournalDecor('q1');
             }
 
             document.querySelector('.oracle-container').addEventListener('click',e=>{if(!e.target.matches('.option')&&!e.target.closest('.option'))return;const t=e.target.matches('.option')?e.target:e.target.closest('.option');const n=t.dataset.value;document.querySelectorAll(`#${currentQuestion} .option`).forEach(e=>e.classList.remove('choice-selected'));t.classList.add('choice-selected');setTimeout(()=>{switch(currentQuestion){case'q1':userAnswers.gana=n;ganaScores[n]=(ganaScores[n]||0)+1;showScreen('q2');break;case'q2':userAnswers.guna1=n;gunaScores[n]+=2;populateShaktiQuestion();showScreen('q3');break;case'q3':{
