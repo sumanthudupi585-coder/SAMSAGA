@@ -312,6 +312,28 @@ class WorkingGameController {
                         <button class="close-modal">Close</button>
                     </div>
                 </div>
+
+                <!-- Journal Modal -->
+                <div class="modal is-hidden" id="journal-modal">
+                    <div class="modal-content journal-content">
+                        <div class="journal-header">
+                            <h3>Field Journal</h3>
+                            <button class="close-modal">Close</button>
+                        </div>
+                        <div class="journal-tabs">
+                            <button class="journal-tab active" data-tab="profile">Profile</button>
+                            <button class="journal-tab" data-tab="objectives">Objectives</button>
+                            <button class="journal-tab" data-tab="clues">Clues & Notes</button>
+                            <button class="journal-tab" data-tab="inventory">Inventory</button>
+                        </div>
+                        <div class="journal-panels">
+                            <div class="journal-panel active" id="journal-profile"></div>
+                            <div class="journal-panel" id="journal-objectives"></div>
+                            <div class="journal-panel" id="journal-clues"></div>
+                            <div class="journal-panel" id="journal-inventory"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
         
