@@ -332,7 +332,9 @@
                     // Add some actual loading logic for key steps
                     switch (this.currentStep) {
                         case 1:
-                            this.checkCompatibility();
+                            if (!this.checkCompatibility()) {
+                                return; // Stop execution if compatibility fails
+                            }
                             break;
                         case 2:
                             this.loadSystems();
