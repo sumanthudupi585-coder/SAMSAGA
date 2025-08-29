@@ -709,9 +709,9 @@ class CinematicUISystem {
     launchPuzzle(puzzleId, sceneData) {
         if (!this.puzzleEngine) {
             try {
-                const gsm = new window.GameStateManager();
+                const gsm = window.gameStateManager || new window.GameStateManager();
                 this.puzzleEngine = new window.PuzzleEngine(gsm, null);
-            } catch (e) { console.warn('PuzzleEngine init failed', e); return; }
+            } catch (e) { console.warn('PuzzleEngine init failed', e); this.showNotification?.('Unable to initialize puzzle system.', 'error', 3000); return; }
         }
         const overlay = document.getElementById('puzzle-overlay');
         const content = document.getElementById('puzzle-content');
