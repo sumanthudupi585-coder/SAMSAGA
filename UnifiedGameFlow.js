@@ -964,21 +964,36 @@ class UnifiedGameFlow {
      * Set up auto-save system
      */
     setupAutoSave() {
-        // Save every 30 seconds
-        setInterval(() => {
-            this.saveGameProgress();
-        }, 30000);
-        
-        // Save on page unload
-        window.addEventListener('beforeunload', () => {
-            this.saveGameProgress();
-        });
+        if (window.gameStateManager) {
+            window.gameStateManager.setupAutoSave(30000);
+            window.addEventListener('beforeunload', () => {
+                try { window.gameStateManager.saveGame(); } catch (e) { /* ignore */ }
+            });
+            return;
+        }
+        setInterval(() => { this.saveGameProgress(); }, 30000);
+        window.addEventListener('beforeunload', () => { this.saveGameProgress(); });
     }
     
     /**
      * Save complete game progress
      */
     saveGameProgress() {
+        const syncUnified = () => {
+            if (!window.gameStateManager) return;
+            try {
+                window.gameStateManager.updateState('currentAct', this.worldState.currentAct || 1);
+                window.gameStateManager.updateState('currentSceneId', this.worldState.currentScene || 'JOURNEY_START');
+                window.gameStateManager.playerProfile = {
+                    ...window.gameStateManager.playerProfile,
+                    nakshatra: this.playerProfile.nakshatra || window.gameStateManager.playerProfile.nakshatra,
+                    gana: this.playerProfile.gana || window.gameStateManager.playerProfile.gana,
+                    shakti: this.playerProfile.shakti || window.gameStateManager.playerProfile.shakti,
+                    gunas: this.playerProfile.gunas || window.gameStateManager.playerProfile.gunas
+                };
+                window.gameStateManager.saveGameDebounced();
+            } catch (e) { /* ignore */ }
+        };
         const saveData = {
             version: '2.0.0',
             timestamp: Date.now(),
@@ -992,6 +1007,7 @@ class UnifiedGameFlow {
         try {
             localStorage.setItem('samsaraSagaUnified', JSON.stringify(saveData));
             console.log('💾 Game progress saved successfully');
+            syncUnified();
             return true;
         } catch (error) {
             console.error('Failed to save game progress:', error);
@@ -1020,6 +1036,21 @@ class UnifiedGameFlow {
      * Restore game state from save data
      */
     restoreFromSave(gameData) {
+        const syncUnified = () => {
+            if (!window.gameStateManager) return;
+            try {
+                window.gameStateManager.updateState('currentAct', this.worldState.currentAct || 1);
+                window.gameStateManager.updateState('currentSceneId', this.worldState.currentScene || 'JOURNEY_START');
+                window.gameStateManager.playerProfile = {
+                    ...window.gameStateManager.playerProfile,
+                    nakshatra: this.playerProfile.nakshatra || window.gameStateManager.playerProfile.nakshatra,
+                    gana: this.playerProfile.gana || window.gameStateManager.playerProfile.gana,
+                    shakti: this.playerProfile.shakti || window.gameStateManager.playerProfile.shakti,
+                    gunas: this.playerProfile.gunas || window.gameStateManager.playerProfile.gunas
+                };
+                window.gameStateManager.saveGameDebounced();
+            } catch (e) { /* ignore */ }
+        };
         this.gameStartTime = gameData.gameStartTime || Date.now();
         this.currentPhase = gameData.currentPhase || this.gamePhases.CHARACTER_CREATION;
         this.playerProfile = { ...this.playerProfile, ...gameData.playerProfile };
@@ -1027,6 +1058,7 @@ class UnifiedGameFlow {
         this.experienceState = { ...this.experienceState, ...gameData.experienceState };
         
         console.log('���� Game progress restored from save');
+        syncUnified();
     }
     
     /**

@@ -177,7 +177,9 @@
 
     loadGame(){
       const raw = this._safeGet(STORAGE_KEY);
-      if(!raw) return false;
+      if(!raw){
+        return this._migrateFromLegacy();
+      }
       try{
         const data = JSON.parse(raw);
         if (data.playerProfile) this.playerProfile = data.playerProfile;
@@ -239,6 +241,46 @@
     updateSettings(settings){ this.playerState.settings = { ...this.playerState.settings, ...settings }; }
 
     getState(){ this.updatePlayTime(); return { playerProfile: deepClone(this.playerProfile), playerState: deepClone(this.playerState), worldState: deepClone(this.worldState), gameStats: deepClone(this.gameStats) }; }
+
+    _migrateFromLegacy(){
+      const keys = [
+        'samsaraSagaUnified',
+        'samsagaSaveGame',
+        'samsaraSaga_workingGame',
+        'samsaraSagaMasterSave',
+        'samsaraSaga_fixedACT1_save',
+        'samsaraSagaJourney'
+      ];
+      let best = null;
+      for (const k of keys){
+        const raw = this._safeGet(k);
+        if (!raw) continue;
+        try{
+          const data = JSON.parse(raw);
+          const ts = data.timestamp || data.gameStartTime || 0;
+          if (!best || ts > best.ts){ best = { k, data, ts }; }
+        }catch(e){ /* ignore */ }
+      }
+      if (!best) return false;
+      const d = best.data;
+      try{
+        if (d.playerProfile) this.playerProfile = d.playerProfile;
+        if (d.playerState) {
+          this.playerState = { ...this.playerState, ...d.playerState };
+        } else if (d.worldState){
+          // map common fields
+          if (typeof d.worldState.currentAct !== 'undefined') this.playerState.currentAct = d.worldState.currentAct;
+          if (typeof d.worldState.currentScene !== 'undefined') this.playerState.currentSceneId = d.worldState.currentScene;
+        } else if (d.currentScene) {
+          this.playerState.currentSceneId = d.currentScene;
+        }
+        if (d.worldState) this.worldState = { ...this.worldState, ...d.worldState };
+        if (d.gameStats) this.gameStats = { ...this.gameStats, ...d.gameStats, startTime: Date.now() };
+        this.saveGame();
+        if (window.EventBus){ window.EventBus.emit('state:migrated', { from: best.k, to: STORAGE_KEY }); }
+        return true;
+      } catch(e){ console.warn('Legacy migration failed', e); return false; }
+    }
   }
 
   window.gameStateManager = window.gameStateManager || new GameStateManager();

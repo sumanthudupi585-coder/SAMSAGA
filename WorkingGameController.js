@@ -205,6 +205,20 @@ class WorkingGameController {
     }
     
     startGame() {
+        if (window.gameStateManager) {
+            try {
+                // prime unified state
+                window.gameStateManager.updateState('currentAct', this.gameState.currentAct);
+                window.gameStateManager.updateState('currentSceneId', this.gameState.currentScene);
+                if (this.gameState.playerProfile) {
+                    window.gameStateManager.playerProfile = {
+                        ...window.gameStateManager.playerProfile,
+                        nakshatra: this.gameState.playerProfile.nakshatra || window.gameStateManager.playerProfile.nakshatra
+                    };
+                }
+                window.gameStateManager.saveGameDebounced();
+            } catch (e) { /* ignore */ }
+        }
         console.log('🚀 Starting game...');
 
         // Hide loading screen if it exists
@@ -883,10 +897,10 @@ class WorkingGameController {
             }
         });
         
-        // Auto-save every 30 seconds
-        setInterval(() => {
-            this.saveProgress();
-        }, 30000);
+        // Centralized autosave handled by GameStateManager if available
+        if (window.gameStateManager) {
+            window.gameStateManager.setupAutoSave(30000);
+        }
     }
     
     performMeditation() {
@@ -940,6 +954,20 @@ class WorkingGameController {
     }
     
     saveProgress() {
+        const syncUnified = () => {
+            if (!window.gameStateManager) return;
+            try {
+                window.gameStateManager.updateState('currentAct', this.gameState.currentAct);
+                window.gameStateManager.updateState('currentSceneId', this.gameState.currentScene);
+                if (this.gameState.playerProfile) {
+                    window.gameStateManager.playerProfile = {
+                        ...window.gameStateManager.playerProfile,
+                        ...this.gameState.playerProfile
+                    };
+                }
+                window.gameStateManager.saveGameDebounced();
+            } catch (e) { /* ignore */ }
+        };
         try {
             const saveData = {
                 ...this.gameState,
@@ -947,12 +975,12 @@ class WorkingGameController {
             };
             
             localStorage.setItem('samsaraSaga_workingGame', JSON.stringify(saveData));
-            
-            // Also update story system save if available
+
             if (this.currentSystem && this.currentSystem.saveProgress) {
                 this.currentSystem.saveProgress();
             }
-            
+
+            syncUnified();
             return true;
         } catch (error) {
             console.error('Failed to save progress:', error);
