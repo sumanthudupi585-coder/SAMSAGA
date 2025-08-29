@@ -1077,7 +1077,104 @@ class WorkingGameController {
             </div>
         `;
     }
-    
+
+    populateJournal() {
+        const prof = document.getElementById('journal-profile');
+        const obj = document.getElementById('journal-objectives');
+        const clues = document.getElementById('journal-clues');
+        const inv = document.getElementById('journal-inventory');
+        if (prof) {
+            const p = this.gameState.playerProfile || {}; const a = p.attributes || {};
+            prof.innerHTML = `<div><strong>Nakshatra:</strong> ${p.nakshatra || 'Unknown'}</div>
+                <div><strong>Guna:</strong> ${p.guna1 || '-'} / ${p.guna3 || '-'}</div>
+                <div><strong>Pada:</strong> ${p.pada || '-'}</div>
+                <hr/><div><strong>Attributes</strong></div>
+                ${Object.entries(a).map(([k,v])=>`<div>${this.getAttributeName(k)}: ${v}</div>`).join('')}`;
+        }
+        if (obj) {
+            obj.innerHTML = `<ul>
+                <li>${this.gameState.worldState.ritual_signal_sent ? '✓' : '○'} Decode the ritual at the Ghat</li>
+                <li>${this.gameState.worldState.has_pearl ? '✓' : '○'} Secure the Pearl Earring</li>
+                <li>${(this.gameState.worldState.dravya_prithvi && this.gameState.worldState.dravya_manas) ? '✓' : '○'} Awaken the Nine Dravyas</li>
+            </ul>`;
+        }
+        if (clues) {
+            const flags = Object.keys(this.gameState.worldState||{}).filter(k=>this.gameState.worldState[k]);
+            clues.innerHTML = flags.length ? `<ul>${flags.map(f=>`<li>${f.replace(/_/g,' ')}</li>`).join('')}</ul>` : '<em>No clues recorded yet.</em>';
+        }
+        if (inv) {
+            const items = this.gameState.inventory || [];
+            inv.innerHTML = items.length ? `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>` : '<em>Inventory empty.</em>';
+        }
+    }
+
+    injectSceneUX(sceneId, scene){
+        const choicesContainer = document.querySelector('.choices-list');
+        if (!choicesContainer) return;
+
+        if (sceneId === 'RITUAL_CIPHER') {
+            choicesContainer.innerHTML = '';
+            const wrap = document.createElement('div');
+            wrap.className = 'ritual-cipher';
+            wrap.innerHTML = `<div class=\"bowl\"><div class=\"petal\" id=\"petal\" style=\"left:48%; top:18%\"></div></div><div class=\"rc-instructions\">Drag the petal: Lower → Crowd → Center</div>`;
+            choicesContainer.parentElement.prepend(wrap);
+            const bowl = wrap.querySelector('.bowl');
+            const petal = wrap.querySelector('#petal');
+            let seq=[]; let dragging=false; let offset={x:0,y:0};
+            petal.addEventListener('pointerdown',e=>{ dragging=true; petal.setPointerCapture(e.pointerId); offset.x=e.offsetX; offset.y=e.offsetY; });
+            petal.addEventListener('pointermove',e=>{ if(!dragging) return; const r=bowl.getBoundingClientRect(); const x=e.clientX - r.left - offset.x; const y=e.clientY - r.top - offset.y; petal.style.left = Math.max(0, Math.min(r.width-24, x)) + 'px'; petal.style.top = Math.max(0, Math.min(r.height-24, y)) + 'px'; const relY = (y/r.height); const relX = (x/r.width); if (relY>0.7 && !seq.includes('down')) seq.push('down'); if (relX>0.65 && !seq.includes('crowd')) seq.push('crowd'); if (Math.abs(relX-0.5)<0.1 && Math.abs(relY-0.5)<0.1 && !seq.includes('center')) seq.push('center'); if (seq.length>=3){ const ok = seq.join('-')==='down-crowd-center'; if (ok){ const ch=(scene.choices||[]).find(c=>c.id==='send_signal')||scene.choices?.[0]; if (ch) this.selectChoice(ch); } } });
+            petal.addEventListener('pointerup',()=>{ dragging=false; });
+            return;
+        }
+
+        if (sceneId === 'NYAYA_PERCEPTION'){
+            const box=document.createElement('div'); box.className='torch-area';
+            box.innerHTML = `<div class=\"torch-etch\" id=\"etch\"></div><div class=\"torch-reveal\" id=\"reveal\"></div>`;
+            choicesContainer.parentElement.prepend(box);
+            const reveal=box.querySelector('#reveal'); const etch=box.querySelector('#etch'); let moved=0;
+            box.addEventListener('pointermove',(e)=>{ const r=box.getBoundingClientRect(); const x=e.clientX - r.left; const y=e.clientY - r.top; reveal.style.setProperty('--x', x+'px'); reveal.style.setProperty('--y', y+'px'); moved++; if (moved>80){ etch.classList.add('visible'); setTimeout(()=>{ const ch= (scene.choices||[])[0]; if (ch) this.selectChoice(ch); },600);} });
+            return;
+        }
+
+        if (sceneId === 'NYAYA_INFERENCE'){
+            const wrap=document.createElement('div'); wrap.innerHTML=`<div style=\"display:flex; gap:.5rem; align-items:center; justify-content:center; margin:.5rem 0;\">\n                <input id=\"inference-input\" placeholder=\"Type SACRED GEOMETRY\" style=\"padding:.5rem 1rem; border-radius:6px; border:1px solid rgba(224,150,88,.4); background:#1a1817; color:#c5c1b9;\"/>\n                <button class=\"action-btn\">Confirm</button>\n            </div>`; choicesContainer.parentElement.prepend(wrap);
+            const btn=wrap.querySelector('button'); const inp=wrap.querySelector('#inference-input');
+            btn.addEventListener('click',()=>{ if ((inp.value||'').trim().toUpperCase()==='SACRED GEOMETRY'){ const ch=(scene.choices||[])[0]; if (ch) this.selectChoice(ch); } else { inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),400);} });
+            return;
+        }
+
+        if (sceneId === 'NYAYA_UPAMANA'){
+            const wrap=document.createElement('div'); wrap.innerHTML=`<div class=\"rings\"><div class=\"ring\" id=\"r1\">◯</div><div class=\"ring\" id=\"r2\">◯</div><div class=\"ring\" id=\"r3\">◯</div></div><div style=\"text-align:center; color:#a97142\">Rotate to align 0°, 120°, 240°</div>`; choicesContainer.parentElement.prepend(wrap);
+            const rings=[{el:wrap.querySelector('#r1'),v:0},{el:wrap.querySelector('#r2'),v:0},{el:wrap.querySelector('#r3'),v:0}];
+            rings.forEach((r,i)=>{ r.el.addEventListener('click',()=>{ r.v=(r.v+30)%360; r.el.style.transform=`rotate(${r.v}deg)`; const ok = rings[0].v%360===0 && rings[1].v%360===120 && rings[2].v%360===240; if (ok){ const ch=(scene.choices||[])[0]; if (ch) this.selectChoice(ch); } }); });
+            return;
+        }
+
+        if (sceneId === 'NYAYA_SABDA'){
+            const wrap=document.createElement('div'); wrap.innerHTML=`<div class=\"heads\"><div class=\"head\" data-id=\"A\">Head A</div><div class=\"head\" data-id=\"B\">Head B</div><div class=\"head\" data-id=\"C\">Head C</div></div><div style=\"text-align:center; color:#a97142\">Click a head, then click again to confirm.</div>`; choicesContainer.parentElement.prepend(wrap);
+            let last=null; wrap.querySelectorAll('.head').forEach(h=>{ h.addEventListener('click',()=>{ wrap.querySelectorAll('.head').forEach(x=>x.classList.remove('active')); h.classList.add('active'); if (last===h.dataset.id){ const ch=(scene.choices||[])[0]; if (ch) this.selectChoice(ch); } last=h.dataset.id; }); });
+            return;
+        }
+
+        if (sceneId==='VAISESIKA_MACHINE' || sceneId.startsWith('DRAVYA_') || sceneId==='DRAVYA_CHECK'){
+            this.renderDravyaChecklist();
+        }
+    }
+
+    renderDravyaChecklist(){
+        const host = document.querySelector('.choices-section'); if (!host) return;
+        const box=document.createElement('div'); box.className='dravya-checklist';
+        const f=this.gameState.worldState||{};
+        const items=[["prithvi","Earth"],["ap","Water"],["tejas","Fire"],["vayu","Air"],["akasha","Ether"],["kala","Time"],["dik","Direction"],["atman","Atman"],["manas","Manas"]];
+        box.innerHTML = `<div style=\"color:#e09658; font-weight:bold; margin-bottom:.4rem;\">Nine Dravyas</div><div class=\"dravya-list\">${items.map(([k,n])=>`<div class=\"dravya-item ${f['dravya_'+k]?'done':''}\">${f['dravya_'+k]?'✓':'○'} ${n}</div>`).join('')}</div>`;
+        host.prepend(box);
+    }
+
+    showGlitchEffect(){
+        const o=document.createElement('div'); o.className='glitch-overlay'; o.textContent='01100110 01101111 01110010 00100000 01100001 00100000 01101110 01100001 01101110 01101111 01110011 01100101 01100011 01101111 01101110 01100100';
+        document.body.appendChild(o); requestAnimationFrame(()=>o.classList.add('active')); setTimeout(()=>{ o.classList.remove('active'); setTimeout(()=>o.remove(),150); },250);
+    }
+
     showNotification(message, type = 'info', duration = 4000) {
         const container = document.getElementById('notifications');
         if (!container) return;
