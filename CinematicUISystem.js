@@ -1172,7 +1172,13 @@ class CinematicUISystem {
         if (window.ENHANCED_ACT1_STORY_DATA && window.ENHANCED_ACT1_STORY_DATA[sceneId]) {
             this.loadScene(window.ENHANCED_ACT1_STORY_DATA[sceneId]);
         } else {
-            console.warn('Scene not found:', sceneId);
+            const fallback = 'THE_GREAT_CONVERGENCE';
+            if (window.ENHANCED_ACT1_STORY_DATA && window.ENHANCED_ACT1_STORY_DATA[fallback]) {
+                this.loadScene(window.ENHANCED_ACT1_STORY_DATA[fallback]);
+                if (this.showNotification) {
+                    this.showNotification('Guiding to a key convergence point...', 'info', 2500);
+                }
+            }
         }
     }
     
