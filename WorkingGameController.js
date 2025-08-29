@@ -260,6 +260,7 @@ class WorkingGameController {
                             ).join('')}
                         </div>
                     </div>
+                    <button class="action-btn journal-open-btn" id="journal-btn">📖 Journal</button>
                 </header>
 
                 <!-- Main Content -->
@@ -1043,7 +1044,7 @@ class WorkingGameController {
                             🔄 Try Again
                         </button>
                         <button onclick="window.location.href='index.html'" style="background: #a97142; border: none; padding: 1rem 2rem; border-radius: 5px; color: #0a0908; font-weight: bold; cursor: pointer;">
-                            🏠 Return Home
+                            ���� Return Home
                         </button>
                     </div>
                 </div>
