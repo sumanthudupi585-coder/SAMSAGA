@@ -41,9 +41,7 @@
         </a>
         <div class="nav-title">The Oracle Within</div>
         <div class="nav-progress">
-            <div class="progress-dots">
-                <span class="progress-dot active" data-step="1"></span><span class="progress-dot" data-step="2"></span><span class="progress-dot" data-step="3"></span><span class="progress-dot" data-step="4"></span><span class="progress-dot" data-step="5"></span>
-            </div>
+            <div class="progress-dots" id="progress-dots"></div>
         </div>
     </nav>
 
@@ -121,6 +119,59 @@
         const nakshatraSvgPaths={1:'<path d="M30,30 Q50,10 70,30 Q80,50 70,70 Q50,90 30,70 Q20,50 30,30"/>',2:'<ellipse cx="50" cy="50" rx="20" ry="30"/>',3:'<line x1="30" y1="30" x2="70" y2="70"/><line x1="30" y1="70" x2="70" y2="30"/>',4:'<rect x="30" y="30" width="40" height="40"/>',5:'<path d="M30,50 Q50,20 70,50 Q50,80 30,50"/>',6:'<path d="M50,30 Q70,50 50,70 Q30,50 50,30"/>',7:'<path d="M30,50 L70,50 M50,30 L50,70"/>',8:'<circle cx="50" cy="50" r="20"/>',9:'<path d="M30,70 Q50,30 70,70"/>',10:'<rect x="35" y="35" width="30" height="30"/>',11:'<line x1="30" y1="70" x2="70" y2="70"/><line x1="30" y1="70" x2="30" y2="30"/><line x1="70" y1="70" x2="70" y2="30"/>',12:'<rect x="30" y="30" width="40" height="40"/>',13:'<path d="M30,50 L70,50 M30,40 L70,40 M30,60 L70,60"/>',14:'<polygon points="50,20 60,40 80,40 65,55 70,75 50,65 30,75 35,55 20,40 40,40"/>',15:'<path d="M50,30 Q60,50 50,70"/>',16:'<path d="M30,70 L50,30 L70,70"/>',17:'<path d="M50,30 C70,40 70,60 50,70 C30,60 30,40 50,30"/>',18:'<path d="M40,30 L60,30 L60,70 L40,70 Z"/>',19:'<path d="M30,30 Q50,50 30,70 M70,30 Q50,50 70,70"/>',20:'<path d="M30,40 Q50,20 70,40 Q50,60 30,40"/>',21:'<path d="M40,30 C60,40 60,60 40,70"/>',22:'<path d="M30,50 C40,30 60,30 70,50 C60,70 40,70 30,50"/>',23:'<circle cx="50" cy="50" r="15"/>',24:'<circle cx="50" cy="50" r="20"/>',25:'<line x1="30" y1="70" x2="30" y2="30"/><line x1="70" y1="70" x2="70" y2="30"/>',26:'<line x1="30" y1="70" x2="70" y2="70"/><line x1="30" y1="70" x2="30" y2="30"/><line x1="70" y1="70" x2="70" y2="30"/>',27:'<path d="M30,40 Q50,20 70,40 M30,60 Q50,80 70,60"/>'};
         
         let userAnswers={};let currentQuestion='q1';
+        const gunaScores={Sattva:0,Rajas:0,Tamas:0};
+        const ganaScores={Deva:0,Manushya:0,Rakshasa:0};
+        const surveyQuestions=[
+          { id:'q6', title:'The Two Paths', subtitle:'You discover a hidden chamber with two routes.', options:[
+              {label:'Direct, dangerous path', effects:{guna:'Rajas'}},
+              {label:'Longer, wiser path', effects:{guna:'Sattva'}}
+          ]},
+          { id:'q7', title:'The Inert Stone', subtitle:'A massive stone blocks a mechanism.', options:[
+              {label:'Move it by sheer effort', effects:{guna:'Rajas'}},
+              {label:'Search for counterweights', effects:{guna:'Sattva'}},
+              {label:'Seek another way', effects:{guna:'Tamas'}}
+          ]},
+          { id:'q8', title:'The Guardian Spirit', subtitle:'A hostile, pained spirit bars your way.', options:[
+              {label:'Soothe with ritual', effects:{gana:'Deva'}},
+              {label:'Reason and negotiate', effects:{gana:'Manushya'}},
+              {label:'Turn its aggression aside', effects:{gana:'Rakshasa'}}
+          ]},
+          { id:'q9', title:'The Stolen Manuscript', subtitle:'A rival stole a text.', options:[
+              {label:'Inform the abbot', effects:{guna:'Sattva'}},
+              {label:'Confront directly', effects:{guna:'Rajas'}},
+              {label:'Steal it back quietly', effects:{guna:'Tamas'}}
+          ]},
+          { id:'q10', title:'The River’s Toll', subtitle:'A ferryman overcharges the poor.', options:[
+              {label:'Pay for the next family', effects:{gana:'Deva'}},
+              {label:'Intimidate him to lower price', effects:{gana:'Rakshasa'}},
+              {label:'Organize villagers to build a bridge', effects:{gana:'Manushya'}}
+          ]},
+          { id:'q11', title:'The Flawed Ritual', subtitle:'A priest errs during a complex rite.', options:[
+              {label:'Gently correct after', effects:{guna:'Sattva'}},
+              {label:'Say nothing', effects:{guna:'Tamas'}},
+              {label:'Interrupt to fix it now', effects:{guna:'Rajas'}}
+          ]},
+          { id:'q12', title:'The Dying Master’s Secret', subtitle:'He warns truth will bring sorrow.', options:[
+              {label:'Listen anyway', effects:{guna:'Sattva'}},
+              {label:'Refuse', effects:{guna:'Tamas'}},
+              {label:'Have him write it to open later', effects:{gana:'Manushya'}}
+          ]},
+          { id:'q13', title:'The Source of Power', subtitle:'A rare lotus is being drained.', options:[
+              {label:'Destroy focusing lens', effects:{guna:'Rajas'}},
+              {label:'Reroute power for recovery', effects:{gana:'Manushya'}},
+              {label:'Sacrifice to heal the lotus', effects:{gana:'Deva'}}
+          ]},
+          { id:'q14', title:'The Unjust Law', subtitle:'Forbidden texts are illegal.', options:[
+              {label:'Operate in shadows', effects:{guna:'Tamas'}},
+              {label:'Openly defy the law', effects:{guna:'Rajas'}},
+              {label:'Seek a patron for dispensation', effects:{gana:'Manushya'}}
+          ]},
+          { id:'q15', title:'The Final Choice', subtitle:'A perfect pearl can heal or reveal.', options:[
+              {label:'Seek the vision of truth', effects:{guna:'Sattva'}},
+              {label:'Create a panacea for others', effects:{gana:'Deva'}},
+              {label:'Keep the pearl’s power', effects:{gana:'Rakshasa'}}
+          ]}
+        ];
 
         // Check for URL parameters on page load
         function initializeFromURL() {
@@ -157,8 +208,30 @@
                 showResult();
             }
         }function showScreen(e){const t=document.querySelector('.screen.active'),n=document.getElementById(e);if(!n)return void console.error(`Screen with ID '${e}' not found!`);t?(t.classList.add('exiting'),setTimeout(()=>{t.classList.remove('active','exiting'),n.classList.add('active'),window.scrollTo(0,0)},800)):n.classList.add('active'),currentQuestion=e,updateProgressDots(e)}
-        function updateProgressDots(e){const t='result-screen'===e?6:parseInt(e.replace('q',''))||0,n=document.querySelectorAll('.progress-dot');n.forEach((e,o)=>{o+1<t?(e.classList.add('completed'),e.classList.remove('active')):o+1===t?(e.classList.add('active'),e.classList.remove('completed')):e.classList.remove('active','completed')}),t>n.length&&n.forEach(e=>e.classList.add('completed'))}
+        function buildProgressDots(total){const c=document.getElementById('progress-dots');if(!c)return;const dots=Array.from({length:total},(_,i)=>`<span class="progress-dot${i===0?' active':''}" data-step="${i+1}"></span>`).join('');c.innerHTML=dots;}
+        function updateProgressDots(id){const step=id==='result-screen'?11:parseInt(id.replace('q',''))||0;const dots=document.querySelectorAll('.progress-dot');dots.forEach((el,i)=>{if(i+1<step){el.classList.add('completed');el.classList.remove('active');}else if(i+1===step){el.classList.add('active');el.classList.remove('completed');}else{el.classList.remove('active','completed')}});if(step>dots.length)dots.forEach(el=>el.classList.add('completed'));}
         function populateShaktiQuestion(){const e=`${userAnswers.gana}-${userAnswers.guna1}`,t=shaktiQuestions[e],n=document.getElementById('q3-options');if(n.innerHTML='',t)for(const e of t){const t=document.createElement('button');t.className='option',t.dataset.value=e.result,t.innerHTML=`<div class="option-icon"><i class="fas fa-star-of-life"></i></div><div class="option-content"><div class="option-description">${e.text}</div></div>`,n.appendChild(t)}}
+        function computeProfileAndShow(){
+            // Determine primaries from accumulated scores
+            const primaryGuna = Object.entries(gunaScores).sort((a,b)=>b[1]-a[1])[0][0];
+            const secondaryGuna = Object.entries(gunaScores).sort((a,b)=>b[1]-a[1])[1][0];
+            const primaryGana = Object.entries(ganaScores).sort((a,b)=>b[1]-a[1])[0][0] || userAnswers.gana;
+            userAnswers.guna1 = userAnswers.guna1 || primaryGuna;
+            userAnswers.guna3 = userAnswers.guna3 || secondaryGuna;
+            userAnswers.gana = userAnswers.gana || primaryGana;
+
+            // Assign Nakshatra from primary Gana pool using secondary guna as tie-breaker
+            const pools={
+                Deva:[1,5,7,8,13,15,17,22,27],
+                Manushya:[2,4,6,11,12,20,21,25,26],
+                Rakshasa:[3,9,10,14,16,18,19,23,24]
+            };
+            const pool=pools[primaryGana]||pools.Deva;
+            const indexMap={Sattva:0.2,Rajas:0.5,Tamas:0.8};
+            const idx=Math.min(pool.length-1, Math.max(0, Math.round(pool.length*indexMap[secondaryGuna])));
+            userAnswers.nakshatraNum=String(pool[idx]);
+            showResult();
+        }
         function showResult(){
             // Validate that all required user answers are present
             if (!userAnswers.gana || !userAnswers.guna1 || !userAnswers.pada || !userAnswers.guna3) {
@@ -230,23 +303,30 @@
             }catch(e){console.error('Error in showResult():',e)}
         }
         function getGanaIcon(e){return{Deva:'fas fa-sun',Manushya:'fas fa-handshake',Rakshasa:'fas fa-fire'}[e]||'fas fa-star'}
-        function setGunaValues(e){const t={sattva:[8,17,22,27,20,21,25,26,19,23,24],rajas:[1,5,7,2,4,6,3,9],tamas:[13,15,11,12,10,14,16,18]};let n=t.sattva.includes(e)?2:1,o=t.rajas.includes(e)?2:1,a=t.tamas.includes(e)?2:1;'Sattva'===userAnswers.guna1&&n++,'Rajas'===userAnswers.guna1&&o++,'Tamas'===userAnswers.guna1&&a++,'Sattva'===userAnswers.guna3&&n++,'Rajas'===userAnswers.guna3&&o++,'Tamas'===userAnswers.guna3&&a++,document.getElementById('sattva-value').textContent=n,document.getElementById('rajas-value').textContent=o,document.getElementById('tamas-value').textContent=a}
+        function setGunaValues(e){const t={sattva:[8,17,22,27,20,21,25,26,19,23,24],rajas:[1,5,7,2,4,6,3,9],tamas:[13,15,11,12,10,14,16,18]};let n=t.sattva.includes(e)?2:1,o=t.rajas.includes(e)?2:1,a=t.tamas.includes(e)?2:1; n+=gunaScores.Sattva; o+=gunaScores.Rajas; a+=gunaScores.Tamas; document.getElementById('sattva-value').textContent=n,document.getElementById('rajas-value').textContent=o,document.getElementById('tamas-value').textContent=a}
         document.addEventListener('DOMContentLoaded',()=>{
+            buildProgressDots(11);
             // Initialize from URL parameters if present
             initializeFromURL();
 
-            document.querySelector('.oracle-container').addEventListener('click',e=>{if(!e.target.matches('.option')&&!e.target.closest('.option'))return;const t=e.target.matches('.option')?e.target:e.target.closest('.option'),n=t.dataset.value;document.querySelectorAll(`#${currentQuestion} .option`).forEach(e=>e.classList.remove('choice-selected')),t.classList.add('choice-selected'),setTimeout(()=>{switch(currentQuestion){case'q1':userAnswers.gana=n,showScreen('q2');break;case'q2':userAnswers.guna1=n,populateShaktiQuestion(),showScreen('q3');break;case'q3':
-                    // Validate the nakshatra number before setting it
+            // Dynamically create extra survey screens q6..q15
+            const container=document.querySelector('.oracle-container');
+            for(const q of surveyQuestions){
+              const scr=document.createElement('div');scr.className='screen';scr.id=q.id;scr.innerHTML=`<h2 class="screen-title">The Oracle Within</h2><p class="screen-subtitle">${q.subtitle}</p><div class="options-grid">${q.options.map((o,i)=>`<button class="option" data-value="${i}"><div class="option-icon"><i class="fas fa-star-of-life"></i></div><div class="option-content"><div class="option-description">${o.label}</div></div></button>`).join('')}</div>`;container.appendChild(scr);
+            }
+
+            document.querySelector('.oracle-container').addEventListener('click',e=>{if(!e.target.matches('.option')&&!e.target.closest('.option'))return;const t=e.target.matches('.option')?e.target:e.target.closest('.option');const n=t.dataset.value;document.querySelectorAll(`#${currentQuestion} .option`).forEach(e=>e.classList.remove('choice-selected'));t.classList.add('choice-selected');setTimeout(()=>{switch(currentQuestion){case'q1':userAnswers.gana=n;ganaScores[n]=(ganaScores[n]||0)+1;showScreen('q2');break;case'q2':userAnswers.guna1=n;gunaScores[n]+=2;populateShaktiQuestion();showScreen('q3');break;case'q3':{
                     const nakshatraNum = parseInt(n, 10);
-                    if (Number.isNaN(nakshatraNum) || nakshatraNum < 1 || nakshatraNum > 27) {
-                        console.error('Invalid nakshatra selection:', n);
-                        alert('Error: Invalid Nakshatra selection. Please try again.');
-                        return;
-                    }
-                    userAnswers.nakshatraNum = String(nakshatraNum);
-                    console.log('Set nakshatra number:', userAnswers.nakshatraNum);
-                    showScreen('q4');
-                    break;case'q4':userAnswers.pada=n,showScreen('q5');break;case'q5':userAnswers.guna3=n,showResult()}},600)}),document.getElementById('action-button').addEventListener('click',()=>{
+                    if (Number.isNaN(nakshatraNum) || nakshatraNum < 1 || nakshatraNum > 27) { alert('Error: Invalid Nakshatra selection.'); return; }
+                    userAnswers.nakshatraNum = String(nakshatraNum);showScreen('q4');break;}
+                case'q4':userAnswers.pada=n;showScreen('q5');break;case'q5':userAnswers.guna3=n;gunaScores[n]+=1;showScreen('q6');break;
+                default:{
+                    // Handle dynamic questions q6..q15
+                    const q=surveyQuestions.find(s=>s.id===currentQuestion);
+                    if(q){const idx=parseInt(n,10);const opt=q.options[idx];if(opt?.effects?.guna) gunaScores[opt.effects.guna]++; if(opt?.effects?.gana) ganaScores[opt.effects.gana]++;}
+                    const nextIndex=parseInt(currentQuestion.replace('q',''))+1; if(nextIndex<=15){showScreen('q'+nextIndex);} else {computeProfileAndShow();}
+                }
+            }},600)}),document.getElementById('action-button').addEventListener('click',()=>{
                 // Validate nakshatra number before proceeding
                 if (!userAnswers.nakshatraNum) {
                     console.error('No nakshatra number available');
