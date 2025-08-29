@@ -301,6 +301,72 @@ class CinematicUISystem {
     }
     
     /**
+     * Inject styles for puzzle overlay and widgets
+     */
+    setupPuzzleStyles() {
+        const styles = `
+        <style id="puzzle-styles">
+        .puzzle-overlay { display:none; position:fixed; inset:0; background: radial-gradient(1200px 600px at 50% 30%, rgba(224,150,88,0.08), rgba(0,0,0,0.85)); z-index:20000; align-items:center; justify-content:center; padding:24px; }
+        .puzzle-content { background: var(--color-surface, #1a1817); border: 1px solid var(--color-primary, #e09658); border-radius: 14px; width: min(880px, 92vw); max-height: 86vh; overflow:auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.03); }
+        .puzzle-header { position:sticky; top:0; backdrop-filter: blur(6px); background: linear-gradient(180deg, rgba(26,24,23,0.9), rgba(26,24,23,0.6)); border-bottom:1px solid rgba(224,150,88,0.25); padding:18px 22px; display:flex; align-items:center; gap:14px; z-index:2; }
+        .puzzle-icon { font-size:22px; filter: drop-shadow(0 0 6px rgba(224,150,88,0.35)); }
+        .puzzle-title-wrap { display:flex; flex-direction:column; }
+        .puzzle-title { margin:0; font-size:1.4rem; color: var(--color-text, #c5c1b9); letter-spacing:0.3px; }
+        .puzzle-sub { margin:4px 0 0; font-size:0.95rem; color: #bca06a; opacity:0.9; }
+        .puzzle-body { padding:20px 22px 24px; display:grid; gap:18px; }
+        .puzzle-hint-row { display:flex; gap:10px; align-items:center; justify-content:space-between; }
+        .hint-btn, .close-btn, .primary-btn, .ghost-btn { border:1px solid var(--color-primary, #e09658); color: var(--color-text, #c5c1b9); background: transparent; border-radius:10px; padding:8px 12px; cursor:pointer; transition: all .2s ease; }
+        .primary-btn { background: linear-gradient(180deg, rgba(224,150,88,0.2), rgba(224,150,88,0.05)); }
+        .ghost-btn { border-color: rgba(224,150,88,0.35); opacity:0.9; }
+        .hint-text { font-size:0.9rem; color:#d2c8be; opacity:0.9; display:none; }
+        .hint-text.show { display:block; animation: fadeIn .25s ease; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform:none; } }
+        .themed-panel { border:1px solid rgba(224,150,88,0.18); border-radius:12px; padding:14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+        /* Rotational Alignment UI */
+        .rings-wrap { display:grid; grid-template-columns: minmax(240px,1fr) minmax(260px,1fr); gap:18px; align-items:center; }
+        .mandala-preview { position:relative; aspect-ratio:1/1; background: radial-gradient(circle at 50% 50%, rgba(255,220,148,0.06), transparent 65%); border-radius:12px; border:1px solid rgba(224,150,88,0.25); overflow:hidden; }
+        .ring { position:absolute; inset:10%; border:1px dashed rgba(224,150,88,0.25); border-radius:50%; pointer-events:none; }
+        .ring.r2 { inset:20%; }
+        .ring.r3 { inset:30%; }
+        .ring-marker { position:absolute; top:0; left:50%; width:2px; height:12%; background: #ffc994; transform-origin: bottom center; box-shadow: 0 0 10px rgba(255,201,148,0.6); }
+        .sliders { display:grid; gap:12px; }
+        .slider-row { display:flex; align-items:center; gap:10px; }
+        .slider-row label { min-width:84px; color:#d2c8be; opacity:0.9; }
+        .slider-row input[type=range] { width:100%; accent-color: #e09658; }
+        .alignment-meter { height:8px; background: linear-gradient(90deg, #7b3f00, #b37a3c, #ffc994); border-radius:999px; overflow:hidden; position:relative; }
+        .alignment-fill { position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(90deg, #b37a3c, #ffc994); box-shadow: 0 0 16px rgba(255,201,148,0.6); transition: width .2s ease; }
+        /* Item Application (Barrier) */
+        .barrier-grid { display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; }
+        .barrier-zone { position:relative; border-radius:12px; border:1px solid rgba(224,150,88,0.25); min-height:220px; display:flex; align-items:center; justify-content:center; background: radial-gradient(240px 140px at 50% 50%, rgba(99,180,209,0.12), rgba(0,0,0,0.15)); overflow:hidden; }
+        .barrier-veil { position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(99,180,209,0.18) 0 6px, transparent 6px 12px); animation: shimmer 2.5s linear infinite; }
+        @keyframes shimmer { from {transform: translateX(-20%);} to { transform: translateX(20%);} }
+        .inventory { display:flex; flex-wrap:wrap; gap:10px; align-content:flex-start; }
+        .token { border:1px solid rgba(224,150,88,0.35); padding:8px 10px; border-radius:999px; cursor:grab; user-select:none; background: rgba(224,150,88,0.06); transition: transform .15s ease; }
+        .token:active { transform: scale(0.98); cursor:grabbing; }
+        .drop-hint { position:absolute; bottom:10px; color:#bca06a; font-size:0.85rem; opacity:0.9; }
+        /* Crafting */
+        .craft-stage { display:flex; align-items:center; gap:10px; }
+        .progress { flex:1; height:8px; background: rgba(255,255,255,0.06); border-radius:999px; overflow:hidden; }
+        .progress > span { display:block; height:100%; width:0%; background: linear-gradient(90deg,#63b4d1,#ffc994); transition: width .3s ease; }
+        .stage-list { display:grid; gap:10px; }
+        .stage-item { display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; border:1px solid rgba(224,150,88,0.2); background: rgba(255,255,255,0.02); }
+        .stage-item.active { border-color:#e09658; box-shadow: 0 0 12px rgba(224,150,88,0.15) inset; }
+        /* Musical Sequence */
+        .chimes { display:flex; gap:10px; flex-wrap:wrap; }
+        .chime { padding:12px 14px; border-radius:10px; border:1px solid rgba(224,150,88,0.3); background: rgba(99,180,209,0.08); cursor:pointer; transition: transform .08s ease, box-shadow .2s ease; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03); }
+        .chime:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,180,209,0.2); }
+        .sequence { display:flex; gap:8px; min-height:36px; align-items:center; }
+        .seq-note { padding:6px 10px; border-radius:999px; border:1px solid rgba(224,150,88,0.3); color:#ffc994; }
+        /* Theming */
+        .puzzle-overlay.theme-banyan .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(188,160,106,0.06), rgba(26,24,23,1)); }
+        .puzzle-overlay.theme-barrier .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(99,180,209,0.08), rgba(26,24,23,1)); }
+        .puzzle-overlay.theme-crafting .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(255,201,148,0.08), rgba(26,24,23,1)); }
+        .puzzle-overlay.theme-harmony .puzzle-content { background: radial-gradient(800px 400px at 50% 0%, rgba(123,206,255,0.08), rgba(26,24,23,1)); }
+        </style>`;
+        if (!document.getElementById('puzzle-styles')) document.head.insertAdjacentHTML('beforeend', styles);
+    }
+
+    /**
      * Initialize theme system with evolving visual styles
      */
     initializeThemes() {
