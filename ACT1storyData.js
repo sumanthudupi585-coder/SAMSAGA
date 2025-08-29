@@ -47,7 +47,7 @@ window.ACT1_STORY_DATA = {
     "title": "The Silent Boatman",
     "text": "A wooden boat ghosts to the steps. The boatman offers a sealed clay pot and nods downriver toward smoke‑shrouded Manikarnika.",
     "choices": [
-      { "text": "Take the clay pot and head into the alleys", "nextScene": "LABYRINTH_ENTRANCE", "effects": { "inventory": ["Pearl Earring (sealed in clay)"], "flags": { "has_clay_pot": true, "has_pearl": true } } }
+      { "text": "Take the clay pot and head into the alleys", "nextScene": "LABYRINTH_ENTRANCE", "effects": { "inventory": { "add": ["Pearl Earring (sealed in clay)"] }, "flags": { "has_clay_pot": true, "has_pearl": true } } }
     ]
   },
 
