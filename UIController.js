@@ -567,6 +567,15 @@ resumeGame() {
             case 'InteractiveInstrument':
                 this.renderInteractiveInstrument(puzzleData);
                 break;
+            case 'OrreryWidget':
+                this.renderOrreryWidget(puzzleData);
+                break;
+            case 'KleshaTrials':
+                this.renderKleshaTrials(puzzleData);
+                break;
+            case 'DharmaScales':
+                this.renderDharmaScales(puzzleData);
+                break;
             default:
                 this.renderLegacyTextPuzzle(puzzleData);
         }
