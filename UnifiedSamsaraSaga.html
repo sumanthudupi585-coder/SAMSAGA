@@ -631,12 +631,19 @@
                     // Save progress
                     this.gameFlow.saveGameProgress();
                 } else {
-                    console.warn('Scene not found:', sceneId);
-                    this.uiSystem.showNotification(
-                        'Scene not found. The journey continues in unexpected ways...',
-                        'warning',
-                        4000
-                    );
+                    const fallback = 'THE_GREAT_CONVERGENCE';
+                    const hasFallback = window.ENHANCED_ACT1_STORY_DATA && window.ENHANCED_ACT1_STORY_DATA[fallback];
+                    if (hasFallback) {
+                        this.uiSystem.queueTransition('scene_change', {
+                            targetScene: fallback,
+                            callback: () => this.loadScene(fallback)
+                        });
+                        this.uiSystem.showNotification(
+                            'Guiding your journey to a key convergence point...',
+                            'info',
+                            3000
+                        );
+                    }
                 }
             }
             
