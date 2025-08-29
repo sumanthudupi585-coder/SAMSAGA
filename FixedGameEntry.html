@@ -425,11 +425,17 @@
             }
             
             loadSystems() {
-                // Load the critical game systems
-                this.loadScript('FixedACT1StorySystem.js')
+                // Load systems required for enhanced Act 1 with playable puzzles
+                this.loadScript('GameStateManager.js')
+                    .then(() => this.loadScript('puzzles.js'))
+                    .then(() => this.loadScript('PuzzleEngine.js'))
+                    .then(() => this.loadScript('CinematicUISystem.js'))
+                    .then(() => this.loadScript('EnhancedACT1StoryData.js'))
+                    .then(() => this.loadScript('storyDataBridge.js'))
+                    .then(() => this.loadScript('FixedACT1StorySystem.js'))
                     .then(() => this.loadScript('WorkingGameController.js'))
                     .then(() => {
-                        console.log('✅ Core systems loaded');
+                        console.log('✅ All systems loaded for Enhanced Act 1');
                     })
                     .catch(error => {
                         console.warn('Some systems failed to load, proceeding with fallback:', error);

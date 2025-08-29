@@ -567,6 +567,15 @@ resumeGame() {
             case 'InteractiveInstrument':
                 this.renderInteractiveInstrument(puzzleData);
                 break;
+            case 'OrreryWidget':
+                this.renderOrreryWidget(puzzleData);
+                break;
+            case 'KleshaTrials':
+                this.renderKleshaTrials(puzzleData);
+                break;
+            case 'DharmaScales':
+                this.renderDharmaScales(puzzleData);
+                break;
             default:
                 this.renderLegacyTextPuzzle(puzzleData);
         }
@@ -780,6 +789,145 @@ resumeGame() {
             const result = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { sequence: playedSequence });
             if (result) this.render();
         });
+    }
+
+    /**
+     * Renders the Navagraha Orrery puzzle.
+     */
+    renderOrreryWidget(puzzleData) {
+        const puzzleId = puzzleData.id;
+        const puzzleArea = document.createElement('div');
+        puzzleArea.className = 'orrery-puzzle-area';
+        const bodies = (puzzleData.uiConfig?.bodies || []).map(b => b.id);
+        const initialAngles = puzzleData.uiConfig?.initialAngles || {};
+        const angles = {};
+        bodies.forEach(id => { angles[id] = typeof initialAngles[id] === 'number' ? initialAngles[id] : 0; });
+
+        puzzleArea.innerHTML = `
+            <div class="orrery-container">
+                <div class="orrery-sky"></div>
+                <div class="orrery-center"></div>
+                ${bodies.map(id => `<div class=\"orrery-planet\" data-id=\"${id}\" style=\"--angle: ${(angles[id]||0)}deg\">${id}</div>`).join('')}
+            </div>
+            <div class="puzzle-hints">${(puzzleData.hints||[]).join('<br>')}</div>
+            <button id="check-orrery-btn" class="puzzle-action-button">Lock Configuration</button>
+        `;
+        this.elements.puzzleContainer.appendChild(puzzleArea);
+
+        const containerEl = this.elements.puzzleContainer.querySelector('.orrery-container');
+        const getCenter = () => {
+            const rect = containerEl.getBoundingClientRect();
+            return { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
+        };
+        const angleAt = (x, y) => {
+            const { cx, cy } = getCenter();
+            const rad = Math.atan2(y - cy, x - cx);
+            let deg = (rad * 180) / Math.PI + 90;
+            if (deg < 0) deg += 360;
+            return deg % 360;
+        };
+
+        const planetEls = this.elements.puzzleContainer.querySelectorAll('.orrery-planet');
+        planetEls.forEach(el => {
+            const id = el.dataset.id;
+            const setAngle = (deg) => {
+                angles[id] = Math.round(((deg % 360) + 360) % 360);
+                el.style.setProperty('--angle', angles[id] + 'deg');
+            };
+            let dragging = false;
+            const onDown = (e) => { dragging = true; el.setPointerCapture(e.pointerId); };
+            const onMove = (e) => { if (!dragging) return; setAngle(angleAt(e.clientX, e.clientY)); };
+            const onUp = (e) => { dragging = false; el.releasePointerCapture(e.pointerId); };
+            el.addEventListener('pointerdown', onDown);
+            el.addEventListener('pointermove', onMove);
+            el.addEventListener('pointerup', onUp);
+            el.addEventListener('pointercancel', onUp);
+            setAngle(angles[id] || 0);
+        });
+
+        const checkBtn = document.getElementById('check-orrery-btn');
+        if (checkBtn) {
+            checkBtn.addEventListener('click', () => {
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { angles });
+                if (solved) this.render();
+            });
+        }
+    }
+
+    /**
+     * Renders the Five Kleshas trial puzzle.
+     */
+    renderKleshaTrials(puzzleData) {
+        const puzzleId = puzzleData.id;
+        const puzzleArea = document.createElement('div');
+        puzzleArea.className = 'klesha-puzzle-area';
+        const stages = (puzzleData.mechanics?.stages || []).map(s => ({ id: s.id, title: s.title, description: s.description }));
+
+        puzzleArea.innerHTML = `
+            <div class="klesha-grid">
+                ${stages.map(s => `
+                    <div class=\"klesha-card\" data-id=\"${s.id}\">
+                        <h4>${s.title}</h4>
+                        <p>${s.description}</p>
+                        <button class=\"resolve-btn\">Resolve</button>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="puzzle-hints">${(puzzleData.hints||[]).join('<br>')}</div>
+        `;
+        this.elements.puzzleContainer.appendChild(puzzleArea);
+
+        this.elements.puzzleContainer.querySelectorAll('.klesha-card .resolve-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const card = e.currentTarget.closest('.klesha-card');
+                const stageId = card.dataset.id;
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { stageId, action: 'resolve' });
+                card.classList.add('resolved');
+                if (solved) this.render();
+            });
+        });
+    }
+
+    /**
+     * Renders the Dharma Scales moral dilemma puzzle.
+     */
+    renderDharmaScales(puzzleData) {
+        const puzzleId = puzzleData.id;
+        const scenarios = puzzleData.mechanics?.scenarios || [];
+        let index = 0;
+        const area = document.createElement('div');
+        area.className = 'dharma-area';
+        this.elements.puzzleContainer.appendChild(area);
+
+        const renderScenario = () => {
+            area.innerHTML = '';
+            if (index >= scenarios.length) {
+                const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { choiceWeight: 0 });
+                if (solved) this.render();
+                return;
+            }
+            const sc = scenarios[index];
+            const wrap = document.createElement('div');
+            wrap.className = 'scenario-panel';
+            wrap.innerHTML = `
+                <h4>${sc.title}</h4>
+                <p>${sc.description}</p>
+                <div class=\"choices\">
+                    ${sc.choices.map(c => `<button class=\"choice-btn\" data-weight=\"${c.weight}\">${c.text}</button>`).join('')}
+                </div>
+            `;
+            area.appendChild(wrap);
+            wrap.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const w = parseFloat(btn.dataset.weight);
+                    const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { choiceWeight: w });
+                    index++;
+                    if (solved) this.render(); else renderScenario();
+                });
+            });
+        };
+
+        renderScenario();
     }
 
     /**
