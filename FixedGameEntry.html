@@ -372,15 +372,54 @@
             }
             
             checkCompatibility() {
-                // Check for required browser features
-                const required = ['localStorage', 'JSON', 'addEventListener', 'querySelector'];
-                for (const feature of required) {
-                    if (typeof window[feature] === 'undefined') {
-                        this.showError(`Browser missing required feature: ${feature}`);
-                        return;
+                console.log('🔍 Checking browser compatibility...');
+
+                // Check for localStorage
+                try {
+                    if (typeof localStorage === 'undefined') {
+                        this.showError('Browser missing required feature: localStorage');
+                        return false;
                     }
+                    // Test localStorage write/read
+                    localStorage.setItem('test', 'test');
+                    localStorage.removeItem('test');
+                } catch (e) {
+                    this.showError('localStorage is not functional (may be in private mode)');
+                    return false;
                 }
+
+                // Check for JSON
+                if (typeof JSON === 'undefined' || typeof JSON.parse !== 'function') {
+                    this.showError('Browser missing required feature: JSON support');
+                    return false;
+                }
+
+                // Check for addEventListener (on document)
+                if (typeof document.addEventListener !== 'function') {
+                    this.showError('Browser missing required feature: addEventListener');
+                    return false;
+                }
+
+                // Check for querySelector (on document)
+                if (typeof document.querySelector !== 'function') {
+                    this.showError('Browser missing required feature: querySelector');
+                    return false;
+                }
+
+                // Check for basic ES6 features
+                try {
+                    // Test arrow functions, const/let, template literals
+                    const testArrow = () => `test`;
+                    if (testArrow() !== 'test') {
+                        throw new Error('Arrow functions not working');
+                    }
+                } catch (e) {
+                    this.showError('Browser missing required feature: Modern JavaScript (ES6)');
+                    return false;
+                }
+
                 console.log('✅ Browser compatibility check passed');
+                return true;
             }
             
             loadSystems() {
