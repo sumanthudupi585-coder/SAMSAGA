@@ -287,11 +287,20 @@ function initializeCompleteGameplayOverhaul(gameStateManager) {
             const puzzleContainer = document.getElementById('puzzle-container');
             if (!puzzleContainer) return false;
             
-            this.systems.banyanPuzzle = new UltraEnhancedBanyanPuzzle(
-                puzzleContainer,
-                gameStateManager,
-                () => this.handlePuzzleCompletion('BanyanTreeHarmony')
-            );
+            if (window.BanyanPuzzleFactory) {
+                this.systems.banyanPuzzle = window.BanyanPuzzleFactory.create(
+                    puzzleContainer,
+                    gameStateManager,
+                    () => this.handlePuzzleCompletion('BanyanTreeHarmony'),
+                    { variant: 'ultra' }
+                );
+            } else {
+                this.systems.banyanPuzzle = new UltraEnhancedBanyanPuzzle(
+                    puzzleContainer,
+                    gameStateManager,
+                    () => this.handlePuzzleCompletion('BanyanTreeHarmony')
+                );
+            }
             
             return true;
         },
