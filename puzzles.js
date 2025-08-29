@@ -275,6 +275,120 @@ window.PUZZLES = {
     },
 
     /**
+     * The Celestial Harmony (Navagraha Orrery)
+     */
+    "CelestialHarmony": {
+        "id": "CelestialHarmony",
+        "title": "The Celestial Harmony",
+        "description": "Align the Navagrahas into harmonious relationships to restore cosmic order (Rta).",
+        "nextSceneOnSuccess": "CELESTIAL_HARMONY_SUCCESS",
+        "difficulty": "Hard",
+        "visualType": "OrreryWidget",
+        "uiConfig": {
+            "bodies": [
+                { "id": "Surya" }, { "id": "Chandra" }, { "id": "Mangala" }, { "id": "Budha" },
+                { "id": "Guru" }, { "id": "Shukra" }, { "id": "Shani" }, { "id": "Rahu" }, { "id": "Ketu" }
+            ],
+            "initialAngles": { "Surya": 0, "Chandra": 180, "Mangala": 45, "Budha": 300, "Guru": 90, "Shukra": 210, "Shani": 135, "Rahu": 270, "Ketu": 30 }
+        },
+        "mechanics": {
+            "type": "OrreryMechanic",
+            "friendPairs": [["Surya","Budha"],["Guru","Shukra"],["Chandra","Shukra"]],
+            "enemyPairs": [["Mangala","Shukra"],["Shani","Surya"],["Rahu","Ketu"]],
+            "targetConjunctions": [["Surya","Chandra"],["Guru","Shukra"]],
+            "friendTolerance": 12,
+            "enemySeparation": 100,
+            "conjunctionTolerance": 8
+        },
+        "hints": [
+            "Friends resonate closely; enemies should be kept apart.",
+            "The auspicious conjunction is depicted faintly above you.",
+            "Listen for harmony as you align them."
+        ],
+        "rewards": { "ability": "Cosmic Attunement", "knowledge": "Understanding of Rta" },
+        "completed": false
+    },
+
+    /**
+     * The Barrier of Spiritual Despair (Five Kleshas)
+     */
+    "KleshaLabyrinth": {
+        "id": "KleshaLabyrinth",
+        "title": "The Barrier of Spiritual Despair",
+        "description": "Resolve the five Kleshas by insight and compassion to unbind the gateway.",
+        "nextSceneOnSuccess": "KLESHA_BARRIER_CLEARED",
+        "difficulty": "Medium",
+        "visualType": "KleshaTrials",
+        "mechanics": {
+            "type": "KleshaResolution",
+            "stages": [
+                { "id": "avidya", "title": "Avidya (Ignorance)", "description": "Focus the light to reveal truth." },
+                { "id": "asmita", "title": "Asmita (Egoism)", "description": "Find the mirror with no reflection." },
+                { "id": "raga", "title": "Raga (Attachment)", "description": "Appreciate without grasping." },
+                { "id": "dvesha", "title": "Dvesha (Aversion)", "description": "Turn with compassion toward the shadow." },
+                { "id": "abhinivesha", "title": "Abhinivesha (Clinging)", "description": "Step into the void with faith." }
+            ]
+        },
+        "hints": [
+            "Wisdom, not force, resolves the trials.",
+            "Each resolution lightens the chains."
+        ],
+        "rewards": { "ability": "Inner Clarity", "knowledge": "Insight into the Kleshas" },
+        "completed": false
+    },
+
+    /**
+     * The Sacred Balance (Scales of Dharma)
+     */
+    "ScalesOfDharma": {
+        "id": "ScalesOfDharma",
+        "title": "The Sacred Balance",
+        "description": "Choose with wisdom to balance the Scales of Dharma.",
+        "nextSceneOnSuccess": "DHARMA_SCALES_BALANCED",
+        "difficulty": "Medium",
+        "visualType": "DharmaScales",
+        "mechanics": {
+            "type": "BalanceScaleChoice",
+            "balanceTolerance": 1,
+            "scenarios": [
+                {
+                    "title": "The Famine",
+                    "description": "A kingdom starves. Do you steal grain, uphold law, or seek a compassionate third way?",
+                    "choices": [
+                        { "text": "Steal the shipment.", "weight": -2 },
+                        { "text": "Do nothing, uphold the law.", "weight": 2 },
+                        { "text": "Negotiate aid and repay later.", "weight": 0 }
+                    ]
+                },
+                {
+                    "title": "The Oath",
+                    "description": "A promise harms the innocent. Do you break it, keep it rigidly, or adapt with accountability?",
+                    "choices": [
+                        { "text": "Break the oath outright.", "weight": -2 },
+                        { "text": "Keep it regardless of harm.", "weight": 2 },
+                        { "text": "Amend with restitution and transparency.", "weight": 0 }
+                    ]
+                },
+                {
+                    "title": "The Enemy",
+                    "description": "A former enemy seeks refuge. Do you reject, embrace blindly, or accept with safeguards?",
+                    "choices": [
+                        { "text": "Reject and expel.", "weight": 2 },
+                        { "text": "Embrace without caution.", "weight": -2 },
+                        { "text": "Offer refuge with clear boundaries.", "weight": 0 }
+                    ]
+                }
+            ]
+        },
+        "hints": [
+            "Extremes tilt the scales heavily.",
+            "The Middle Path is wise action without attachment."
+        ],
+        "rewards": { "knowledge": "Understanding of Dharma and Karma" },
+        "completed": false
+    },
+
+    /**
      * Celestial Court Puzzle
      * A diplomatic puzzle requiring navigation of divine politics
      */
@@ -892,7 +1006,7 @@ window.PUZZLES = {
                     "Magha": "It is the inheritance of our ancestors, the karmic echo of every soul that has ever believed itself to be separate.",
                     "Chitra": "It is a flaw in the design of perception. The illusion of suffering is a beautiful, intricate, but ultimately false jewel created by the senses.",
                     "Vishakha": "It comes from the ambition of the part to comprehend the whole. The illusion of suffering is the consequence of a limited perspective.",
-                    "Jyeshtha": "It is a challenge from a fallen king—the ego. The illusion of suffering is the ego's claim to sovereignty over your consciousness.",
+                    "Jyeshtha": "It is a challenge from a fallen king���the ego. The illusion of suffering is the ego's claim to sovereignty over your consciousness.",
                     "Mula": "You are looking for a root that does not exist. The illusion of suffering has no source. It is the absence of knowledge.",
                     "Dhanishtha": "It is the silence between the notes of a divine song. The illusion of suffering is not a thing in itself, but the perceived absence of bliss.",
                     "Shatabhisha": "It is the ailment of the one who believes they are a single drop, not the ocean. The illusion of suffering requires a healer, but there is nothing to heal."
