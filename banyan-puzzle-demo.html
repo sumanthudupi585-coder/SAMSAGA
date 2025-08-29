@@ -108,7 +108,8 @@
         </div>
     </div>
 
-    <script src="fixed-banyan-puzzle.js"></script>
+    <script src="puzzles/banyan/BanyanPuzzleFactory.js"></script>
+    <script src="puzzles/banyan/fixed-banyan-puzzle.js"></script>
     <script>
         // Mock game state manager for demo
         const mockGameState = {
@@ -123,12 +124,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('puzzle-container');
             
-            const puzzle = new FixedBanyanTreeHarmony(
+            const puzzle = window.BanyanPuzzleFactory.create(
                 container,
                 mockGameState,
-                () => {
-                    alert('🎉 Puzzle Solved! Perfect harmony achieved!');
-                }
+                () => { alert('🎉 Puzzle Solved! Perfect harmony achieved!'); },
+                { variant: 'fixed' }
             );
             
             console.log('Fixed BanyanTreeHarmony puzzle loaded successfully!');
