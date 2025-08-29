@@ -803,7 +803,39 @@ const ENHANCED_ACT1_STORY_DATA = {
         "choices": [
             { "text": "Return with renewed understanding.", "nextScene": "ACT1_CONCLUSION" }
         ]
+    },
+
+    // ===== PUZZLE CHALLENGES =====
+
+    "BANYAN_HARMONY_CHALLENGE": {
+        "title": "Harmonize the Banyan",
+        "text": "Balance the tree's energies through sacred alignment.",
+        "puzzleId": "BanyanTreeHarmony",
+        "puzzle": { "id": "BanyanTreeHarmony", "successScene": "THE_GREAT_CONVERGENCE" },
+        "choices": [ { "text": "Return", "nextScene": "BANYAN_INVESTIGATION" } ]
+    },
+    "NEGATIVE_BARRIER_CHALLENGE": {
+        "title": "Barrier of Negativity",
+        "text": "A dark barrier repels all but pure intent.",
+        "puzzleId": "BarrierOfNegativity",
+        "puzzle": { "id": "BarrierOfNegativity", "successScene": "ACT1_CONCLUSION" },
+        "choices": [ { "text": "Step back", "nextScene": "PATTERN_ANALYSIS" } ]
+    },
+    "SHILPA_WORKSHOP": {
+        "title": "Shilpa Shastra Workshop",
+        "text": "Craft a Resonance Bell to aid the village.",
+        "puzzleId": "ShilpaShastraCrafting",
+        "puzzle": { "id": "ShilpaShastraCrafting", "successScene": "BANYAN_INVESTIGATION" },
+        "choices": [ { "text": "Return to the square", "nextScene": "DHARMAPURA_OBSERVATION" } ]
+    },
+    "HARMONIC_RESONANCE_CHALLENGE": {
+        "title": "Harmonic Resonance",
+        "text": "Play the five sacred notes to open the gate.",
+        "puzzleId": "HarmonicResonance",
+        "puzzle": { "id": "HarmonicResonance", "successScene": "ACT1_CONCLUSION" },
+        "choices": [ { "text": "Step back", "nextScene": "TEMPLE_APPROACH" } ]
     }
+
 };
 
 // Validate story data structure
