@@ -37,7 +37,10 @@ class CinematicUISystem {
         
         // Set up dynamic UI evolution
         this.setupUIEvolution();
-        
+
+        // Setup enhanced puzzle styles
+        this.setupPuzzleStyles?.();
+
         console.log('✅ Cinematic UI System initialized');
     }
     
