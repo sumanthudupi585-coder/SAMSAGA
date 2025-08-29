@@ -903,45 +903,97 @@ class CinematicUISystem {
             const successScene = (sceneData.puzzle && sceneData.puzzle.successScene) || puzzle.nextSceneOnSuccess || 'ACT1_CONCLUSION';
             if (successScene) this.transitionToScene(successScene);
         };
+        // Common hint toggle
+        const hintBtn = content.querySelector('#show-hint');
+        if (hintBtn) hintBtn.addEventListener('click', () => {
+            const t = content.querySelector('#hint-text');
+            if (t) t.classList.toggle('show');
+        });
+        // Close
+        const closeBtnEl = content.querySelector('#puzzle-close');
+        if (closeBtnEl) closeBtnEl.addEventListener('click', () => overlay.style.display = 'none');
+
         if (type === 'RotationalAlignment') {
-            document.getElementById('puzzle-check').onclick = () => {
-                const inputs = content.querySelectorAll('input[data-ring]');
+            const inputs = Array.from(content.querySelectorAll('input[data-ring]'));
+            const degEls = Object.fromEntries(inputs.map(i => [i.dataset.ring, content.querySelector(`[data-deg="${i.dataset.ring}"]`)]));
+            const markers = {
+                vitality: content.querySelector('[data-marker="vitality"]'),
+                wisdom: content.querySelector('[data-marker="wisdom"]'),
+                harmony: content.querySelector('[data-marker="harmony"]')
+            };
+            const fill = content.querySelector('#align-fill');
+            const updatePreview = () => {
+                const values = {};
+                inputs.forEach(i => { values[i.dataset.ring] = parseInt(i.value)||0; if (degEls[i.dataset.ring]) degEls[i.dataset.ring].textContent = `${values[i.dataset.ring]}°`; });
+                if (markers.vitality) markers.vitality.style.transform = `rotate(${values.vitality||0}deg)`;
+                if (markers.wisdom) markers.wisdom.style.transform = `rotate(${values.wisdom||0}deg)`;
+                if (markers.harmony) markers.harmony.style.transform = `rotate(${values.harmony||0}deg)`;
+                const avgDelta = Object.values(values).reduce((a,v)=> a + Math.min(Math.abs(v%360), 360-Math.abs(v%360)), 0) / 3;
+                const pct = Math.max(0, 100 - (avgDelta/180)*100);
+                if (fill) fill.style.width = `${pct}%`;
+            };
+            inputs.forEach(i => i.addEventListener('input', updatePreview));
+            updatePreview();
+            const check = content.querySelector('#puzzle-check');
+            if (check) check.addEventListener('click', () => {
                 const ringRotations = {};
                 inputs.forEach(i => ringRotations[i.dataset.ring] = parseInt(i.value));
                 const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { ringRotations });
                 if (solved) finish();
-            };
+            });
+            const reset = content.querySelector('#reset-rings');
+            if (reset) reset.addEventListener('click', () => { inputs.forEach(i => { i.value = 0; }); updatePreview(); });
         } else if (type === 'ItemApplication' || type === 'PurityAlignment') {
-            content.querySelectorAll('button[data-item]').forEach(btn => btn.addEventListener('click', () => {
-                const item = btn.dataset.item;
+            const zone = content.querySelector('#drop-zone');
+            const onSolve = (item) => {
                 const solved = this.puzzleEngine.evaluatePuzzleAttempt(puzzleId, { droppedItem: item });
                 if (solved) finish();
-            }));
+            };
+            content.querySelectorAll('[data-item-click]').forEach(btn => btn.addEventListener('click', () => onSolve(btn.dataset.itemClick)));
+            content.querySelectorAll('.token').forEach(tok => {
+                tok.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', tok.dataset.item); });
+            });
+            if (zone) {
+                zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.outline = '2px solid #63b4d1'; });
+                zone.addEventListener('dragleave', () => { zone.style.outline = 'none'; });
+                zone.addEventListener('drop', (e) => { e.preventDefault(); zone.style.outline = 'none'; const item = e.dataTransfer.getData('text/plain'); onSolve(item); });
+            }
         } else if (type === 'MultiStageCrafting') {
-            const stageEl = document.getElementById('craft-stage');
+            const progress = content.querySelector('#craft-progress');
+            const items = Array.from(content.querySelectorAll('[data-stage-item]'));
             const update = () => {
                 const state = this.puzzleEngine.activePuzzle?.activeState || { currentStage: 1 };
                 const total = (puzzle.stages||[]).length;
-                stageEl.textContent = `Stage ${state.currentStage} of ${total}`;
+                const pct = Math.min(100, ((state.currentStage-1)/total)*100);
+                if (progress) progress.style.width = `${pct}%`;
+                items.forEach((el, idx) => el.classList.toggle('active', idx < state.currentStage));
             };
             this.puzzleEngine.startPuzzle(puzzleId);
             update();
-            document.getElementById('advance-stage').onclick = () => {
+            const adv = content.querySelector('#advance-stage');
+            if (adv) adv.addEventListener('click', () => {
                 this.puzzleEngine.handleInteraction({ action: 'advance_stage' });
                 update();
                 if (this.puzzleEngine.activePuzzle?.isSolved()) finish();
-            };
+            });
         } else if (type === 'MusicalSequence') {
             this.puzzleEngine.startPuzzle(puzzleId);
-            content.querySelectorAll('button[data-note]').forEach(btn => btn.addEventListener('click', () => {
-                this.puzzleEngine.handleInteraction({ note: btn.dataset.note });
+            const seq = content.querySelector('#sequence');
+            const reset = content.querySelector('#seq-reset');
+            const addNote = (n) => {
+                const tag = document.createElement('div');
+                tag.className = 'seq-note';
+                tag.textContent = n;
+                seq.appendChild(tag);
+                this.puzzleEngine.handleInteraction({ note: n });
                 if (this.puzzleEngine.activePuzzle?.isSolved()) finish();
-            }));
+            };
+            content.querySelectorAll('[data-note]').forEach(btn => btn.addEventListener('click', () => addNote(btn.dataset.note)));
+            if (reset) reset.addEventListener('click', () => { seq.innerHTML=''; this.puzzleEngine.activePuzzle.activeState.sequence = []; });
         } else {
             const auto = document.getElementById('auto-solve');
             if (auto) auto.onclick = finish;
         }
-        content.querySelector('#puzzle-close').onclick = () => { overlay.style.display = 'none'; };
     }
 
     /**
