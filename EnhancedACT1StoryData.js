@@ -153,6 +153,11 @@ const ENHANCED_ACT1_STORY_DATA = {
                 "text": "✨ Share your vision of integrated existence with the villagers",
                 "nextScene": "TEACHING_MOMENT",
                 "philosophicalTheme": "teaching"
+            },
+            {
+                "id": "confront_barrier",
+                "text": "🌀 Confront the barrier of negativity (Puzzle)",
+                "nextScene": "NEGATIVE_BARRIER_CHALLENGE"
             }
         ],
         "philosophicalGrowth": {
@@ -196,6 +201,11 @@ const ENHANCED_ACT1_STORY_DATA = {
                 "text": "🤲 Offer to help with their immediate daily struggles",
                 "nextScene": "SEVA_PATH",
                 "philosophicalTheme": "service"
+            },
+            {
+                "id": "visit_workshop",
+                "text": "🔔 Visit the artisan's workshop to craft a Resonance Bell (Puzzle)",
+                "nextScene": "SHILPA_WORKSHOP"
             }
         ],
         "ganaChoices": {
@@ -303,6 +313,11 @@ const ENHANCED_ACT1_STORY_DATA = {
                 "text": "🔍 Examine the temple carvings for wisdom or clues",
                 "nextScene": "CARVING_STUDY",
                 "philosophicalTheme": "symbolism"
+            },
+            {
+                "id": "play_resonance",
+                "text": "🎶 Play the sacred notes to unlock the gate (Puzzle)",
+                "nextScene": "HARMONIC_RESONANCE_CHALLENGE"
             }
         ],
         "meditation": {
@@ -596,7 +611,8 @@ const ENHANCED_ACT1_STORY_DATA = {
         "text": "The Banyan's presence is powerful yet muted. Its roots hum with restrained potential, and the village's tension seems to orbit it.",
         "choices": [
             { "text": "Listen to the Elder and Priestess debate.", "nextScene": "DEBATE_LISTENING" },
-            { "text": "Propose a unifying approach.", "nextScene": "INTEGRATION_PROPOSAL" }
+            { "text": "Propose a unifying approach.", "nextScene": "INTEGRATION_PROPOSAL" },
+            { "text": "Balance the Banyan's energies (Puzzle)", "nextScene": "BANYAN_HARMONY_CHALLENGE" }
         ]
     },
     "DEBATE_LISTENING": {
