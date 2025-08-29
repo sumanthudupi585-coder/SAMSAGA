@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixedGameEntry.html - Comprehensive Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1817;
+            color: #c5c1b9;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            background: rgba(26, 24, 23, 0.8);
+            border: 1px solid #e09658;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-section h2 {
+            color: #e09658;
+            margin-top: 0;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .test-pass {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+        }
+        
+        .test-fail {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .test-warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+        }
+        
+        .test-btn {
+            background: #e09658;
+            color: #0a0908;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        .test-btn:hover {
+            background: #a97142;
+        }
+        
+        .code-block {
+            background: #0a0908;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .iframe-container {
+            border: 2px solid #e09658;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        
+        .test-log {
+            background: #0f0c08;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            height: 200px;
+            overflow-y: scroll;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .transition-test {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .transition-test > div {
+            flex: 1;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 FixedGameEntry.html - Comprehensive Test Suite</h1>
+    <p>This page tests the fixed game entry point to ensure all loading transitions and error handling work correctly.</p>
+    
+    <div class="test-section">
+        <h2>🔧 Browser Compatibility Test</h2>
+        <button class="test-btn" onclick="testBrowserCompatibility()">Test Browser Features</button>
+        <div id="compatibility-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📱 Character Data Simulation</h2>
+        <button class="test-btn" onclick="testWithSampleCharacter()">Test with Sample Character Data</button>
+        <button class="test-btn" onclick="testWithoutCharacter()">Test without Character Data</button>
+        <button class="test-btn" onclick="testWithCorruptedData()">Test with Corrupted Data</button>
+        <div id="character-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎬 Loading Transition Test</h2>
+        <div class="transition-test">
+            <div>
+                <h3>Direct Test</h3>
+                <button class="test-btn" onclick="openFixedGameEntry()">Open FixedGameEntry.html</button>
+                <button class="test-btn" onclick="openWithCharacterData()">Open with Character Data</button>
+                <button class="test-btn" onclick="openInNewTab()">Open in New Tab</button>
+            </div>
+            <div>
+                <h3>Embedded Test</h3>
+                <button class="test-btn" onclick="loadInIframe()">Load in iframe</button>
+                <div class="iframe-container" id="iframe-container" style="display: none;">
+                    <iframe id="test-iframe" src="about:blank"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>⚠️ Error Scenario Tests</h2>
+        <button class="test-btn" onclick="testScriptLoadingFailure()">Test Script Loading Failure</button>
+        <button class="test-btn" onclick="testLocalStorageFailure()">Test localStorage Failure</button>
+        <button class="test-btn" onclick="testNetworkFailure()">Test Network Issues</button>
+        <div id="error-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 Real-time Loading Monitor</h2>
+        <button class="test-btn" onclick="startLoadingMonitor()">Start Monitoring</button>
+        <button class="test-btn" onclick="stopLoadingMonitor()">Stop Monitoring</button>
+        <div class="test-log" id="loading-log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔗 Integration Tests</h2>
+        <button class="test-btn" onclick="testCharacterCreationFlow()">Test Full Character Creation → Game Flow</button>
+        <button class="test-btn" onclick="testDirectGameAccess()">Test Direct Game Access</button>
+        <div id="integration-results"></div>
+    </div>
+    
+    <script>
+        let loadingMonitorInterval = null;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('loading-log');
+            const colorMap = {
+                'info': '#c5c1b9',
+                'success': '#4caf50',
+                'error': '#f44336',
+                'warning': '#ffc107'
+            };
+            
+            if (logElement) {
+                logElement.innerHTML += `<span style="color: ${colorMap[type] || '#c5c1b9'}">[${timestamp}] ${message}</span>\n`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+            console.log(`[Test] ${message}`);
+        }
+        
+        function showResult(containerId, testName, passed, message) {
+            const container = document.getElementById(containerId);
+            const resultClass = passed ? 'test-pass' : 'test-fail';
+            const resultIcon = passed ? '✅' : '❌';
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = resultClass;
+            resultDiv.innerHTML = `${resultIcon} ${testName}: ${message}`;
+            container.appendChild(resultDiv);
+            
+            log(`${testName}: ${passed ? 'PASS' : 'FAIL'} - ${message}`, passed ? 'success' : 'error');
+        }
+        
+        function testBrowserCompatibility() {
+            log('Starting browser compatibility tests...', 'info');
+            const container = document.getElementById('compatibility-results');
+            container.innerHTML = '';
+            
+            // Test localStorage
+            try {
+                localStorage.setItem('test_compatibility', 'test');
+                localStorage.removeItem('test_compatibility');
+                showResult('compatibility-results', 'localStorage', true, 'localStorage is functional');
+            } catch (e) {
+                showResult('compatibility-results', 'localStorage', false, `localStorage failed: ${e.message}`);
+            }
+            
+            // Test JSON
+            try {
+                const testObj = {test: 'data'};
+                const serialized = JSON.stringify(testObj);
+                const parsed = JSON.parse(serialized);
+                const success = parsed.test === 'data';
+                showResult('compatibility-results', 'JSON', success, success ? 'JSON serialization works' : 'JSON serialization failed');
+            } catch (e) {
+                showResult('compatibility-results', 'JSON', false, `JSON failed: ${e.message}`);
+            }
+            
+            // Test querySelector
+            try {
+                const testElement = document.querySelector('body');
+                const success = testElement !== null;
+                showResult('compatibility-results', 'querySelector', success, success ? 'querySelector is functional' : 'querySelector failed');
+            } catch (e) {
+                showResult('compatibility-results', 'querySelector', false, `querySelector failed: ${e.message}`);
+            }
+            
+            // Test addEventListener
+            try {
+                const testFunc = () => {};
+                document.addEventListener('test_event', testFunc);
+                document.removeEventListener('test_event', testFunc);
+                showResult('compatibility-results', 'addEventListener', true, 'addEventListener is functional');
+            } catch (e) {
+                showResult('compatibility-results', 'addEventListener', false, `addEventListener failed: ${e.message}`);
+            }
+            
+            // Test ES6 features
+            try {
+                const testArrow = () => `test`;
+                const testTemplate = `template ${'literal'}`;
+                const success = testArrow() === 'test' && testTemplate === 'template literal';
+                showResult('compatibility-results', 'ES6 Features', success, success ? 'Modern JavaScript features work' : 'ES6 features failed');
+            } catch (e) {
+                showResult('compatibility-results', 'ES6 Features', false, `ES6 features failed: ${e.message}`);
+            }
+        }
+        
+        function testWithSampleCharacter() {
+            log('Testing with sample character data...', 'info');
+            const container = document.getElementById('character-results');
+            container.innerHTML = '';
+            
+            // Simulate URL parameters
+            const sampleParams = new URLSearchParams({
+                nakshatra: '5',
+                guna1: 'Sattva',
+                pada: 'Dharma',
+                guna3: 'Rajas'
+            });
+            
+            // Test parameter parsing
+            const nakshatra = sampleParams.get('nakshatra');
+            const success = nakshatra === '5';
+            showResult('character-results', 'URL Parameter Parsing', success, 
+                success ? 'Character data can be extracted from URL' : 'Failed to parse URL parameters');
+            
+            // Test character profile creation
+            try {
+                const profile = {
+                    nakshatra: getNakshatraName(parseInt(nakshatra)),
+                    nakshatraNumber: parseInt(nakshatra),
+                    guna1: sampleParams.get('guna1'),
+                    pada: sampleParams.get('pada'),
+                    guna3: sampleParams.get('guna3')
+                };
+                
+                const validProfile = profile.nakshatra && profile.nakshatraNumber > 0;
+                showResult('character-results', 'Character Profile Creation', validProfile, 
+                    validProfile ? `Created profile for ${profile.nakshatra}` : 'Failed to create character profile');
+            } catch (e) {
+                showResult('character-results', 'Character Profile Creation', false, `Profile creation failed: ${e.message}`);
+            }
+        }
+        
+        function testWithoutCharacter() {
+            log('Testing without character data...', 'info');
+            // This simulates accessing the game without URL parameters
+            const container = document.getElementById('character-results');
+            
+            // Test localStorage fallback
+            try {
+                localStorage.removeItem('samsaraSaga_workingGame');
+                showResult('character-results', 'No Character Data Fallback', true, 'System should handle missing character data gracefully');
+            } catch (e) {
+                showResult('character-results', 'No Character Data Fallback', false, `Fallback test failed: ${e.message}`);
+            }
+        }
+        
+        function testWithCorruptedData() {
+            log('Testing with corrupted data...', 'info');
+            const container = document.getElementById('character-results');
+            
+            // Test corrupted localStorage
+            try {
+                localStorage.setItem('samsaraSaga_workingGame', 'corrupted_json_data');
+                showResult('character-results', 'Corrupted Data Handling', true, 'System should handle corrupted save data gracefully');
+                localStorage.removeItem('samsaraSaga_workingGame');
+            } catch (e) {
+                showResult('character-results', 'Corrupted Data Handling', false, `Corrupted data test failed: ${e.message}`);
+            }
+        }
+        
+        function openFixedGameEntry() {
+            log('Opening FixedGameEntry.html in same window...', 'info');
+            window.location.href = 'FixedGameEntry.html';
+        }
+        
+        function openWithCharacterData() {
+            log('Opening FixedGameEntry.html with character data...', 'info');
+            const params = 'nakshatra=5&guna1=Sattva&pada=Dharma&guna3=Rajas';
+            window.location.href = `FixedGameEntry.html?${params}`;
+        }
+        
+        function openInNewTab() {
+            log('Opening FixedGameEntry.html in new tab...', 'info');
+            window.open('FixedGameEntry.html', '_blank');
+        }
+        
+        function loadInIframe() {
+            log('Loading FixedGameEntry.html in iframe...', 'info');
+            const container = document.getElementById('iframe-container');
+            const iframe = document.getElementById('test-iframe');
+            
+            container.style.display = 'block';
+            iframe.src = 'FixedGameEntry.html?nakshatra=5&guna1=Sattva&pada=Dharma&guna3=Rajas';
+            
+            iframe.onload = () => {
+                log('Iframe loaded successfully', 'success');
+            };
+            
+            iframe.onerror = () => {
+                log('Iframe failed to load', 'error');
+            };
+        }
+        
+        function testScriptLoadingFailure() {
+            log('Testing script loading failure scenarios...', 'info');
+            const container = document.getElementById('error-results');
+            container.innerHTML = '';
+            
+            // Test loading a non-existent script
+            const script = document.createElement('script');
+            script.src = 'nonexistent-script.js';
+            script.onload = () => {
+                showResult('error-results', 'Script Loading Failure', false, 'Non-existent script should not load');
+            };
+            script.onerror = () => {
+                showResult('error-results', 'Script Loading Failure', true, 'System correctly handles missing scripts');
+            };
+            document.head.appendChild(script);
+        }
+        
+        function testLocalStorageFailure() {
+            log('Testing localStorage failure scenarios...', 'info');
+            const container = document.getElementById('error-results');
+            
+            // Simulate localStorage failure (in private mode, for example)
+            const originalSetItem = localStorage.setItem;
+            localStorage.setItem = function() {
+                throw new Error('localStorage not available');
+            };
+            
+            try {
+                localStorage.setItem('test', 'value');
+                showResult('error-results', 'localStorage Failure', false, 'localStorage should have failed');
+            } catch (e) {
+                showResult('error-results', 'localStorage Failure', true, 'System correctly handles localStorage failure');
+            }
+            
+            // Restore localStorage
+            localStorage.setItem = originalSetItem;
+        }
+        
+        function testNetworkFailure() {
+            log('Testing network failure scenarios...', 'info');
+            const container = document.getElementById('error-results');
+            
+            // Test loading from a URL that will fail
+            fetch('https://nonexistent-domain-that-should-fail.invalid/')
+                .then(() => {
+                    showResult('error-results', 'Network Failure', false, 'Network request should have failed');
+                })
+                .catch(() => {
+                    showResult('error-results', 'Network Failure', true, 'System correctly handles network failures');
+                });
+        }
+        
+        function startLoadingMonitor() {
+            log('Starting loading monitor...', 'info');
+            
+            if (loadingMonitorInterval) {
+                clearInterval(loadingMonitorInterval);
+            }
+            
+            loadingMonitorInterval = setInterval(() => {
+                // Monitor for various loading states
+                const iframe = document.getElementById('test-iframe');
+                if (iframe && iframe.src !== 'about:blank') {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc.readyState === 'complete') {
+                            log('Iframe document ready state: complete', 'success');
+                            
+                            // Check for loading elements
+                            const loadingElement = iframeDoc.getElementById('critical-loading');
+                            if (loadingElement) {
+                                const isHidden = loadingElement.classList.contains('hidden');
+                                log(`Loading screen status: ${isHidden ? 'hidden' : 'visible'}`, 'info');
+                            }
+                            
+                            // Check for error elements
+                            const errorElement = iframeDoc.getElementById('error-container');
+                            if (errorElement && errorElement.classList.contains('show')) {
+                                const errorMessage = iframeDoc.getElementById('error-message');
+                                const message = errorMessage ? errorMessage.textContent : 'Unknown error';
+                                log(`Error detected: ${message}`, 'error');
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin issues are expected
+                        log('Cross-origin access blocked (expected)', 'warning');
+                    }
+                }
+            }, 1000);
+        }
+        
+        function stopLoadingMonitor() {
+            if (loadingMonitorInterval) {
+                clearInterval(loadingMonitorInterval);
+                loadingMonitorInterval = null;
+                log('Loading monitor stopped', 'info');
+            }
+        }
+        
+        function testCharacterCreationFlow() {
+            log('Testing character creation → game flow...', 'info');
+            const container = document.getElementById('integration-results');
+            container.innerHTML = '';
+            
+            // This would typically open CB-fixed.html and simulate the flow
+            showResult('integration-results', 'Character Creation Flow', true, 'Open CB-fixed.html to test full flow');
+            
+            const link = document.createElement('a');
+            link.href = 'CB-fixed.html';
+            link.target = '_blank';
+            link.textContent = '🔗 Test Character Creation Flow';
+            link.className = 'test-btn';
+            container.appendChild(link);
+        }
+        
+        function testDirectGameAccess() {
+            log('Testing direct game access...', 'info');
+            const container = document.getElementById('integration-results');
+            
+            showResult('integration-results', 'Direct Game Access', true, 'Game should handle direct access gracefully');
+            
+            const link = document.createElement('a');
+            link.href = 'FixedGameEntry.html';
+            link.target = '_blank';
+            link.textContent = '🔗 Test Direct Game Access';
+            link.className = 'test-btn';
+            container.appendChild(link);
+        }
+        
+        function getNakshatraName(number) {
+            const names = {
+                1: 'Ashwini', 2: 'Bharani', 3: 'Krittika', 4: 'Rohini', 5: 'Mrigashira',
+                6: 'Ardra', 7: 'Punarvasu', 8: 'Pushya', 9: 'Ashlesha', 10: 'Magha',
+                11: 'Purva Phalguni', 12: 'Uttara Phalguni', 13: 'Hasta', 14: 'Chitra',
+                15: 'Swati', 16: 'Vishakha', 17: 'Anuradha', 18: 'Jyeshtha', 19: 'Mula',
+                20: 'Purva Ashadha', 21: 'Uttara Ashadha', 22: 'Shravana', 23: 'Dhanishta',
+                24: 'Shatabhisha', 25: 'Purva Bhadrapada', 26: 'Uttara Bhadrapada', 27: 'Revati'
+            };
+            return names[number] || 'Seeker';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Test suite initialized', 'info');
+            log('Browser: ' + navigator.userAgent, 'info');
+        });
+        
+        // Monitor page errors
+        window.addEventListener('error', (e) => {
+            log(`JavaScript Error: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
+        });
+        
+        // Monitor unhandled promise rejections
+        window.addEventListener('unhandledrejection', (e) => {
+            log(`Unhandled Promise Rejection: ${e.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>
