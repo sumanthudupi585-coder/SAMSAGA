@@ -426,10 +426,12 @@
             
             loadSystems() {
                 // Load the critical game systems
-                this.loadScript('FixedACT1StorySystem.js')
+                // Load Kashi Khanda Act I data first; then controller; keep fixed system as fallback
+                    this.loadScript('ACT1storyData.js')
                     .then(() => this.loadScript('WorkingGameController.js'))
+                    .then(() => this.loadScript('FixedACT1StorySystem.js'))
                     .then(() => {
-                        console.log('✅ Core systems loaded');
+                        console.log('✅ Core systems loaded (Kashi data + controller + fixed fallback)');
                     })
                     .catch(error => {
                         console.warn('Some systems failed to load, proceeding with fallback:', error);
