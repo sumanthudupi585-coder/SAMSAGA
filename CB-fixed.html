@@ -551,6 +551,53 @@ function triggerInkBleed(done){
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes scaleUp { from { transform: scale(1); opacity: 1; } to { transform: scale(10); opacity: 0; } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        /* Living Manuscript: Journal Layout */
+        .journal-book { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 1100px; margin: 80px auto 20px; position: relative; }
+        .page { position: relative; background: linear-gradient(145deg, rgba(245,240,230,0.9), rgba(232,222,202,0.9)); border: 1px solid rgba(74,52,34,0.35); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.6); overflow: hidden; }
+        .page::after { content:''; position:absolute; top:0; bottom:0; left:50%; width:1px; background: linear-gradient(to bottom, transparent, rgba(74,52,34,0.25), transparent); transform: translateX(-50%); filter: blur(0.5px); }
+        .page-left { padding: 18px; }
+        .page-right { padding: 22px; perspective: 1200px; }
+        .page-right .page-content { background: repeating-linear-gradient(0deg, transparent, transparent 32px, rgba(74,52,34,0.08) 33px); border-radius: 8px; padding: 18px; min-height: 540px; position: relative; }
+        .journal-book.page-turn .page-right .page-content { transform: rotateY(-12deg); transition: transform 0.6s cubic-bezier(.25,.8,.25,1); transform-origin: left center; }
+        .page-curl { position:absolute; right:0; top:0; width:90px; height:90px; background: radial-gradient(circle at 100% 0%, rgba(255,255,255,0.7) 0%, rgba(224,150,88,0.25) 50%, transparent 70%); opacity:0.4; pointer-events:none; }
+
+        /* Left page visuals */
+        .left-illustration { height: 360px; border-radius: 8px; box-shadow: inset 0 0 30px rgba(0,0,0,0.18); margin-bottom: 12px; background: radial-gradient(120px 120px at 30% 30%, rgba(224,150,88,0.35), transparent 60%), radial-gradient(140px 140px at 70% 70%, rgba(99,180,209,0.25), transparent 60%), radial-gradient(90px 90px at 50% 50%, rgba(255,197,143,0.2), transparent 60%); filter: saturate(0.95) contrast(1.05); }
+        .left-illustration.ill-q1 { background: radial-gradient(140px 140px at 30% 35%, rgba(129,199,132,0.35), transparent 60%), radial-gradient(120px 120px at 70% 65%, rgba(63,81,181,0.25), transparent 60%), radial-gradient(90px 90px at 50% 50%, rgba(255,197,143,0.25), transparent 60%); }
+        .left-illustration.ill-q2 { background: radial-gradient(140px 140px at 25% 35%, rgba(224,150,88,0.4), transparent 60%), radial-gradient(120px 120px at 70% 70%, rgba(103,58,183,0.25), transparent 60%), radial-gradient(90px 90px at 50% 50%, rgba(255,255,255,0.15), transparent 60%); }
+        .left-illustration.ill-q3 { background: radial-gradient(140px 140px at 30% 30%, rgba(255,138,101,0.35), transparent 60%), radial-gradient(120px 120px at 70% 70%, rgba(99,180,209,0.25), transparent 60%), radial-gradient(90px 90px at 50% 50%, rgba(255,214,102,0.25), transparent 60%); }
+        .left-illustration.ill-q4 { background: radial-gradient(140px 140px at 30% 30%, rgba(255,214,102,0.35), transparent 60%), radial-gradient(120px 120px at 70% 70%, rgba(224,150,88,0.3), transparent 60%), radial-gradient(90px 90px at 50% 50%, rgba(129,199,132,0.3), transparent 60%); }
+        .left-illustration.ill-q5 { background: radial-gradient(140px 140px at 30% 30%, rgba(99,180,209,0.35), transparent 60%), radial-gradient(120px 120px at 70% 70%, rgba(103,58,183,0.25), transparent 60%), radial-gradient(90px 90px at 50% 50%, rgba(224,150,88,0.25), transparent 60%); }
+        .margin-notes { font-family: var(--font-title); font-style: italic; color: rgba(74,52,34,0.8); padding: 10px 8px; border-left: 2px dashed rgba(74,52,34,0.25); }
+
+        /* Embossed answer buttons */
+        .option { background: linear-gradient(145deg, rgba(250,245,235,0.8), rgba(235,225,205,0.8)); color: #2c1a10; border: 1px solid rgba(74,52,34,0.35); box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), inset 0 -2px 0 rgba(0,0,0,0.08), 0 6px 18px rgba(0,0,0,0.2); }
+        .option:hover { box-shadow: inset 0 2px 0 rgba(255,255,255,0.8), inset 0 -2px 0 rgba(0,0,0,0.1), 0 10px 28px rgba(0,0,0,0.3), var(--shadow-glow); }
+        .option .option-title { letter-spacing: 0.5px; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
+
+        /* Ink bleed transition for results */
+        .ink-bleed-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 9998; background: radial-gradient(circle at 50% 50%, rgba(44,24,16,0.95) 0%, rgba(44,24,16,0.7) 40%, rgba(44,24,16,0.0) 60%); animation: inkBleed 1s ease-out forwards; }
+        @keyframes inkBleed { 0% { opacity: 0; transform: scale(0.2); filter: blur(8px); } 70% { opacity: 1; transform: scale(1.05); filter: blur(0); } 100% { opacity: 0; transform: scale(1.2); } }
+
+        /* Astrological chart background on results */
+        #result-screen .result-content.card { position: relative; overflow: hidden; }
+        #result-screen .result-content.card::before { content:''; position:absolute; inset:-40px; border-radius: 50%; background: repeating-conic-gradient(rgba(224,150,88,0.08) 0deg, rgba(224,150,88,0.08) 10deg, transparent 10deg, transparent 20deg), radial-gradient(circle at 50% 50%, transparent 55%, rgba(224,150,88,0.08) 56%, transparent 57%), radial-gradient(circle at 50% 50%, transparent 35%, rgba(224,150,88,0.08) 36%, transparent 37%); animation: spinSlow 60s linear infinite; z-index: 0; }
+        #result-screen .result-content.card > * { position: relative; z-index: 1; }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #result-screen .result-content.card.reveal .detail-item { opacity: 0; animation: revealUp 0.8s ease forwards; }
+        #result-screen .result-content.card.reveal .detail-item:nth-of-type(1) { animation-delay: .1s; }
+        #result-screen .result-content.card.reveal .detail-item:nth-of-type(2) { animation-delay: .2s; }
+        #result-screen .result-content.card.reveal .detail-item:nth-of-type(3) { animation-delay: .3s; }
+        #result-screen .result-content.card.reveal .detail-item:nth-of-type(4) { animation-delay: .4s; }
+        @keyframes revealUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Layout adjustments */
+        .screen-stack { display: contents; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .screen.exiting { display: none; }
+
+        @media (max-width: 980px) { .journal-book { grid-template-columns: 1fr; } .page-right .page-content { min-height: 420px; } }
         @media (max-width: 768px) { .nav-bar { padding: 1rem; } .nav-title { font-size: 1.5rem; } .nav-link span { display: none; } .oracle-container { padding: 80px 1rem 2rem; } .option { flex-direction: column; text-align: center; } .result-grid { grid-template-columns: 1fr; } }
     </style>
 </body>
