@@ -790,10 +790,9 @@ class CinematicUISystem {
             overlay = document.createElement('div');
             overlay.id = 'puzzle-overlay';
             overlay.className = 'puzzle-overlay';
-            overlay.style.cssText = 'display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 20000; align-items: center; justify-content: center;';
             content = document.createElement('div');
             content.id = 'puzzle-content';
-            content.style.cssText = 'background: var(--color-surface, #1a1817); border: 1px solid var(--color-primary, #e09658); border-radius: 12px; padding: 20px; width: min(700px, 92vw); max-height: 85vh; overflow: auto;';
+            content.className = 'puzzle-content';
             overlay.appendChild(content);
             container.appendChild(overlay);
         }
