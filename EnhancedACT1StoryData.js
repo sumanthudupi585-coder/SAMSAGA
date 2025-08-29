@@ -575,6 +575,235 @@ const ENHANCED_ACT1_STORY_DATA = {
     },
     
     // ===== STORY DATA COMPLETE =====
+    "HIDDEN_PATHS_DISCOVERY": {
+        "title": "Hidden Paths Revealed",
+        "text": "Your curiosity uncovers faint footprints and a subtle trail behind the market stalls, leading toward the Banyan's lesser-known roots.",
+        "choices": [
+            { "text": "Follow the hidden trail toward the Banyan.", "nextScene": "BANYAN_INVESTIGATION" },
+            { "text": "Return to observe the village again.", "nextScene": "DHARMAPURA_OBSERVATION" }
+        ]
+    },
+    "ENERGY_SENSING": {
+        "title": "Sensing the Village's Energy",
+        "text": "You channel gentle awareness and feel three distinct disturbances converging at the Banyan, temple, and river.",
+        "choices": [
+            { "text": "Go to the Banyan to investigate.", "nextScene": "BANYAN_INVESTIGATION" },
+            { "text": "Analyze the patterns you perceived.", "nextScene": "PATTERN_ANALYSIS" }
+        ]
+    },
+    "BANYAN_INVESTIGATION": {
+        "title": "At the Heart of Dharmapura",
+        "text": "The Banyan's presence is powerful yet muted. Its roots hum with restrained potential, and the village's tension seems to orbit it.",
+        "choices": [
+            { "text": "Listen to the Elder and Priestess debate.", "nextScene": "DEBATE_LISTENING" },
+            { "text": "Propose a unifying approach.", "nextScene": "INTEGRATION_PROPOSAL" }
+        ]
+    },
+    "DEBATE_LISTENING": {
+        "title": "Hearing Both Sides",
+        "text": "You listen with patience as both leaders make compelling points that mirror the village's split between necessity and sanctity.",
+        "choices": [
+            { "text": "Offer a solution that unites both perspectives.", "nextScene": "INTEGRATION_PROPOSAL" },
+            { "text": "Investigate the root cause beneath the surface.", "nextScene": "ROOT_INVESTIGATION" }
+        ]
+    },
+    "INTEGRATION_PROPOSAL": {
+        "title": "A Path of Integration",
+        "text": "You outline a solution that honors the sacred while addressing practical needs. The crowd quiets, open to synthesis over conflict.",
+        "choices": [
+            { "text": "Guide the village toward collective wisdom.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Teach integration through lived practice.", "nextScene": "TEACHING_MOMENT" }
+        ]
+    },
+    "ROOT_INVESTIGATION": {
+        "title": "Seeking the Root Cause",
+        "text": "You examine the land, roots, and history. Subtle signs suggest the problem isn't the tree, but a fractured relationship with the sacred.",
+        "choices": [
+            { "text": "Attempt a gentle healing of the Banyan.", "nextScene": "BANYAN_HEALING" },
+            { "text": "Share your findings with the community.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "TEACHING_MOMENT": {
+        "title": "Sharing a Vision",
+        "text": "You describe how unity of spirit and matter restores balance. The villagers lean in, recognizing forgotten truths.",
+        "choices": [
+            { "text": "Organize a simple practice for all to try.", "nextScene": "VILLAGE_TEACHING" },
+            { "text": "Invite leaders to model unity together.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "VILLAGE_HISTORY": {
+        "title": "Stories of the Past",
+        "text": "Elders recall rituals that once linked work and worship. The village thrived when the sacred infused daily life.",
+        "choices": [
+            { "text": "Translate history into present action.", "nextScene": "PATTERN_ANALYSIS" },
+            { "text": "Bring these stories to the Banyan gathering.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "SEVA_PATH": {
+        "title": "Service in Action",
+        "text": "You help with simple tasks, and spirits lift. Through service, separation softens.",
+        "choices": [
+            { "text": "Encourage the villagers to serve together.", "nextScene": "COMMUNICATION_HEALING" },
+            { "text": "Return to speak with more people.", "nextScene": "VILLAGER_ENCOUNTER" }
+        ]
+    },
+    "DIVINE_BLESSING": {
+        "title": "A Blessing of Hope",
+        "text": "A quiet blessing calms anxious hearts. The sense of possibility returns.",
+        "choices": [
+            { "text": "Guide the community toward shared understanding.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Offer more practical help.", "nextScene": "PRACTICAL_WISDOM" }
+        ]
+    },
+    "PRACTICAL_WISDOM": {
+        "title": "Practical Steps",
+        "text": "You suggest immediate steps for repair and care that do not harm the sacred.",
+        "choices": [
+            { "text": "Bring these steps into the village debate.", "nextScene": "DEBATE_LISTENING" },
+            { "text": "Share the plan with everyone at the Banyan.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "DIRECT_ACTION": {
+        "title": "Decisive Movement",
+        "text": "You take bold, respectful steps that demonstrate unity-in-action. People rally around clarity.",
+        "choices": [
+            { "text": "Lead the gathering to resolution.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Invite others to act with you.", "nextScene": "COMMUNICATION_HEALING" }
+        ]
+    },
+    "COMMUNICATION_HEALING": {
+        "title": "Healing Through Dialogue",
+        "text": "You facilitate deep listening. Misunderstandings dissolve; goodwill grows.",
+        "choices": [
+            { "text": "Guide everyone toward a shared ceremony.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Encourage continued service together.", "nextScene": "SEVA_PATH" }
+        ]
+    },
+    "GRANDFATHER_MYSTERY": {
+        "title": "Legacy of Anchoring",
+        "text": "You uncover notes about 'anchoring the world tree'—rituals that knit spirit and daily life.",
+        "choices": [
+            { "text": "Use this knowledge to heal the Banyan.", "nextScene": "BANYAN_HEALING" },
+            { "text": "Bring this wisdom to the community.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "CHILD_WISDOM": {
+        "title": "Dreams of the Tree",
+        "text": "A child's dreams hint at the Banyan's voice asking for unity, not sacrifice.",
+        "choices": [
+            { "text": "Investigate the Banyan with new insight.", "nextScene": "BANYAN_INVESTIGATION" },
+            { "text": "Share this message with the leaders.", "nextScene": "DEBATE_LISTENING" }
+        ]
+    },
+    "THRESHOLD_MEDITATION": {
+        "title": "Centered at the Gate",
+        "text": "You pause at the temple threshold. Calm spreads. You feel ready to proceed.",
+        "choices": [
+            { "text": "Enter the temple.", "nextScene": "TEMPLE_INTERIOR" },
+            { "text": "Study the carvings for deeper meaning.", "nextScene": "CARVING_STUDY" }
+        ]
+    },
+    "CARVING_STUDY": {
+        "title": "Carvings of Wisdom",
+        "text": "Lotus, wheel, and cosmic figures depict the unity of paths. The teaching is clear: integration.",
+        "choices": [
+            { "text": "Seek guidance from within the temple.", "nextScene": "TEMPLE_INTERIOR" },
+            { "text": "Bring these insights to the village.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "TEMPLE_SERVICE": {
+        "title": "Service to the Sacred",
+        "text": "You assist with tending lamps and restoring order. The sanctum brightens.",
+        "choices": [
+            { "text": "Ask Guruji for deeper teaching.", "nextScene": "GURUJI_TEACHING" },
+            { "text": "Carry this renewed spirit back to the Banyan.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "MUTUAL_WISDOM": {
+        "title": "Sharing Insights",
+        "text": "You and Guruji exchange understanding. Both practical and spiritual paths point to unity.",
+        "choices": [
+            { "text": "Begin practicing unity meditation.", "nextScene": "AIKYA_PRACTICE" },
+            { "text": "Guide the community with these insights.", "nextScene": "THE_GREAT_CONVERGENCE" }
+        ]
+    },
+    "AIKYA_PRACTICE": {
+        "title": "Meditation on Unity",
+        "text": "You practice Aikya. A felt sense of oneness arises, clarifying your next steps.",
+        "choices": [
+            { "text": "Apply this directly to heal division.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Teach others the practice.", "nextScene": "VILLAGE_TEACHING" }
+        ]
+    },
+    "VILLAGE_TEACHING": {
+        "title": "Teaching the Village",
+        "text": "You teach simple practices that integrate sacred and mundane. Smiles return.",
+        "choices": [
+            { "text": "Lead everyone to a unifying ceremony.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Demonstrate unity through action.", "nextScene": "UNITY_DEMONSTRATION" }
+        ]
+    },
+    "BANYAN_HEALING": {
+        "title": "Gentle Healing",
+        "text": "With care and reverence, you tend to the Banyan's needs while preserving its sanctity.",
+        "choices": [
+            { "text": "Invite the community to witness healing.", "nextScene": "THE_GREAT_CONVERGENCE" },
+            { "text": "Conclude with a shared ritual.", "nextScene": "INTEGRATION_RITUAL" }
+        ]
+    },
+    "COLLECTIVE_WISDOM": {
+        "title": "Wisdom of the Many",
+        "text": "Through guided dialogue, the community arrives at a shared resolution.",
+        "choices": [
+            { "text": "Seal the insight with a unifying ritual.", "nextScene": "INTEGRATION_RITUAL" },
+            { "text": "Affirm the teaching and move forward.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    },
+    "UNITY_DEMONSTRATION": {
+        "title": "Unity in Action",
+        "text": "You demonstrate how sacred intention informs practical work. The lesson lands in hearts and hands.",
+        "choices": [
+            { "text": "Transition into a formal ritual together.", "nextScene": "INTEGRATION_RITUAL" },
+            { "text": "Conclude and bless the village.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    },
+    "TEACHER_PATH": {
+        "title": "Staying to Guide",
+        "text": "You remain for a time, helping establish practices that maintain harmony.",
+        "choices": [
+            { "text": "Offer a final blessing and move on.", "nextScene": "ACT1_CONCLUSION" },
+            { "text": "Encourage the village to continue together.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    },
+    "ADVANCED_TEACHING": {
+        "title": "Deeper Study",
+        "text": "You seek advanced teachings that deepen your integration of wisdom and action.",
+        "choices": [
+            { "text": "Return to the village to share what you've learned.", "nextScene": "ACT1_CONCLUSION" },
+            { "text": "Let your journey continue onward.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    },
+    "ACT2_OPENING": {
+        "title": "The Road to New Horizons",
+        "text": "Beyond Dharmapura, new challenges await. For now, your Act 1 journey stands complete.",
+        "choices": [
+            { "text": "Acknowledge this milestone.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    },
+    "ADVANCED_TRIALS_INTRO": {
+        "title": "Toward the Trials",
+        "text": "You prepare for advanced challenges. The foundation of unity will carry you forward.",
+        "choices": [
+            { "text": "Conclude Act 1 and integrate your learning.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    },
+    "DEEP_MEDITATION_PHASE": {
+        "title": "A Season of Stillness",
+        "text": "You enter a period of silent integration. Clarity dawns as Act 1 concludes in peace.",
+        "choices": [
+            { "text": "Return with renewed understanding.", "nextScene": "ACT1_CONCLUSION" }
+        ]
+    }
 };
 
 // Validate story data structure
