@@ -267,6 +267,7 @@ class WorkingGameController {
                                 <p>Preparing your spiritual journey...</p>
                             </div>
                             <div class="atmospheric-description"></div>
+                            <div class="puzzle-panel is-hidden" id="puzzle-panel"></div>
                         </div>
                     </section>
 
@@ -629,6 +630,9 @@ class WorkingGameController {
             }
         }
         
+        // Render puzzle if present
+        this.renderPuzzle(scene);
+
         // Load choices
         this.loadChoices(scene.choices || []);
         
@@ -641,7 +645,82 @@ class WorkingGameController {
         
         console.log('✅ Scene loaded:', scene.title);
     }
-    
+
+    renderPuzzle(scene) {
+        const panel = document.getElementById('puzzle-panel');
+        if (!panel) return;
+        if (!scene.puzzle) {
+            panel.classList.add('is-hidden');
+            panel.innerHTML = '';
+            return;
+        }
+        if (scene.puzzle.type === 'purification') {
+            this.mountPurificationPuzzle(panel, scene);
+            return;
+        }
+        panel.classList.add('is-hidden');
+        panel.innerHTML = '';
+    }
+
+    mountPurificationPuzzle(panel, scene) {
+        panel.classList.remove('is-hidden');
+        const elements = [
+            { id: 'earth', label: 'Sacred Earth', emoji: '🌍' },
+            { id: 'water', label: 'Blessed Water', emoji: '💧' },
+            { id: 'fire', label: 'Purifying Fire', emoji: '🔥' },
+            { id: 'air', label: 'Cleansing Air', emoji: '🌬️' }
+        ];
+        panel.innerHTML = `
+            <h4 class="puzzle-title">Purification Ritual</h4>
+            <div class="puzzle-elements" id="purify-elements">
+                ${elements.map(e => `<button class="puzzle-element" data-id="${e.id}">${e.emoji} ${e.label}</button>`).join('')}
+            </div>
+            <div class="puzzle-actions">
+                <button class="action-btn" id="purify-perform">Perform Purification</button>
+                <button class="action-btn" id="purify-reset">Reset</button>
+            </div>
+        `;
+        const selected = new Set();
+        panel.querySelectorAll('.puzzle-element').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.id;
+                if (selected.has(id)) { selected.delete(id); btn.classList.remove('active'); }
+                else { selected.add(id); btn.classList.add('active'); }
+            });
+        });
+        panel.querySelector('#purify-reset').addEventListener('click', () => {
+            selected.clear();
+            panel.querySelectorAll('.puzzle-element').forEach(b => b.classList.remove('active'));
+        });
+        panel.querySelector('#purify-perform').addEventListener('click', () => {
+            const required = ['earth','water','fire','air'];
+            const ok = required.every(r => selected.has(r)) && selected.size === required.length;
+            if (ok) {
+                if (this.currentSystem && typeof this.currentSystem.solvePuzzle === 'function') {
+                    this.currentSystem.solvePuzzle('purification', scene.puzzle.solution);
+                    if (this.currentSystem.currentScene) {
+                        this.gameState.currentScene = this.currentSystem.currentScene;
+                    }
+                } else if (scene.puzzle.success) {
+                    this.gameState.currentScene = scene.puzzle.success;
+                }
+                this.showNotification('The ritual succeeds. The curse dissolves.', 'success');
+                this.loadCurrentScene();
+            } else {
+                if (this.currentSystem && typeof this.currentSystem.solvePuzzle === 'function') {
+                    this.currentSystem.solvePuzzle('purification', 'WRONG');
+                    if (this.currentSystem.currentScene) {
+                        this.gameState.currentScene = this.currentSystem.currentScene;
+                    }
+                } else if (scene.puzzle.failure) {
+                    this.gameState.currentScene = scene.puzzle.failure;
+                }
+                this.showNotification('The ritual falters. Something is missing.', 'warning');
+                this.loadCurrentScene();
+            }
+        });
+    }
+
     formatText(text) {
         if (Array.isArray(text)) {
             return text.map(p => `<p>${p}</p>`).join('');
