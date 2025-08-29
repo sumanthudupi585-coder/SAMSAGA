@@ -158,18 +158,18 @@ class WorkingGameController {
     
     async initializeStorySystem() {
         console.log('📚 Initializing story system...');
-        
-        // Try to use the fixed story system first
-        if (window.FixedACT1StorySystem) {
-            this.currentSystem = new window.FixedACT1StorySystem();
-            console.log('✅ Using Fixed ACT1 Story System');
-            return;
-        }
-        
-        // Fallback to enhanced story data
+
+        // Prefer Enhanced ACT1 story data for full puzzle compatibility
         if (window.ENHANCED_ACT1_STORY_DATA) {
             this.currentSystem = new this.BasicStorySystem(window.ENHANCED_ACT1_STORY_DATA);
             console.log('✅ Using Enhanced ACT1 Story Data with basic system');
+            return;
+        }
+
+        // Fallback to fixed story system
+        if (window.FixedACT1StorySystem) {
+            this.currentSystem = new window.FixedACT1StorySystem();
+            console.log('✅ Using Fixed ACT1 Story System');
             return;
         }
         
@@ -206,25 +206,35 @@ class WorkingGameController {
     
     startGame() {
         console.log('🚀 Starting game...');
-        
+
         // Hide loading screen if it exists
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
             loadingScreen.style.display = 'none';
         }
-        
-        // Set up UI
+
+        // If Cinematic UI + Enhanced story are available, use them for full puzzle support
+        if (window.CinematicUISystem && window.ENHANCED_ACT1_STORY_DATA) {
+            try {
+                if (!this.uiSystem || !(this.uiSystem instanceof window.CinematicUISystem)) {
+                    this.uiSystem = new window.CinematicUISystem(this.currentSystem);
+                }
+                const initial = window.ENHANCED_ACT1_STORY_DATA[this.gameState.currentScene] || window.ENHANCED_ACT1_STORY_DATA['AWAKENING_PROLOGUE'];
+                this.uiSystem.loadScene(initial);
+                const basic = document.getElementById('game-container');
+                if (basic) basic.style.display = 'none';
+                console.log('✅ Cinematic UI active');
+                return;
+            } catch (e) {
+                console.warn('Falling back to basic UI:', e);
+            }
+        }
+
+        // Basic fallback UI
         this.setupGameUI();
-        
-        // Load first scene
         this.loadCurrentScene();
-        
-        // Set up event listeners
         this.setupEventListeners();
-        
-        // Show welcome message
         this.showNotification('Welcome to your spiritual journey!', 'success');
-        
         console.log('✅ Game started successfully');
     }
     
