@@ -818,6 +818,9 @@ class CinematicUISystem {
         else if (puzzleId === 'BarrierOfNegativity') overlay.classList.add('theme-barrier');
         else if (puzzleId === 'ShilpaShastraCrafting') overlay.classList.add('theme-crafting');
         else if (puzzleId === 'HarmonicResonance') overlay.classList.add('theme-harmony');
+        else if (puzzleId === 'CelestialHarmony') overlay.classList.add('theme-harmony');
+        else if (puzzleId === 'KleshaLabyrinth') overlay.classList.add('theme-barrier');
+        else if (puzzleId === 'ScalesOfDharma') overlay.classList.add('theme-crafting');
 
         const header = `
             <div class=\"puzzle-header\">
